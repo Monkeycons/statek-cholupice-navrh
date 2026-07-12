@@ -1,0 +1,48 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "layout": {
+      "contentSize": "1180px",
+      "wideSize": "1440px"
+    },
+    "color": {
+      "palette": [
+        {
+          "slug": "green",
+          "color": "#4f7d57",
+          "name": "Zelená"
+        },
+        {
+          "slug": "green-dark",
+          "color": "#2f5a38",
+          "name": "Tmavě zelená"
+        },
+        {
+          "slug": "cream",
+          "color": "#fbfaf6",
+          "name": "Krémová"
+        },
+        {
+          "slug": "graphite",
+          "color": "#303631",
+          "name": "Grafitová"
+        }
+      ]
+    },
+    "typography": {
+      "fontFamilies": [
+        {
+          "slug": "inter",
+          "name": "Inter",
+          "fontFamily": "Inter, Segoe UI, Arial, sans-serif"
+        },
+        {
+          "slug": "serif",
+          "name": "Georgia",
+          "fontFamily": "Georgia, Times New Roman, serif"
+        }
+      ]
+    }
+  }
+}
