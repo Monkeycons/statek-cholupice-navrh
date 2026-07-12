@@ -1,8 +1,6 @@
 # Inter font
 
-Šablona je připravena pro lokální soubor `InterVariable.woff2`.
+Šablona obsahuje lokální soubor `InterVariable.woff2` z oficiálního projektu Inter.
 
-Font se má doplnit z oficiálního projektu Inter: https://github.com/rsms/inter
-Licence: SIL Open Font License 1.1.
-
-V tomto prostředí nebyl font stažen automaticky, protože není dostupný síťový přístup.
+Použitá verze fontu: Inter 4.66.
+Licence: SIL Open Font License 1.1, přiložená v souboru `Inter-LICENSE.txt`.

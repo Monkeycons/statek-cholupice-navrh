@@ -69,6 +69,10 @@
       line-height: 1.55;
     }
 
+    body.admin-bar {
+      --anchor-offset: 136px;
+    }
+
       header {
         position: sticky;
         top: 0;
@@ -81,6 +85,20 @@
         background: transparent;
         border-bottom: 0;
         transition: padding .22s ease;
+      }
+
+      .admin-bar header {
+        top: 32px;
+      }
+
+      @media (max-width: 782px) {
+        body.admin-bar {
+          --anchor-offset: 150px;
+        }
+
+        .admin-bar header {
+          top: 46px;
+        }
       }
 
       .nav {

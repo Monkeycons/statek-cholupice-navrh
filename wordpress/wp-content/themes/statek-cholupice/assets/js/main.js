@@ -21,7 +21,7 @@
         after.style.clipPath = `inset(0 0 0 ${value}%)`;
         handle.style.left = `${value}%`;
         range.setAttribute("aria-valuenow", String(numericValue));
-        range.setAttribute("aria-valuetext", `${numericValue} % navrhované podoby`);
+        range.setAttribute("aria-valuetext", `Současný stav ${numericValue} %, navrhovaná podoba ${100 - numericValue} %`);
         updateLabels(value);
       }
 
@@ -108,12 +108,28 @@
     }, { passive: true });
     header?.classList.toggle("is-scrolled", window.scrollY > 56);
 
-    const sectionLinks = Array.from(document.querySelectorAll("header a[href^='#']:not(.button)"));
-    const sectionIds = [...new Set(sectionLinks.map((link) => link.getAttribute("href").slice(1)))];
+    function getSamePageHash(link) {
+      const rawHref = link.getAttribute("href") || "";
+      try {
+        const url = new URL(rawHref, window.location.href);
+        if (url.origin !== window.location.origin || !url.hash) return "";
+        const samePage = url.pathname.replace(/\/$/, "") === window.location.pathname.replace(/\/$/, "");
+        return samePage ? url.hash : "";
+      } catch (error) {
+        return rawHref.startsWith("#") ? rawHref : "";
+      }
+    }
+
+    const sectionLinks = Array.from(document.querySelectorAll("header a:not(.button)")).filter((link) => getSamePageHash(link));
+    sectionLinks.forEach((link) => {
+      const hash = getSamePageHash(link);
+      if (hash && link.getAttribute("href") !== hash) link.setAttribute("href", hash);
+    });
+    const sectionIds = [...new Set(sectionLinks.map((link) => getSamePageHash(link).slice(1)))];
     const sectionTargets = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
     function setActiveSection(id) {
       sectionLinks.forEach((link) => {
-        const active = link.getAttribute("href") === `#${id}`;
+        const active = getSamePageHash(link) === `#${id}`;
         link.classList.toggle("is-active", active);
         if (active) link.setAttribute("aria-current", "page");
         else link.removeAttribute("aria-current");
@@ -288,14 +304,15 @@
         submitButton.disabled = true;
         submitButton.textContent = "Odesílám…";
         try {
+          const contactNonce = window.StatekCholupice?.contactNonce || "";
           const response = await fetch(CONTACT_ENDPOINT, {
             method: "POST",
-            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            headers: { "Content-Type": "application/json", Accept: "application/json", "X-WP-Nonce": contactNonce },
             body: JSON.stringify({
               name: contactForm.elements.name.value.trim(),
               email: emailField.value.trim(),
               message: messageField.value.trim(),
-              nonce: window.StatekCholupice?.contactNonce || "",
+              nonce: contactNonce,
               company: contactForm.elements.company?.value || ""
             })
           });

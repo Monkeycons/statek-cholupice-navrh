@@ -11,7 +11,7 @@ Plugin řeší:
 
 - kontaktní REST endpoint,
 - globální nastavení e-mailu a URL zásad,
-- idempotentní inicializaci homepage a primárního menu,
+- idempotentní inicializaci homepage, stránky Novinky, blog indexu a primárního menu,
 - nativní metaboxová pole pro vybrané texty homepage.
 
-Obrázky jsou obsloužené helperem `statek_cholupice_picture()`, který skládá AVIF, WebP a JPEG fallback varianty z `assets/images/optimized`. Velké originály zůstávají v pracovní složce jako zdroj, ale nejsou balené do produkčního ZIPu šablony.
+Obrázky jsou obsloužené helperem `statek_cholupice_picture()`, který skládá AVIF, WebP a JPEG fallback varianty z `assets/images/optimized`. Hledání variant a čtení rozměrů se cachuje v rámci jednoho requestu, aby se neopakovalo `glob()` a `getimagesize()` pro stejné soubory. Velké originály zůstávají v pracovní složce jako zdroj, ale nejsou balené do produkčního ZIPu šablony.

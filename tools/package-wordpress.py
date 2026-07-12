@@ -76,6 +76,8 @@ def main() -> None:
 
     test_extract(theme_zip, "statek-cholupice")
     test_extract(plugin_zip, "statek-cholupice-core")
+    if TEST_ROOT.exists():
+        shutil.rmtree(TEST_ROOT)
 
     lines = [
         "WordPress ZIP manifest",

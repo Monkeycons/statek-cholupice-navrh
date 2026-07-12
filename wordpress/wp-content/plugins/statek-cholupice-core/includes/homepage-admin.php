@@ -59,7 +59,11 @@ function statek_cholupice_core_sanitize_home_meta( string $value, string $key = 
 	return sanitize_textarea_field( $value );
 }
 
-function statek_cholupice_core_home_metabox(): void {
+function statek_cholupice_core_home_metabox( string $post_type, ?WP_Post $post = null ): void {
+	if ( 'page' !== $post_type || ! $post || (int) $post->ID !== (int) get_option( 'page_on_front' ) ) {
+		return;
+	}
+
 	add_meta_box(
 		'statek-cholupice-home-content',
 		'Statek Cholupice - obsah homepage',
@@ -69,7 +73,7 @@ function statek_cholupice_core_home_metabox(): void {
 		'high'
 	);
 }
-add_action( 'add_meta_boxes', 'statek_cholupice_core_home_metabox' );
+add_action( 'add_meta_boxes', 'statek_cholupice_core_home_metabox', 10, 2 );
 
 function statek_cholupice_core_render_home_metabox( WP_Post $post ): void {
 	wp_nonce_field( 'statek_cholupice_home_save', 'statek_cholupice_home_nonce' );
@@ -99,6 +103,9 @@ function statek_cholupice_core_save_home_metabox( int $post_id ): void {
 		return;
 	}
 	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		return;
+	}
+	if ( (int) $post_id !== (int) get_option( 'page_on_front' ) ) {
 		return;
 	}
 

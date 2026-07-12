@@ -21,18 +21,47 @@ function statek_cholupice_core_activate(): void {
 				'post_content' => 'Obsah domovské stránky spravuje šablona Statek Cholupice.',
 			)
 		);
+		if ( is_wp_error( $page_id ) ) {
+			$page_id = 0;
+		}
 	} else {
 		$page_id = (int) $page->ID;
 	}
 
-	if ( $page_id && 'page' !== get_option( 'show_on_front' ) ) {
+	if ( $page_id && ( 'page' !== get_option( 'show_on_front' ) || (int) get_option( 'page_on_front' ) <= 0 ) ) {
 		update_option( 'show_on_front', 'page' );
 		update_option( 'page_on_front', $page_id );
 	}
 
+	statek_cholupice_core_ensure_posts_page();
 	statek_cholupice_core_ensure_primary_menu();
 }
 register_activation_hook( dirname( __DIR__ ) . '/statek-cholupice-core.php', 'statek_cholupice_core_activate' );
+
+function statek_cholupice_core_ensure_posts_page(): void {
+	if ( (int) get_option( 'page_for_posts' ) > 0 ) {
+		return;
+	}
+
+	$page = get_page_by_path( 'novinky' );
+	if ( $page ) {
+		$page_id = (int) $page->ID;
+	} else {
+		$page_id = wp_insert_post(
+			array(
+				'post_title'   => 'Novinky',
+				'post_name'    => 'novinky',
+				'post_status'  => 'publish',
+				'post_type'    => 'page',
+				'post_content' => 'Archiv novinek spravují běžné příspěvky WordPressu.',
+			)
+		);
+	}
+
+	if ( $page_id && ! is_wp_error( $page_id ) ) {
+		update_option( 'page_for_posts', (int) $page_id );
+	}
+}
 
 function statek_cholupice_core_ensure_primary_menu(): void {
 	$menu_name = 'Statek Cholupice - hlavní menu';

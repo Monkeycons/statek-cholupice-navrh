@@ -30,6 +30,25 @@ function statek_cholupice_anchor_url( string $anchor ): string {
 	return home_url( '/#' . $anchor );
 }
 
+function statek_cholupice_normalize_menu_url( string $url ): string {
+	if ( ! is_front_page() ) {
+		return $url;
+	}
+
+	$parts = wp_parse_url( $url );
+	if ( ! is_array( $parts ) || empty( $parts['fragment'] ) ) {
+		return $url;
+	}
+
+	$home_host = wp_parse_url( home_url( '/' ), PHP_URL_HOST );
+	$same_host = empty( $parts['host'] ) || ( $home_host && $parts['host'] === $home_host );
+	if ( $same_host ) {
+		return '#' . ltrim( (string) $parts['fragment'], '#' );
+	}
+
+	return $url;
+}
+
 function statek_cholupice_contact_email(): string {
 	$email = get_option( 'statek_cholupice_contact_email', 'info@statekcholupice.cz' );
 	return is_email( $email ) ? $email : 'info@statekcholupice.cz';
@@ -110,6 +129,13 @@ function statek_cholupice_faq_items(): array {
 }
 
 function statek_cholupice_image_variants( string $path, string $extension ): array {
+	static $cache = array();
+
+	$cache_key = $path . '|' . $extension;
+	if ( array_key_exists( $cache_key, $cache ) ) {
+		return $cache[ $cache_key ];
+	}
+
 	$image_path = preg_replace( '#^images/#', '', ltrim( $path, '/' ) );
 	$stem       = pathinfo( $image_path, PATHINFO_FILENAME );
 	$directory  = pathinfo( $image_path, PATHINFO_DIRNAME );
@@ -119,7 +145,8 @@ function statek_cholupice_image_variants( string $path, string $extension ): arr
 	$variants   = array();
 
 	if ( ! is_array( $files ) ) {
-		return array();
+		$cache[ $cache_key ] = array();
+		return $cache[ $cache_key ];
 	}
 
 	foreach ( $files as $file ) {
@@ -139,7 +166,8 @@ function statek_cholupice_image_variants( string $path, string $extension ): arr
 	}
 
 	ksort( $variants, SORT_NUMERIC );
-	return array_values( $variants );
+	$cache[ $cache_key ] = array_values( $variants );
+	return $cache[ $cache_key ];
 }
 
 function statek_cholupice_srcset( array $variants ): string {
@@ -184,7 +212,14 @@ function statek_cholupice_picture( string $path, string $alt, array $args = arra
 
 	$src    = $chosen ? $chosen['url'] : statek_cholupice_asset_url( $path );
 	$source = $chosen ? $chosen['path'] : statek_cholupice_asset_path( $path );
-	$size   = is_readable( $source ) ? getimagesize( $source ) : false;
+	static $size_cache = array();
+
+	if ( array_key_exists( $source, $size_cache ) ) {
+		$size = $size_cache[ $source ];
+	} else {
+		$size = is_readable( $source ) ? getimagesize( $source ) : false;
+		$size_cache[ $source ] = $size;
+	}
 	$width  = is_array( $size ) ? (int) $size[0] : 0;
 	$height = is_array( $size ) ? (int) $size[1] : 0;
 
@@ -249,16 +284,20 @@ class Statek_Cholupice_Nav_Walker extends Walker_Nav_Menu {
 
 	public function start_el( &$output, $item, $depth = 0, $args = null, $id = 0 ) {
 		$classes = array();
-		$url     = isset( $item->url ) ? $item->url : '';
+		$url     = isset( $item->url ) ? statek_cholupice_normalize_menu_url( $item->url ) : '';
 
 		if ( str_contains( $url, 'faq-contact-form' ) || 'Kontakt' === trim( wp_strip_all_tags( $item->title ) ) ) {
 			$classes[] = 'button';
 		}
 		if ( is_array( $item->classes ) ) {
 			foreach ( $item->classes as $class ) {
-				if ( is_string( $class ) && '' !== $class && ! str_starts_with( $class, 'menu-item' ) ) {
-					$classes[] = $class;
+				if ( ! is_string( $class ) || '' === $class ) {
+					continue;
 				}
+				if ( str_starts_with( $class, 'menu-item' ) || str_starts_with( $class, 'page-item' ) || str_starts_with( $class, 'page_item' ) || str_starts_with( $class, 'current-' ) || str_starts_with( $class, 'current_' ) || str_starts_with( $class, 'current_page' ) ) {
+					continue;
+				}
+				$classes[] = $class;
 			}
 		}
 

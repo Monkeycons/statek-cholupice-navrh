@@ -31,7 +31,7 @@
 		</div>
 	</div>
 	<div class="wrap footer-bottom">
-		<span>© <?php echo esc_html( gmdate( 'Y' ) ); ?> Statek Cholupice</span>
+		<span>© <?php echo esc_html( wp_date( 'Y' ) ); ?> Statek Cholupice</span>
 		<div class="footer-bottom-links">
 			<a href="<?php echo esc_url( statek_cholupice_privacy_url() ); ?>">Zásady zpracování osobních údajů</a>
 		</div>
