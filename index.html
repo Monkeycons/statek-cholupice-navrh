@@ -766,6 +766,11 @@
       margin: 0;
       opacity: 0;
       cursor: ew-resize;
+      touch-action: none;
+    }
+
+    .before-after.is-dragging input {
+      cursor: grabbing;
     }
 
     .ba-handle {
@@ -783,19 +788,34 @@
     .ba-handle::before {
       content: "← →";
       position: absolute;
+      content: "‹  ›";
+      content: "\2039  \203A";
       top: 50%;
       left: 50%;
-      width: 62px;
-      height: 62px;
+      width: 54px;
+      height: 54px;
       display: grid;
       place-items: center;
       border-radius: 50%;
       transform: translate(-50%, -50%);
       background: rgba(255,255,255,.94);
       color: var(--graphite);
-      font-size: 18px;
+      font-size: 25px;
       font-weight: 900;
-      box-shadow: 0 16px 40px rgba(0,0,0,.28);
+      letter-spacing: .08em;
+      box-shadow: 0 12px 30px rgba(0,0,0,.26);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .before-after:hover .ba-handle::before,
+    .before-after:focus-within .ba-handle::before {
+      transform: translate(-50%, -50%) scale(1.04);
+      box-shadow: 0 14px 34px rgba(0,0,0,.3);
+    }
+
+    .before-after.is-dragging .ba-handle::before {
+      transform: translate(-50%, -50%) scale(.98);
+      box-shadow: 0 10px 26px rgba(0,0,0,.34);
     }
 
     .ba-label {
@@ -809,6 +829,18 @@
       font-size: 13px;
       font-weight: 800;
       backdrop-filter: blur(10px);
+      box-shadow: none;
+      cursor: default;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(4px);
+      transition: opacity .22s ease, transform .22s ease;
+      white-space: nowrap;
+    }
+
+    .ba-label.is-visible {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .ba-label.before { left: 22px; }
@@ -1914,10 +1946,10 @@
           <div class="before-after" data-before-after>
             <img src="statek_web_premium/pred_premium_documentary.png" alt="Současný stav areálu před revitalizací">
             <img class="after" src="statek_web_premium/po_premium_dss_van_logo_left.png" alt="Prémiová vizualizace navrženého stavu areálu s dodávkou DSS">
-            <span class="ba-label before">Před</span>
-            <span class="ba-label after-label">Po</span>
+            <span class="ba-label before">Současný stav</span>
+            <span class="ba-label after-label">Navrhovaná podoba</span>
             <span class="ba-handle" aria-hidden="true"></span>
-            <input type="range" min="0" max="100" value="50" aria-label="Porovnání před a po">
+            <input type="range" min="0" max="100" value="50" aria-label="Porovnání současného stavu a navrhované podoby">
           </div>
           <div class="story-copy">
             <h3>Revitalizace brownfieldu s respektem k historii</h3>
@@ -2234,13 +2266,39 @@
       const range = slider.querySelector("input");
       const after = slider.querySelector(".after");
       const handle = slider.querySelector(".ba-handle");
+      const beforeLabel = slider.querySelector(".ba-label.before");
+      const afterLabel = slider.querySelector(".ba-label.after-label");
+
+      function updateLabels(value) {
+        const width = slider.clientWidth || 1;
+        const handleX = width * (Number(value) / 100);
+        const safeGap = 86;
+        const beforeWidth = beforeLabel?.offsetWidth || 0;
+        const afterWidth = afterLabel?.offsetWidth || 0;
+        beforeLabel?.classList.toggle("is-visible", handleX > beforeWidth + safeGap);
+        afterLabel?.classList.toggle("is-visible", width - handleX > afterWidth + safeGap);
+      }
 
       function update(value) {
         after.style.clipPath = `inset(0 0 0 ${value}%)`;
         handle.style.left = `${value}%`;
+        range.setAttribute("aria-valuenow", String(Math.round(Number(value))));
+        updateLabels(value);
       }
 
       range.addEventListener("input", (event) => update(event.target.value));
+      range.addEventListener("keydown", (event) => {
+        if (event.key !== "Home" && event.key !== "End") return;
+        event.preventDefault();
+        range.value = event.key === "Home" ? range.min : range.max;
+        update(range.value);
+      });
+      range.addEventListener("pointerdown", () => slider.classList.add("is-dragging"));
+      ["pointerup", "pointercancel"].forEach((eventName) => {
+        window.addEventListener(eventName, () => slider.classList.remove("is-dragging"));
+      });
+      range.addEventListener("blur", () => slider.classList.remove("is-dragging"));
+      window.addEventListener("resize", () => update(range.value));
       update(range.value);
     });
 
