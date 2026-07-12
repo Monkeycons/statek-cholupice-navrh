@@ -14,11 +14,12 @@
       --cream: #fbfaf6;
       --line: #d8e1d9;
       --graphite: #303631;
+      --anchor-offset: 104px;
     }
 
     * { box-sizing: border-box; }
 
-      html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+      html { scroll-behavior: smooth; scroll-padding-top: var(--anchor-offset); }
 
     .visually-hidden {
       position: absolute;
@@ -82,6 +83,18 @@
       color: white;
       white-space: nowrap;
       text-shadow: 0 1px 18px rgba(0,0,0,.28);
+    }
+
+    .brand-link {
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .brand-link:focus-visible {
+      outline: 3px solid rgba(216, 234, 219, .9);
+      outline-offset: 6px;
+      border-radius: 6px;
     }
 
       nav {
@@ -303,7 +316,7 @@
 
       section {
         padding-block: clamp(56px, 6vw, 88px);
-        scroll-margin-top: 88px;
+        scroll-margin-top: var(--anchor-offset);
       }
 
     .wrap {
@@ -877,7 +890,7 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      scroll-margin-top: 88px;
+      scroll-margin-top: var(--anchor-offset);
     }
 
     .topic-safety {
@@ -1472,7 +1485,7 @@
       border-radius: 8px;
       background: var(--graphite);
       color: white;
-      scroll-margin-top: 88px;
+      scroll-margin-top: var(--anchor-offset);
     }
 
     .faq-contact-kicker {
@@ -1574,7 +1587,7 @@
     }
 
     .faq-contact-form {
-      scroll-margin-top: 88px;
+      scroll-margin-top: var(--anchor-offset);
     }
 
     .contact-privacy {
@@ -1835,7 +1848,7 @@
 <body>
   <header>
     <div class="nav">
-      <div class="brand">Statek Cholupice</div>
+      <a class="brand brand-link" href="#uvod" aria-label="Statek Cholupice - zpět na úvod">Statek Cholupice</a>
       <nav aria-label="Hlavní menu">
         <a href="#projekt">O projektu</a>
         <a href="#bezpecnost">Bezpečnost</a>
