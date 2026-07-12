@@ -9,15 +9,29 @@ V Nastavení > Statek Cholupice lze nastavit:
 - e-mail pro kontaktní formulář a viditelné kontaktní odkazy,
 - URL zásad zpracování osobních údajů.
 
-Na stránce nastavené jako homepage je metabox „Statek Cholupice - obsah homepage“. Metabox se zobrazuje pouze u stránky nastavené jako `page_on_front`, ne u ostatních běžných stránek. Umožňuje upravit:
+Na stránce nastavené jako homepage jsou samostatné metaboxy „Statek Cholupice“. Zobrazují se pouze u stránky nastavené jako `page_on_front`, ne u ostatních běžných stránek.
 
-- texty v hero sekci,
-- nadpisy a úvod sekce častých dotazů,
-- položky FAQ jako JSON pole objektů `{ "question": "...", "answer": "<p>...</p>" }`,
-- nadpis a text kontaktního bloku.
+Spravovat lze:
 
-Prázdná pole nepřepisují schválený výchozí obsah šablony.
+- hero texty a CTA tlačítka,
+- úvod sekce častých dotazů,
+- O projektu včetně hlavního obrázku a dvojice obrázků Před / Po,
+- šest částí areálu včetně pořadí, textů, obrázků a alt textů,
+- sekci „Jak bude areál fungovat“ včetně seznamů „bude“ a „nebude“,
+- sekce Bezpečnost, Doprava a Životní prostředí včetně rozklikávacího textu a ilustračních fotografií,
+- Přínosy včetně šesti karet, pořadí a předdefinované ikony,
+- Časté dotazy přes běžné repeater rozhraní bez ručního JSON,
+- kontaktní blok pod FAQ,
+- investorské údaje a upozornění v patičce.
 
-## Omezení editace
+## Obrázky
 
-Detailní layoutové bloky „O projektu“, „Šest částí, jeden živý areál“, „Jak bude areál fungovat“, Bezpečnost / Doprava / Životní prostředí, Přínosy, investorské údaje a patičkové upozornění zůstávají v této release candidate verzi pevnou součástí šablony, aby se nerozbil schválený vizuální návrh. Tato verze proto není označovaná jako plně redakčně editovatelný web. Pokud má klient později spravovat celý obsah bez zásahu do kódu, doporučený další krok je rozšířit stejný nativní metaboxový systém o tyto opakující se bloky a mediální pole.
+Obrázky se vybírají přes standardní WordPress media modal. Pokud editor obrázek nevybere, web použije schválený výchozí obrázek ze šablony. Alt text lze upravit samostatně.
+
+## FAQ
+
+FAQ se needituje jako JSON. Každá otázka má vlastní řádek s polem „Otázka“ a „Odpověď“. Odpověď pište jako běžný text, odstavce oddělte prázdným řádkem. Maximální počet je 12 otázek.
+
+## Fallback
+
+Prázdná pole nepřepisují schválený výchozí obsah šablony. Pokud editor některou hodnotu smaže a uloží, návštěvnický web se vrátí k původnímu schválenému textu nebo obrázku.

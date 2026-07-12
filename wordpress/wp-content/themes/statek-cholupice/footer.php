@@ -4,12 +4,18 @@
  *
  * @package StatekCholupice
  */
+$footer = statek_cholupice_footer_data();
 ?>
 <footer>
 	<div class="wrap footer-main">
 		<div class="footer-column">
 			<h3>Investor projektu</h3>
-			<p>DSS a.s.<br>Kloboučnická 1735/26, Nusle, 140 00 Praha 4<br>IČ: 26161541, DIČ: CZ26161541<br>Zapsaná v obchodním rejstříku vedeném Městským soudem v Praze, oddíl B, vložka 6434.</p>
+			<p>
+				<?php echo esc_html( $footer['investor_name'] ); ?><br>
+				<?php echo esc_html( $footer['investor_address'] ); ?><br>
+				<?php echo esc_html( $footer['investor_id'] ); ?><br>
+				<?php echo esc_html( $footer['investor_registry'] ); ?>
+			</p>
 		</div>
 		<div class="footer-column">
 			<h3>Kontakt</h3>
@@ -22,12 +28,12 @@
 	</div>
 	<div class="wrap footer-notice">
 		<div>
-			<h3>Aktuálnost informací</h3>
-			<p>Informace uvedené na tomto webu odpovídají stavu projektu v době jejich zveřejnění. Průběžně je aktualizujeme, mezi změnou projektu a jejím zveřejněním na webu však může vzniknout časová prodleva.</p>
+			<h3><?php echo esc_html( $footer['info_heading'] ); ?></h3>
+			<p><?php echo esc_html( $footer['info_text'] ); ?></p>
 		</div>
 		<div>
-			<h3>Vizualizace projektu</h3>
-			<p>Vizualizace mají ilustrativní charakter a zachycují předpokládanou podobu projektu v době svého vzniku. V průběhu další přípravy, povolování a realizace může dojít k dílčím změnám architektonického, technického nebo materiálového řešení.</p>
+			<h3><?php echo esc_html( $footer['visuals_heading'] ); ?></h3>
+			<p><?php echo esc_html( $footer['visuals_text'] ); ?></p>
 		</div>
 	</div>
 	<div class="wrap footer-bottom">

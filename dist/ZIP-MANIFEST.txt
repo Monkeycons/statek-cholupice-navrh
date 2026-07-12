@@ -1,5 +1,5 @@
 WordPress ZIP manifest
-statek-cholupice-theme.zip: 141 entries
+statek-cholupice-theme.zip: 142 entries
   statek-cholupice/404.php
   statek-cholupice/archive.php
   statek-cholupice/assets/css/main.css
@@ -81,7 +81,9 @@ statek-cholupice-theme.zip: 141 entries
   statek-cholupice/assets/images/optimized/statek_web_premium/hero-vjezd-preview-v4-lide-obchod-1280.avif
   statek-cholupice/assets/images/optimized/statek_web_premium/hero-vjezd-preview-v4-lide-obchod-1280.jpg
   ...
-statek-cholupice-core.zip: 4 entries
+statek-cholupice-core.zip: 6 entries
+  statek-cholupice-core/assets/admin-homepage.css
+  statek-cholupice-core/assets/admin-homepage.js
   statek-cholupice-core/includes/contact.php
   statek-cholupice-core/includes/homepage-admin.php
   statek-cholupice-core/includes/setup.php

@@ -1,0 +1,99 @@
+.statek-admin-help {
+	max-width: 760px;
+	color: #52605a;
+}
+
+.statek-admin-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 18px 22px;
+}
+
+.statek-admin-wide {
+	grid-column: 1 / -1;
+}
+
+.statek-admin-card {
+	margin: 18px 0;
+	padding: 18px;
+	border: 1px solid #d7dfd9;
+	border-radius: 6px;
+	background: #fbfaf6;
+}
+
+.statek-admin-card h3 {
+	margin: 0 0 16px;
+	color: #1f5a34;
+}
+
+.statek-admin-field {
+	display: block;
+	margin: 0 0 14px;
+}
+
+.statek-admin-field span {
+	display: block;
+	margin: 0 0 6px;
+	font-weight: 700;
+	color: #26322d;
+}
+
+.statek-admin-field input,
+.statek-admin-field select,
+.statek-admin-field textarea {
+	width: 100%;
+	max-width: 100%;
+}
+
+.statek-admin-field small,
+.statek-admin-field .description,
+.statek-admin-card .description {
+	display: block;
+	margin-top: 6px;
+	color: #66736c;
+}
+
+.statek-admin-inline-row,
+.statek-admin-nested {
+	position: relative;
+	margin: 0 0 12px;
+	padding: 12px;
+	border: 1px solid #e2e7e3;
+	border-radius: 5px;
+	background: #fff;
+}
+
+.statek-admin-inline-row textarea {
+	width: 100%;
+}
+
+.statek-media-preview {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 92px;
+	margin: 8px 0 10px;
+	border: 1px dashed #b9c5bd;
+	border-radius: 5px;
+	background: #fff;
+	color: #66736c;
+}
+
+.statek-media-preview img {
+	display: block;
+	max-width: 180px;
+	max-height: 120px;
+	width: auto;
+	height: auto;
+	border-radius: 4px;
+}
+
+.statek-repeater-add {
+	margin-top: 4px !important;
+}
+
+@media (max-width: 782px) {
+	.statek-admin-grid {
+		grid-template-columns: 1fr;
+	}
+}
