@@ -1,0 +1,2548 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Statek Cholupice - koncept webu</title>
+  <style>
+    :root {
+      --ink: #202520;
+      --muted: #5c665f;
+      --green: #4f7d57;
+      --green-dark: #2f5a38;
+      --sage: #edf4ef;
+      --cream: #fbfaf6;
+      --line: #d8e1d9;
+      --graphite: #303631;
+    }
+
+    * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--cream);
+      line-height: 1.55;
+    }
+
+      header {
+        position: sticky;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        min-height: 76px;
+        margin-bottom: -76px;
+        padding: 6px 0;
+        background: transparent;
+        border-bottom: 0;
+        transition: padding .22s ease;
+      }
+
+      .nav {
+        width: min(1180px, calc(100% - 48px));
+        margin: 0 auto;
+        min-height: 62px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 28px;
+        padding: 0 12px 0 18px;
+        border: 1px solid transparent;
+        border-radius: 12px;
+        transition: background-color .22s ease, border-color .22s ease, box-shadow .22s ease, backdrop-filter .22s ease;
+      }
+
+      header.is-scrolled .nav {
+        background: rgba(29, 38, 31, .91);
+        border-color: rgba(255, 255, 255, .14);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, .08);
+        backdrop-filter: blur(12px);
+      }
+
+    .brand {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 28px;
+      letter-spacing: .02em;
+      color: white;
+      white-space: nowrap;
+      text-shadow: 0 1px 18px rgba(0,0,0,.28);
+    }
+
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        font-size: 15px;
+        color: rgba(255,255,255,.86);
+      }
+
+      .nav > nav { white-space: nowrap; }
+
+      .nav > nav .button {
+        padding: 10px 18px;
+        border-radius: 10px;
+      }
+
+    nav a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    nav a:not(.button),
+    .mobile-menu a:not(.button) {
+      transition: color .2s ease, opacity .2s ease;
+    }
+
+    nav a:not(.button):hover,
+    nav a:not(.button).is-active,
+    .mobile-menu a:not(.button):hover,
+    .mobile-menu a:not(.button).is-active {
+      color: #d8eadb;
+    }
+
+    nav a:focus-visible,
+    .mobile-menu a:focus-visible,
+    .button:focus-visible,
+    .mobile-menu-toggle:focus-visible {
+      outline: 2px solid #b8d7be;
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 6px;
+      background: var(--green);
+      color: white;
+      padding: 12px 18px;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease;
+    }
+
+    .button:hover {
+      background: #5d8b65;
+      box-shadow: 0 8px 18px rgba(0,0,0,.16);
+      transform: translateY(-1px);
+    }
+
+    .button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .button:disabled {
+      opacity: .62;
+      cursor: wait;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .button.secondary:hover {
+      background: white;
+      color: var(--green-dark);
+    }
+
+    .mobile-menu-toggle {
+      display: none;
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 5px;
+      border: 1px solid rgba(255,255,255,.34);
+      border-radius: 6px;
+      background: rgba(20,24,20,.26);
+      color: white;
+      cursor: pointer;
+    }
+
+    .mobile-menu-toggle span {
+      width: 19px;
+      height: 2px;
+      display: block;
+      background: currentColor;
+      transition: transform .2s ease, opacity .2s ease;
+    }
+
+    .mobile-menu-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .mobile-menu-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .mobile-menu-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      padding: 10px 24px 18px;
+      border-top: 1px solid rgba(255,255,255,.12);
+      background: rgba(32,37,32,.98);
+      box-shadow: 0 14px 28px rgba(0,0,0,.2);
+    }
+
+    .mobile-menu nav {
+      display: flex;
+      align-items: stretch;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .mobile-menu nav a {
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+      color: rgba(255,255,255,.9);
+    }
+
+    .mobile-menu nav a.button {
+      width: 100%;
+      margin-top: 12px;
+      border-bottom: 0;
+    }
+
+    body.menu-open { overflow: hidden; }
+
+        .hero {
+          padding: 0;
+          min-height: clamp(640px, 100svh, 760px);
+          display: grid;
+          align-items: center;
+      background:
+        radial-gradient(circle at 78% 32%, rgba(255,255,255,.18), rgba(255,255,255,0) 30%),
+        linear-gradient(90deg, rgba(18,24,19,.84) 0%, rgba(18,24,19,.58) 36%, rgba(18,24,19,.18) 68%, rgba(18,24,19,.04) 100%),
+        linear-gradient(0deg, rgba(18,24,19,.45), rgba(18,24,19,0) 35%),
+        url("hero_vizualizace/cholupice-hero-super-render-web-spravne.png") center 52% / cover no-repeat;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+      .hero-inner {
+        width: min(1180px, calc(100% - 48px));
+        margin: 0 auto;
+        padding: clamp(96px, 14vh, 128px) 0 clamp(72px, 12vh, 112px);
+        transform: translateY(60px);
+    }
+
+    .kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #d8eadb;
+    }
+
+    .kicker::before {
+      content: "";
+      width: 36px;
+      height: 2px;
+      background: #d8eadb;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font-size: clamp(56px, 5.8vw, 92px);
+      line-height: .94;
+      font-weight: 800;
+      text-wrap: balance;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 690px;
+      margin: 22px 0 0;
+      font-size: 22px;
+      line-height: 1.42;
+      color: rgba(255,255,255,.9);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .hero-actions .button {
+      min-width: 152px;
+      height: 48px;
+    }
+
+    .button.secondary {
+      background: rgba(255,255,255,.92);
+      color: var(--graphite);
+    }
+
+      section {
+        padding-block: clamp(56px, 6vw, 88px);
+        scroll-margin-top: 88px;
+      }
+
+    .wrap {
+      width: min(1180px, calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    .intro {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 46px;
+      line-height: 1.08;
+      color: var(--graphite);
+    }
+
+    .lead {
+      margin: 0;
+      font-size: 20px;
+      color: var(--muted);
+    }
+
+      .project-story {
+        background: #fffdf8;
+        padding: clamp(56px, 6vw, 72px) 0 28px;
+    }
+
+    .story-block {
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+      gap: 36px;
+      align-items: center;
+    }
+
+    .story-block + .story-block {
+      margin-top: 52px;
+    }
+
+    .story-block.reverse {
+      grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr);
+    }
+
+    .story-copy {
+      display: grid;
+      gap: 14px;
+    }
+
+    .story-copy h3 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.15;
+      color: var(--graphite);
+    }
+
+    .story-copy p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .story-media {
+      position: relative;
+      min-height: 350px;
+      align-self: stretch;
+      margin: 0;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #d7ddd8;
+    }
+
+    .story-media img {
+      width: 100%;
+      height: 100%;
+      min-height: 350px;
+      display: block;
+      object-fit: cover;
+    }
+
+      .story-block .before-after {
+        min-height: 350px;
+        margin-top: 0;
+      }
+
+      .principles-section {
+        margin-top: clamp(32px, 3vw, 40px);
+        padding: clamp(24px, 2vw, 28px) 0 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .principles-heading {
+        display: grid;
+        gap: 12px;
+        max-width: 820px;
+        margin-bottom: 26px;
+      }
+
+      .principles-heading h2 {
+        margin: 0;
+        color: var(--graphite);
+        font-size: 42px;
+        line-height: 1.08;
+      }
+
+      .principles-heading p {
+        margin: 0;
+        color: var(--green-dark);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 19px;
+        line-height: 1.4;
+      }
+
+      .principles-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+        align-items: stretch;
+      }
+
+      .principle-card {
+        display: flex;
+        min-height: 188px;
+        flex-direction: column;
+        padding: 24px 24px 26px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--sage);
+        box-shadow: 0 12px 28px rgba(34, 45, 36, .06);
+        transition: transform .2s ease, box-shadow .2s ease;
+      }
+
+      .principle-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 16px 32px rgba(34, 45, 36, .1);
+      }
+
+      .principle-number {
+        display: block;
+        margin-bottom: 22px;
+        color: var(--green);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: .12em;
+      }
+
+      .principle-card h3 {
+        margin: 0 0 10px;
+        color: var(--graphite);
+        font-size: 21px;
+        line-height: 1.18;
+      }
+
+      .principle-card p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.55;
+      }
+
+      .site-area {
+        background: #fffdf8;
+        padding: clamp(48px, 5vw, 56px) 0 28px;
+    }
+
+    .site-area-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .site-area-heading h2 { margin: 0; font-size: 42px; line-height: 1.08; }
+    .site-area-heading .lead { max-width: 560px; margin: 0; color: var(--green-dark); font-family: Georgia, "Times New Roman", serif; font-size: 19px; line-height: 1.4; }
+
+    .site-area-layout {
+      display: block;
+    }
+
+    .site-area-tabs {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--line);
+      scrollbar-width: none;
+    }
+    .site-area-tabs::-webkit-scrollbar { display: none; }
+
+    .site-area-tab {
+      position: relative;
+      flex: 0 0 auto;
+      min-height: 54px;
+      padding: 10px 22px 13px 0;
+      margin-right: 24px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font: inherit;
+      font-size: 15px;
+      text-align: left;
+      transition: color .25s ease;
+    }
+
+    .site-area-tab::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      width: auto;
+      height: 2px;
+      background: transparent;
+      transition: background .25s ease;
+    }
+
+    .site-area-tab span {
+      display: block;
+      margin-bottom: 3px;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+
+    .site-area-tab span,
+    .site-area-label { display: none; }
+
+    .site-area-tab[aria-selected="true"] {
+      color: var(--green-dark);
+      font-weight: 700;
+    }
+
+    .site-area-tab[aria-selected="true"]::before { background: var(--green); }
+
+    .site-area-tab:focus-visible {
+      outline: none;
+      color: var(--green-dark);
+    }
+
+    .site-area-tab:focus-visible::before {
+      background: var(--green);
+    }
+
+    .site-area-content {
+      min-width: 0;
+      padding-top: 28px;
+    }
+
+    .site-area-panel {
+      display: none;
+      grid-template-columns: minmax(0, 1.12fr) minmax(260px, .88fr);
+      gap: 38px;
+      align-items: center;
+      min-height: 420px;
+    }
+
+    .site-area-panel[aria-hidden="false"] {
+      display: grid;
+      animation: site-area-in .35s ease both;
+    }
+
+    @keyframes site-area-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    html.js .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+      html.js .reveal.is-visible {
+        opacity: 1;
+        transform: none;
+        transition: opacity .6s ease, transform .6s ease;
+      }
+
+      html.js .principles-grid .principle-card:nth-child(2) { transition-delay: .08s; }
+      html.js .principles-grid .principle-card:nth-child(3) { transition-delay: .16s; }
+
+    .hero .kicker,
+    .hero h1,
+    .hero p,
+    .hero-actions {
+      animation: hero-enter .6s ease both;
+    }
+
+    .hero h1 { animation-delay: .08s; }
+    .hero p { animation-delay: .16s; }
+    .hero-actions { animation-delay: .24s; }
+
+    @keyframes hero-enter {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .site-area-media {
+      margin: 0;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #d7ddd8;
+    }
+
+    .site-area-media img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .site-area-copy { display: grid; gap: 12px; max-width: 480px; }
+
+    .site-area-label {
+      margin: 0;
+      color: var(--green-dark);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .site-area-copy h3 { margin: 0; font-size: 30px; line-height: 1.12; }
+    .site-area-copy p { margin: 0; color: var(--muted); font-size: 15px; }
+    .site-operation-intro { max-width: 860px; margin-bottom: 28px; }
+    .site-operation-intro h3 { margin: 0 0 12px; font-size: 30px; line-height: 1.12; }
+    .site-operation-intro p { margin: 0; color: var(--muted); font-size: 15px; }
+    .site-operation-columns { display: grid; grid-template-columns: 1fr; gap: 18px; }
+    .site-operation-box { padding: 22px 26px 18px; border-top: 3px solid; }
+    .site-operation-box.good { border-color: var(--green); background: var(--sage); }
+    .site-operation-box.neutral { border-color: #9ba39d; background: #eef0ed; }
+    .site-operation-box h4 { position: relative; margin: 0 0 16px; padding-left: 34px; color: var(--graphite); font-size: 18px; font-weight: 700; line-height: 24px; }
+    .site-operation-box h4::before { position: absolute; left: 0; top: 0; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; color: white; font-size: 17px; font-weight: 500; line-height: 24px; }
+    .site-operation-box.good h4::before { content: "+"; background: var(--green); }
+    .site-operation-box.neutral h4::before { content: "–"; background: #6f7772; }
+    .site-operation-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin: 0; padding: 0; list-style: none; }
+    .site-operation-list li { position: relative; padding: 13px 18px 12px 22px; border-top: 1px solid rgba(48,54,49,.14); }
+    .site-operation-list li::before { left: 0; top: 13px; }
+    .site-operation-list li::before { position: absolute; left: 0; top: 13px; font-size: 18px; font-weight: 500; line-height: 1; }
+    .site-operation-box.good .site-operation-list li::before { content: "+"; color: var(--green-dark); }
+    .site-operation-box.neutral .site-operation-list li::before { content: "–"; color: #68716b; }
+    .site-operation-list strong { display: block; margin-bottom: 3px; color: var(--graphite); font-size: 15px; }
+    .site-operation-list span { display: block; color: var(--muted); font-size: 14px; line-height: 1.45; }
+      .site-operation-section { background: var(--cream); padding: clamp(56px, 6vw, 64px) 0 36px; border-top: 1px solid var(--line); }
+    .site-operation-section .wrap { display: grid; grid-template-columns: minmax(260px, .72fr) minmax(0, 1.28fr); gap: 52px; align-items: start; }
+    .site-operation-section .site-operation-intro { max-width: 500px; margin: 0; padding-top: 4px; }
+    .site-operation-section .site-operation-intro h2 { margin: 0 0 16px; font-size: clamp(36px, 4.2vw, 58px); line-height: 1.02; }
+    .site-operation-section .site-operation-intro p { margin: 0 0 12px; color: var(--muted); font-size: 16px; }
+    .site-operation-section .site-operation-intro p.site-operation-motto { display: block; margin: 0 0 16px; color: var(--green-dark); font-family: Georgia, "Times New Roman", serif; font-size: 19px; line-height: 1.55; font-weight: 400; letter-spacing: normal; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      html.js .reveal,
+      html.js .reveal.is-visible,
+      .hero .kicker,
+      .hero h1,
+      .hero p,
+      .hero-actions,
+      .site-area-panel[aria-hidden="false"],
+      .site-area-tab,
+      .site-area-tab::before,
+      .faq-answer,
+      header,
+        .button,
+        .benefit,
+        .news-track,
+        .news-card,
+        .news-carousel-button,
+        .principle-card { animation: none; transition: none; }
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .stat {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 24px;
+      background: white;
+      box-shadow: 0 18px 48px rgba(34, 45, 36, .07);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 34px;
+      color: var(--green-dark);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+      .quick-facts {
+        padding: 40px 0;
+    }
+
+    .quick-facts .stats {
+      margin-top: 0;
+    }
+
+    .before-after {
+      position: relative;
+      min-height: 430px;
+      margin-top: 56px;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #d7ddd8;
+      border: 1px solid var(--line);
+      isolation: isolate;
+    }
+
+    .before-after img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .before-after .after {
+      clip-path: inset(0 0 0 50%);
+    }
+
+    .before-after input {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      opacity: 0;
+      cursor: ew-resize;
+    }
+
+    .ba-handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      z-index: 3;
+      width: 2px;
+      background: rgba(255,255,255,.94);
+      transform: translateX(-1px);
+      box-shadow: 0 0 24px rgba(0,0,0,.3);
+    }
+
+    .ba-handle::before {
+      content: "← →";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 62px;
+      height: 62px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255,255,255,.94);
+      color: var(--graphite);
+      font-size: 18px;
+      font-weight: 900;
+      box-shadow: 0 16px 40px rgba(0,0,0,.28);
+    }
+
+    .ba-label {
+      position: absolute;
+      top: 22px;
+      z-index: 2;
+      border-radius: 999px;
+      padding: 8px 13px;
+      color: white;
+      background: rgba(16,22,17,.64);
+      font-size: 13px;
+      font-weight: 800;
+      backdrop-filter: blur(10px);
+    }
+
+    .ba-label.before { left: 22px; }
+    .ba-label.after-label { right: 22px; }
+
+    .band {
+      background: var(--sage);
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 26px;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 32px;
+    }
+
+    .panel.good { border-top: 5px solid var(--green); }
+    .panel.neutral { border-top: 5px solid #9da7a0; }
+
+    .panel h3 {
+      margin: 0 0 20px;
+      font-size: 28px;
+    }
+
+    .checklist {
+      display: grid;
+      gap: 14px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .checklist li {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 12px;
+      color: var(--muted);
+    }
+
+    .mark {
+      width: 28px;
+      height: 28px;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #e0eee3;
+      color: var(--green-dark);
+      font-weight: 900;
+    }
+
+    .neutral .mark {
+      background: #ecefed;
+      color: #69736c;
+    }
+
+      .topics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+        margin-top: 28px;
+      }
+
+      .topics-section { padding: clamp(48px, 5vw, 64px) 0 32px; }
+
+      .band { padding: clamp(56px, 6vw, 72px) 0 32px; }
+
+      .faq-section {
+        height: auto;
+        min-height: 0;
+        padding: clamp(56px, 6vw, 72px) 0 48px;
+      }
+
+    .topic {
+      min-height: 300px;
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      scroll-margin-top: 88px;
+    }
+
+    .topic-safety {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .topic-safety .topic-illustration {
+      margin: 0;
+      aspect-ratio: 16 / 7;
+      overflow: hidden;
+      border-radius: 4px;
+      background: var(--sage);
+    }
+
+    .topic-safety .topic-illustration img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: saturate(.86) contrast(.96) brightness(1.02);
+    }
+
+    .topic-safety .topic-body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      padding: 24px 28px 28px;
+    }
+
+    .topic-safety .topic-accordion {
+      margin: 22px 0 0;
+      padding: 15px 0 0;
+      border: 0;
+      border-top: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .topic-safety .topic-accordion summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      list-style: none;
+      font-size: 15px;
+    }
+
+    .topic-safety .topic-accordion summary::-webkit-details-marker { display: none; }
+    .topic-safety .topic-accordion summary::after {
+      content: "+";
+      flex: 0 0 auto;
+      color: var(--green-dark);
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .topic-safety .topic-accordion[open] summary::after { content: "–"; }
+    .topic-safety .topic-accordion p { margin: 12px 0 0; font-size: 14px; line-height: 1.55; }
+
+    .topics {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    .topic-stacked {
+      min-height: 420px;
+      padding: 0;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(260px, .88fr);
+      gap: 38px;
+      align-items: stretch;
+    }
+
+    .topic-stacked .topic-illustration {
+      margin: 0;
+      height: 100%;
+      min-height: 0;
+      align-self: stretch;
+      aspect-ratio: auto;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: var(--sage);
+      overflow: hidden;
+    }
+
+    .topic-stacked .topic-illustration img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .topic-stacked .topic-body {
+      display: flex;
+      flex-direction: column;
+      min-height: 420px;
+      box-sizing: border-box;
+      padding: 30px 38px 32px;
+    }
+
+    .topic-stacked h2 {
+      margin: 0 0 16px;
+      color: var(--graphite);
+      font-size: clamp(36px, 4.2vw, 58px);
+      line-height: 1.02;
+    }
+
+    .topic-stacked .topic-motto {
+      margin: 0 0 16px;
+      color: var(--green-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 19px;
+      line-height: 1.55;
+      font-weight: 400;
+      letter-spacing: normal;
+    }
+
+    .topic-stacked .topic-accordion {
+      margin: 22px 0 0;
+      padding: 15px 0 0;
+      border: 0;
+      border-top: 1px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .topic-stacked .topic-accordion summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      list-style: none;
+      font-size: 15px;
+    }
+
+    .topic-stacked .topic-accordion summary::-webkit-details-marker { display: none; }
+    .topic-stacked .topic-accordion summary::after {
+      content: "+";
+      flex: 0 0 auto;
+      color: var(--green-dark);
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .topic-stacked .topic-accordion[open] summary::after { content: "–"; }
+    .topic-stacked .topic-accordion p { margin: 12px 0 0; font-size: 14px; line-height: 1.55; }
+
+    .topic h3,
+    .benefit h3 {
+      margin: 0 0 12px;
+      font-size: 23px;
+      color: var(--graphite);
+    }
+
+    .topic p,
+    .benefit p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .read-more {
+      margin-top: 24px;
+      color: var(--green-dark);
+      font-weight: 800;
+    }
+
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+        margin-top: 28px;
+    }
+
+    .benefits-motto {
+      max-width: none;
+      margin: 0;
+      color: var(--green-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 19px;
+      line-height: 1.55;
+      font-weight: 400;
+      letter-spacing: normal;
+    }
+
+      .benefits-heading {
+        display: block;
+        margin-bottom: 20px;
+    }
+
+    .benefits-heading h2 {
+      margin: 0 0 16px;
+      font-size: 42px;
+      line-height: 1.08;
+    }
+
+    .benefits-heading .benefits-motto { max-width: none; }
+
+    .benefits-intro {
+      max-width: none;
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .benefit {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 28px;
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .benefit:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 34px rgba(34, 45, 36, .1);
+    }
+
+    .icon {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      margin-bottom: 18px;
+      background: var(--sage);
+      color: var(--green-dark);
+    }
+
+    .icon svg {
+      width: 23px;
+      height: 23px;
+      display: block;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .benefit-neighbor .icon { color: #b34f4f; }
+    .benefit-neighbor .icon svg {
+      fill: #b34f4f;
+      stroke: #b34f4f;
+    }
+
+    .news-section {
+      background: #fffdf8;
+      padding: clamp(56px, 6vw, 72px) 0 48px;
+    }
+
+    .news-heading {
+      display: grid;
+      gap: 12px;
+      max-width: 820px;
+      margin-bottom: 32px;
+    }
+
+    .news-heading .news-kicker {
+      margin: 0;
+      color: var(--green-dark);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .news-heading h2 {
+      margin: 0;
+      color: var(--graphite);
+      font-size: 42px;
+      line-height: 1.08;
+    }
+
+    .news-heading .news-motto {
+      margin: 0;
+      color: var(--green-dark);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 19px;
+      line-height: 1.4;
+    }
+
+    .news-heading .news-intro {
+      max-width: 760px;
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+
+    .news-carousel {
+      position: relative;
+    }
+
+    .news-carousel-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .news-carousel-button {
+      display: inline-grid;
+      width: 44px;
+      height: 44px;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: white;
+      color: var(--green-dark);
+      cursor: pointer;
+      font: inherit;
+      font-size: 24px;
+      line-height: 1;
+      transition: background .2s ease, color .2s ease, border-color .2s ease;
+    }
+
+    .news-carousel-button:hover:not(:disabled) {
+      border-color: var(--green);
+      background: var(--green);
+      color: white;
+    }
+
+    .news-carousel-button:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 4px;
+    }
+
+    .news-carousel-button:disabled {
+      opacity: .38;
+      cursor: default;
+    }
+
+    .news-carousel-viewport {
+      overflow: hidden;
+    }
+
+    .news-track {
+      display: flex;
+      gap: 22px;
+      transition: transform .32s ease;
+      will-change: transform;
+    }
+
+    .news-card {
+      display: flex;
+      min-width: 0;
+      flex: 0 0 calc((100% - 44px) / 3);
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+
+    .news-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 28px rgba(34, 45, 36, .08);
+    }
+
+    .news-card:focus-within {
+      outline: 2px solid var(--green);
+      outline-offset: 4px;
+    }
+
+    .news-card-image {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: #d7ddd8;
+      border-radius: 4px 4px 0 0;
+    }
+
+    .news-card-body {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      padding: 24px;
+    }
+
+    .news-card-date {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .news-card h3 {
+      display: -webkit-box;
+      overflow: hidden;
+      margin: 0 0 10px;
+      color: var(--graphite);
+      font-size: 23px;
+      line-height: 1.2;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 3;
+    }
+
+    .news-card-excerpt {
+      display: -webkit-box;
+      overflow: hidden;
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+    }
+
+    .news-card-link {
+      display: inline-block;
+      align-self: flex-start;
+      margin-top: auto;
+      padding-top: 22px;
+      color: var(--green-dark);
+      font-weight: 800;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 4px;
+    }
+
+    .news-carousel-status {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      white-space: nowrap;
+    }
+
+    .faq-contact {
+      display: block;
+      height: auto;
+      min-height: 0;
+      align-content: start;
+      justify-content: start;
+      max-width: none;
+    }
+
+      .faq-heading {
+        max-width: none;
+        margin-bottom: 34px;
+    }
+
+    .faq-heading h2 {
+      margin-bottom: 14px;
+    }
+
+    .faq-heading .benefits-motto {
+      margin-bottom: 24px;
+    }
+
+    .faq-intro {
+      max-width: none;
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .faq-intro + .faq-intro {
+      margin-top: 14px;
+    }
+
+    .faq-intro a {
+      color: var(--green-dark);
+      font-weight: 800;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    .faq-list {
+      display: block;
+      height: auto;
+      min-height: 0;
+      align-content: start;
+      justify-content: start;
+      gap: 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .faq-list > .faq-item > .faq-question {
+      height: auto;
+      min-height: 0;
+      padding: 18px 8px;
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    .faq-item {
+      height: auto;
+      min-height: 0;
+      display: block;
+      padding: 0;
+      margin: 0;
+      flex: none;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .faq-question {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      height: auto;
+      min-height: 0;
+      padding-block: 18px;
+      margin: 0;
+      border: 0;
+      background: transparent;
+      color: var(--green-dark);
+      cursor: pointer;
+      font: inherit;
+      font-size: clamp(18px, 2vw, 24px);
+      font-weight: 800;
+      line-height: 1.25;
+      text-align: left;
+    }
+
+    .faq-question::after {
+      content: "+";
+      flex: 0 0 auto;
+      color: var(--green);
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .faq-item.is-open .faq-question::after {
+      content: "–";
+    }
+
+    .faq-question:hover {
+      color: var(--green);
+    }
+
+    .faq-question:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 6px;
+      border-radius: 2px;
+    }
+
+    .faq-answer {
+      display: grid;
+      grid-template-rows: 0fr;
+      overflow: hidden;
+      opacity: 0;
+      transition: grid-template-rows .38s ease, opacity .25s ease;
+    }
+
+    .faq-item.is-open .faq-answer {
+      grid-template-rows: 1fr;
+      opacity: 1;
+    }
+
+    .faq-answer-inner {
+      max-width: none;
+      min-height: 0;
+      overflow: hidden;
+      padding: 0 56px 0 0;
+    }
+
+    .faq-item.is-open .faq-answer-inner {
+      padding-bottom: 24px;
+    }
+
+    .faq-answer p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+    .faq-answer p:last-child {
+      margin-bottom: 0;
+    }
+
+    .faq-contact-block {
+      display: grid;
+      grid-template-columns: minmax(0, .72fr) minmax(0, 1.28fr);
+      gap: 56px;
+      align-items: center;
+        margin-top: 48px;
+      padding: 46px 48px;
+      border-radius: 8px;
+      background: var(--graphite);
+      color: white;
+      scroll-margin-top: 88px;
+    }
+
+    .faq-contact-kicker {
+      margin: 0 0 14px;
+      color: #d8eadb;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .faq-contact-copy h3 {
+      margin: 0 0 18px;
+      color: white;
+      font-size: clamp(30px, 3.2vw, 46px);
+      line-height: 1.04;
+    }
+
+    .faq-contact-motto {
+      margin: 0 0 20px;
+      color: #d8eadb;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 19px;
+      line-height: 1.45;
+    }
+
+    .faq-contact-text {
+      margin: 0;
+      color: rgba(255,255,255,.78);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .faq-contact-text a,
+    .contact-privacy a {
+      color: #d8eadb;
+      font-weight: 800;
+      text-underline-offset: 3px;
+    }
+
+    .faq-contact-block form {
+      min-width: 0;
+      padding: 0;
+      background: transparent;
+    }
+
+    .contact-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .form-field label {
+      color: rgba(255,255,255,.88);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    .form-field label span {
+      color: rgba(255,255,255,.56);
+      font-weight: 400;
+    }
+
+    .faq-contact-block input,
+    .faq-contact-block textarea {
+      width: 100%;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font: inherit;
+    }
+
+    .faq-contact-block textarea {
+      min-height: 168px;
+      resize: vertical;
+    }
+
+    .faq-contact-block input:focus-visible,
+    .faq-contact-block textarea:focus-visible {
+      outline: 2px solid #b8d7be;
+      outline-offset: 2px;
+      border-color: #b8d7be;
+    }
+
+    .faq-contact-form .button {
+      margin-top: 16px;
+      cursor: pointer;
+    }
+
+    .faq-contact-form {
+      scroll-margin-top: 88px;
+    }
+
+    .contact-privacy {
+      margin: 14px 0 0;
+      color: rgba(255,255,255,.56);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .form-status {
+      min-height: 1.5em;
+      margin: 14px 0 0;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .form-status.is-success { color: #d8eadb; }
+    .form-status.is-error { color: #ffd0c9; }
+
+    footer {
+      padding: 28px 0 18px;
+      background: #202520;
+      color: rgba(255,255,255,.78);
+    }
+
+    .footer-main {
+      display: grid;
+      grid-template-columns: 1.5fr .75fr .75fr;
+      gap: 36px;
+      align-items: start;
+    }
+
+    .footer-column {
+      min-width: 0;
+    }
+
+    footer strong,
+    .footer-column h3 {
+      color: white;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .footer-column p {
+      margin: 0;
+      color: rgba(255,255,255,.78);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .footer-column a,
+    .footer-bottom a {
+      color: rgba(255,255,255,.84);
+      overflow-wrap: anywhere;
+      text-underline-offset: 3px;
+    }
+
+    .footer-column a:hover,
+    .footer-bottom a:hover {
+      color: white;
+    }
+
+    .footer-column a:focus-visible,
+    .footer-bottom a:focus-visible {
+      outline: 2px solid #b8d7be;
+      outline-offset: 4px;
+      border-radius: 2px;
+    }
+
+    footer .footer-notice {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,.16);
+    }
+
+    .footer-notice h3 {
+      margin: 0 0 8px;
+      color: rgba(255,255,255,.84);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .footer-notice p {
+      max-width: none;
+      margin: 0;
+      color: rgba(255,255,255,.68);
+      font-size: 14px;
+      line-height: 1.58;
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,.16);
+      color: rgba(255,255,255,.62);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .footer-bottom-links {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+      @media (max-width: 1100px) {
+        .news-card { flex-basis: calc((100% - 22px) / 2); }
+        .hero-inner { transform: translateY(40px); }
+      }
+
+      @media (max-width: 980px) {
+        header {
+          min-height: 68px;
+          margin-bottom: -68px;
+          padding: 6px 0;
+        }
+
+        .nav { min-height: 56px; }
+        .nav > nav { display: none; }
+        .mobile-menu-toggle { display: flex; }
+      }
+
+    @media (max-width: 860px) {
+      nav { display: none; }
+      .brand { font-size: 24px; }
+        .hero {
+          height: auto;
+          min-height: 100svh;
+          padding: 0;
+      }
+        h1 { font-size: 46px; }
+        .hero p { font-size: 18px; }
+        .hero-inner { padding: 92px 0 60px; transform: translateY(30px); }
+      .intro,
+      .split,
+      .faq-contact {
+        grid-template-columns: 1fr;
+      }
+      .stats,
+      .topics,
+      .benefits {
+        grid-template-columns: 1fr;
+      }
+      .story-block,
+      .story-block.reverse {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+      .story-block.reverse .story-copy {
+        order: -1;
+      }
+      .story-media,
+      .story-media img,
+        .story-block .before-after {
+          min-height: 270px;
+        }
+        .principles-section { margin-top: 36px; padding-top: 24px; }
+        .principles-heading h2 { font-size: 34px; }
+        .principles-heading p { font-size: 18px; }
+        .principles-grid { grid-template-columns: 1fr; }
+        .principle-card { min-height: 188px; }
+        .site-area { padding: 48px 0 28px; }
+      .site-area-heading { display: block; margin-bottom: 18px; }
+      .site-area-heading .lead { margin-top: 8px; }
+      .benefits-heading { display: block; margin-bottom: 18px; }
+      .benefits-heading .benefits-motto { margin-top: 8px; }
+      .site-area-content { padding-top: 22px; }
+      .site-area-panel,
+      .site-area-panel[aria-hidden="false"] {
+        grid-template-columns: 1fr;
+        min-height: 0;
+        gap: 20px;
+      }
+      .site-area-copy { max-width: none; }
+      .site-area-copy h3 { font-size: 27px; }
+      .site-operation-columns { grid-template-columns: 1fr; }
+      .site-operation-panel { min-height: 0; }
+      .site-operation-section .wrap { grid-template-columns: 1fr; gap: 30px; }
+      .site-operation-section .site-operation-intro { max-width: none; }
+      .site-operation-list { grid-template-columns: 1fr; }
+      .before-after { min-height: 270px; }
+      .topic,
+      .topic-safety,
+      .topic-stacked,
+      .topic-safety .topic-body,
+      .topic-stacked .topic-body {
+        min-height: 0;
+        height: auto;
+      }
+      .topic-safety .topic-body,
+      .topic-stacked .topic-body {
+        padding-bottom: 22px;
+      }
+      .topic-stacked { grid-template-columns: 1fr; }
+      .topic-stacked .topic-illustration { height: auto; aspect-ratio: 16 / 9; min-height: 0; }
+      .topic-stacked .topic-body { padding: 24px 26px 22px; }
+      .faq-heading { margin-bottom: 30px; }
+      .faq-intro { font-size: 16px; }
+      .faq-question { padding-block: 16px; font-size: 19px; }
+      .faq-list > .faq-item > .faq-question { padding-block: 16px; }
+      .faq-item.is-open .faq-answer-inner { padding-right: 0; }
+      .faq-answer p { font-size: 16px; }
+      .faq-contact-block { grid-template-columns: 1fr; gap: 32px; margin-top: 44px; padding: 32px 26px; }
+      .contact-fields { grid-template-columns: 1fr; }
+      .faq-contact-form .button { width: 100%; }
+      .news-heading h2 { font-size: 34px; }
+      .news-heading .news-intro { font-size: 16px; }
+      .news-carousel-toolbar { justify-content: flex-start; }
+      .news-carousel-viewport {
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+      }
+      .news-carousel-viewport::-webkit-scrollbar { display: none; }
+      .news-track { width: max-content; transform: none !important; }
+      .news-card {
+        flex-basis: min(82vw, 360px);
+        scroll-snap-align: start;
+      }
+      .footer-main { grid-template-columns: 1fr; gap: 20px; }
+      footer .footer-notice { grid-template-columns: 1fr; gap: 14px; margin-top: 18px; padding-top: 14px; }
+      .footer-notice p { font-size: 14px; line-height: 1.6; }
+      .footer-bottom { align-items: flex-start; margin-top: 16px; padding-top: 12px; }
+      .footer-bottom-links { flex-direction: column; gap: 6px; }
+        section:not(.hero) { padding-block: 48px; }
+        section.project-story { padding: 48px 0 28px; }
+        section.site-area { padding: 48px 0 28px; }
+        section.site-operation-section { padding: 56px 0 36px; }
+        section.topics-section { padding: 48px 0 32px; }
+        section.band { padding: 48px 0 32px; }
+        section.faq-section { padding: 48px 0 40px; }
+        section.news-section { padding: 48px 0 40px; }
+      }
+
+      @media (max-width: 600px) {
+        .hero-inner { transform: none; }
+      }
+
+      @media (max-width: 380px) {
+        .principle-card { min-height: 224px; }
+      }
+
+  </style>
+  <script>document.documentElement.classList.add("js");</script>
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="brand">Statek Cholupice</div>
+      <nav aria-label="Hlavní menu">
+        <a href="#projekt">O projektu</a>
+        <a href="#bezpecnost">Bezpečnost</a>
+        <a href="#doprava">Doprava</a>
+        <a href="#zivotni-prostredi">Životní prostředí</a>
+        <a href="#prinosy">Přínosy</a>
+        <a href="#kontakt">Časté dotazy</a>
+        <a class="button" href="#faq-contact-form">Kontakt</a>
+      </nav>
+      <button class="mobile-menu-toggle" id="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Otevřít menu">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu" hidden>
+      <nav aria-label="Mobilní menu">
+        <a href="#projekt">O projektu</a>
+        <a href="#bezpecnost">Bezpečnost</a>
+        <a href="#doprava">Doprava</a>
+        <a href="#zivotni-prostredi">Životní prostředí</a>
+        <a href="#prinosy">Přínosy</a>
+        <a href="#kontakt">Časté dotazy</a>
+        <a class="button" href="#faq-contact-form">Kontakt</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="uvod">
+      <div class="hero-inner">
+        <div class="kicker">Revitalizace brownfieldu</div>
+        <h1>Nový život pro Statek Cholupice</h1>
+        <p>Citlivá přestavba historického areálu propojí bydlení, služby pro obyvatele, moderní výrobu a respekt k místu.</p>
+        <div class="hero-actions">
+          <a class="button" href="#projekt">Poznat projekt</a>
+          <a class="button secondary" href="#prinosy">Dobrý soused</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="project-story" id="projekt">
+      <div class="wrap">
+        <h2 class="visually-hidden">O projektu</h2>
+        <div class="story-block">
+          <div class="story-copy">
+            <h3>Nové využití pro místo, které dlouho čekalo na změnu</h3>
+            <p>Naším cílem je vrátit život místu, které bylo dlouhé roky nevyužité a chátralo. Přestavbou nefunkčního statku postupně vznikne moderní a funkční prostor, který propojí kvalitní českou strojírenskou výrobu, nové pracovní příležitosti, bydlení i občanskou vybavenost.</p>
+            <p>Bytový dům nabídne klidné bydlení citlivě navazující na okolní zástavbu. V jeho přízemí vzniknou komerční prostory pro obchod, kavárnu nebo služby každodenní potřeby, které mohou přirozeně oživit cholupickou náves a vytvořit zázemí pro místní obyvatele.</p>
+            <p>Výroba bude probíhat uvnitř moderních budov bez výrazného hluku, zápachu nebo intenzivní dopravy.</p>
+          </div>
+          <figure class="story-media">
+            <img src="statek_web_premium/hero-vjezd-preview-v4-lide-obchod.png" alt="Vizualizace vstupu do areálu s obchody a novým vjezdem">
+          </figure>
+        </div>
+        <div class="story-block reverse">
+          <div class="before-after" data-before-after>
+            <img src="statek_web_premium/pred_premium_documentary.png" alt="Současný stav areálu před revitalizací">
+            <img class="after" src="statek_web_premium/po_premium_dss_van_logo_left.png" alt="Prémiová vizualizace navrženého stavu areálu s dodávkou DSS">
+            <span class="ba-label before">Před</span>
+            <span class="ba-label after-label">Po</span>
+            <span class="ba-handle" aria-hidden="true"></span>
+            <input type="range" min="0" max="100" value="50" aria-label="Porovnání před a po">
+          </div>
+          <div class="story-copy">
+            <h3>Revitalizace brownfieldu s respektem k historii</h3>
+            <p>Součástí projektu je rozsáhlá přestavba celého areálu, odstranění starých ekologických zátěží i záchrana historického špejcharu ze 16. století.</p>
+            <p>Celková investice dosáhne přibližně jedné miliardy korun. Věříme, že projekt může být příkladem moderní a odpovědné přestavby brownfieldu, která propojí průmysl, služby, bydlení i respekt k historii a okolnímu prostředí.</p>
+            <p>Společnost DSS, investor projektu, patří mezi české výrobce specializující se na ruční palné zbraně. Dlouhodobě působí v oblasti obranného průmyslu, kde staví na odbornosti, precizní strojírenské výrobě a respektu k tradičnímu československému zbrojařskému řemeslu.</p>
+          </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    <section class="site-area" id="popis-arealu">
+      <div class="wrap">
+        <div class="site-area-heading">
+          <h2>Šest částí, jeden živý areál</h2>
+          <p class="lead">Promyšlené spojení různých funkcí vrací Statku Cholupice život.</p>
+        </div>
+        <div class="site-area-layout">
+          <div class="site-area-tabs" role="tablist" aria-label="Části areálu" aria-orientation="horizontal">
+            <button class="site-area-tab" id="site-area-tab-1" role="tab" aria-selected="true" aria-controls="site-area-panel-1" tabindex="0"><span>01</span>Bytový dům</button>
+            <button class="site-area-tab" id="site-area-tab-2" role="tab" aria-selected="false" aria-controls="site-area-panel-2" tabindex="-1"><span>02</span>Komerční prostory</button>
+            <button class="site-area-tab" id="site-area-tab-3" role="tab" aria-selected="false" aria-controls="site-area-panel-3" tabindex="-1"><span>03</span>Administrativní centrum</button>
+            <button class="site-area-tab" id="site-area-tab-4" role="tab" aria-selected="false" aria-controls="site-area-panel-4" tabindex="-1"><span>04</span>Výrobní prostory</button>
+            <button class="site-area-tab" id="site-area-tab-5" role="tab" aria-selected="false" aria-controls="site-area-panel-5" tabindex="-1"><span>05</span>Vývojové centrum</button>
+            <button class="site-area-tab" id="site-area-tab-6" role="tab" aria-selected="false" aria-controls="site-area-panel-6" tabindex="-1"><span>06</span>Parkovací dům</button>
+          </div>
+          <div class="site-area-content">
+            <article class="site-area-panel" id="site-area-panel-1" role="tabpanel" aria-labelledby="site-area-tab-1" aria-hidden="false">
+              <figure class="site-area-media"><img src="statek_web_premium/1_16_photo_premium_residential.png" alt="Prémiová vizualizace bytového domu" fetchpriority="high"></figure>
+              <div class="site-area-copy"><p class="site-area-label">Popis areálu · 01</p><h3>Bytový dům</h3><p>Plánovaný bytový dům představuje novou tvář přestavby celého areálu. Navržen je s důrazem na kvalitní a klidné bydlení a počítá se samostatně řešeným parkováním v podzemí i na vlastním pozemku.</p><p>Dům bude mít dvě nadzemní podlaží a obytné podkroví, díky čemuž citlivě naváže na charakter okolní zástavby. Současně přirozeně oddělí veřejný prostor návsi od výrobní části areálu.</p></div>
+            </article>
+            <article class="site-area-panel" id="site-area-panel-2" role="tabpanel" aria-labelledby="site-area-tab-2" aria-hidden="true">
+              <figure class="site-area-media"><img src="statek_web_premium/1_18_photo_premium_commerce_people_atm.png" alt="Prémiová vizualizace komerčních prostor s bankomatem" loading="lazy"></figure>
+              <div class="site-area-copy"><p class="site-area-label">Popis areálu · 02</p><h3>Komerční prostory</h3><p>V přízemí bytového domu vzniknou také komerční prostory. Mohou zde najít místo například menší obchod, kavárna nebo služby každodenní potřeby, jako jsou kadeřnictví, kosmetika či ordinace lékaře.</p><p>Cílem je vytvořit příjemné místo pro místní obyvatele i návštěvníky a podpořit přirozený život v centru Cholupic.</p></div>
+            </article>
+            <article class="site-area-panel" id="site-area-panel-3" role="tabpanel" aria-labelledby="site-area-tab-3" aria-hidden="true">
+              <figure class="site-area-media"><img src="statek_web_premium/administrativni_centrum_premium.png" alt="Vizualizace administrativního centra a špejcharu" loading="lazy"></figure>
+              <div class="site-area-copy"><p class="site-area-label">Popis areálu · 03</p><h3>Administrativní centrum – Špejchar</h3><p>Špejchar projde pečlivou rekonstrukcí. Do původní historické budovy bude citlivě vsazena nová vnitřní konstrukce, která vytvoří moderní kancelářské a reprezentativní prostory například pro jednání s obchodními partnery a zahraničními delegacemi.</p><p>Součástí projektu je také statické zajištění a sanace historických konstrukcí s důrazem na jejich dlouhodobou ochranu.</p></div>
+            </article>
+            <article class="site-area-panel" id="site-area-panel-4" role="tabpanel" aria-labelledby="site-area-tab-4" aria-hidden="true">
+              <figure class="site-area-media"><img src="statek_web_premium/hala_a_premium.png" alt="Vizualizace výrobních prostor" loading="lazy"></figure>
+              <div class="site-area-copy"><p class="site-area-label">Popis areálu · 04</p><h3>Výrobní prostory</h3><p>Ve výrobních prostorách bude probíhat zpracování kovových komponentů – od přípravy a prvotního opracování materiálu přes přesné CNC obrábění až po kontrolu kvality.</p><p>Součástí objektu budou moderní výrobní technologie, automatizované prvky a kontrolované pracovní prostředí odpovídající vysokým nárokům na kvalitu a bezpečnost. Veškeré činnosti budou probíhat uvnitř budovy s minimálním vlivem na okolí.</p></div>
+            </article>
+            <article class="site-area-panel" id="site-area-panel-5" role="tabpanel" aria-labelledby="site-area-tab-5" aria-hidden="true">
+              <figure class="site-area-media"><img src="statek_web_premium/vyvojove_centrum_premium_engineers.png" alt="Vizualizace vývojového centra se dvěma inženýry" loading="lazy"></figure>
+              <div class="site-area-copy"><p class="site-area-label">Popis areálu · 05</p><h3>Vývojové centrum</h3><p>Vývojové centrum vznikne vestavbou nového objektu do stávajících historických konstrukcí areálu. Prostor bude sloužit pro vývoj, výzkum a technickou přípravu nových řešení.</p><p>Návrh zachová původní charakter objektu a zároveň mu přinese nové a dlouhodobě udržitelné využití.</p></div>
+            </article>
+            <article class="site-area-panel" id="site-area-panel-6" role="tabpanel" aria-labelledby="site-area-tab-6" aria-hidden="true">
+              <figure class="site-area-media"><img src="statek_web_premium/parkovaci_dum_premium.png" alt="Vizualizace parkovacího domu" loading="lazy"></figure>
+              <div class="site-area-copy"><p class="site-area-label">Popis areálu · 06</p><h3>Parkovací dům</h3><p>Dvoupodlažní parkovací objekt určený pro zaměstnance nabídne 121 parkovacích míst. Navržen je tak, aby omezil dopravní zatížení okolí a umožnil plynulý vjezd i výjezd bez tvorby kolon.</p><p>Parkování bude oddělené od výrobních částí areálu.</p></div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="site-operation-section" id="provoz-arealu">
+      <div class="wrap">
+        <div class="site-operation-intro">
+          <h2>Jak bude areál fungovat</h2>
+          <p class="site-operation-motto">Promyšlený provoz uvnitř. Klid pro okolí.</p>
+          <p>V areálu bude probíhat moderní strojírenská výroba založená na přesném CNC obrábění kovových komponentů, jejich kontrole a kompletaci. Součástí provozu budou také skladovací prostory, související logistické činnosti, administrativní zázemí a pracoviště zaměřená na vývoj a zdokonalování výrobních technologií.</p>
+          <p>Výroba bude probíhat převážně v uzavřených halách s využitím moderních technologií, automatizace a kontrolovaných výrobních procesů. Provoz je navržen tak, aby splňoval všechny platné bezpečnostní, hygienické a environmentální požadavky a měl minimální dopad na okolní zástavbu i kvalitu života v městské části.</p>
+        </div>
+        <div class="site-operation-columns">
+          <section class="site-operation-box good"><h4>Co bude součástí provozu</h4><ul class="site-operation-list"><li><strong>Přesné CNC obrábění</strong><span>Výroba kovových komponentů založená na přesném CNC obrábění.</span></li><li><strong>Kontrola a kompletace</strong><span>Kontrola vyrobených komponentů a jejich kompletace.</span></li><li><strong>Vývoj výrobních technologií</strong><span>Pracoviště zaměřená na vývoj a zdokonalování výrobních technologií.</span></li><li><strong>Skladování, logistika a administrativa</strong><span>Skladovací prostory, související logistické činnosti a administrativní zázemí provozu.</span></li></ul></section>
+          <section class="site-operation-box neutral"><h4>Co nebude součástí provozu</h4><ul class="site-operation-list"><li><strong>Žádná střelba ani střelnice</strong><span>V areálu nebude probíhat střelba ani praktické testování hotových výrobků. Nebude zde střelnice.</span></li><li><strong>Žádné skladování ani nakládání s výbušninami a municí</strong><span>Výbušniny ani munice se zde nebudou skladovat a nebude s nimi ani jinak nakládáno.</span></li><li><strong>Žádné chemické zušlechťování oceli</strong><span>V areálu nebude probíhat chemické zušlechťování oceli ani jiné nebezpečné práce s chemikáliemi.</span></li><li><strong>Žádný těžký průmysl</strong><span>Provoz nebude zdrojem emisí, výrazného hluku ani znečištění, které by zatěžovalo okolí.</span></li></ul></section>
+        </div>
+      </div>
+    </section>
+
+      <section class="topics-section">
+      <div class="wrap">
+        <div class="topics">
+          <article class="topic topic-stacked topic-safety" id="bezpecnost">
+            <figure class="topic-illustration"><img src="statek_web_premium/bezpecnost-vstup-kontrola.png" alt="Kontrolovaný vstup zaměstnance do výrobního prostoru" loading="lazy" decoding="async"></figure>
+            <div class="topic-body">
+              <h2>Bezpečnost</h2>
+              <p class="topic-motto">Bezpečnost postavená na lidech, technologiích a jasných pravidlech</p>
+              <p>Dělat věci správně je pro nás naprosto zásadní. Celý areál je proto navržen jako víceúrovňový systém kombinující fyzická, technologická i organizační opatření, na jejichž přípravě spolupracujeme s evropskými technologickými lídry a odbornými institucemi.</p>
+              <details class="topic-accordion">
+                <summary>Číst více</summary>
+                <div class="safety-copy">
+                  <p>Přesto naše společnost sází především na stabilní kmen zaměstnanců, převážně z České republiky a zemí Evropské unie. Jádro týmu tvoří dlouhodobě prověření zaměstnanci s potřebnou odborností a bezpečnostní spolehlivostí.</p>
+                  <p>Provoz podléhá přísné legislativě České republiky, víceúrovňovým a periodickým kontrolám ze strany státních orgánů.</p>
+                  <p>Výroba je komplexně monitorována a díky implementaci nejmodernějšího trasování a evidence není možné jakékoli zneužití nebo nedovolené vynášení.</p>
+                  <p>Bezpečnost provozu, ochrana areálu i výrobních procesů budou odpovídat standardům ISO 9001 a AQAP 2110 používaným v rámci NATO. Tyto standardy vyžadují právě například přesnou evidenci výroby, dohledatelnost jednotlivých součástek a přísnou kontrolu kvality v celém výrobním procesu.</p>
+                  <p>V areálu nebude probíhat žádná střelba ani praktické testování našich výrobků. Tyto činnosti probíhají výhradně mimo areál na specializovaných pracovištích.</p>
+                </div>
+              </details>
+            </div>
+          </article>
+          <article class="topic topic-stacked" id="doprava">
+            <figure class="topic-illustration"><img src="statek_web_premium/doprava-areal-delivery-truck-focus.png" alt="Vizualizace dopravy v areálu s výraznou dodávkou před výrobní halou" loading="lazy" decoding="async"></figure>
+            <div class="topic-body">
+              <h2>Doprava</h2>
+              <p class="topic-motto">Méně dopravy než v minulosti. Více klidu pro okolí.</p>
+              <p>Doprava spojená s provozem areálu bude oproti původnímu využití areálu velmi omezená. Předpokládá se zhruba jedna až dvě menší dodávky (do 6 tun) denně, tedy objem zásobování srovnatelný například s běžným obchodem.</p>
+              <details class="topic-accordion">
+                <summary>Číst více</summary>
+                <div class="safety-copy">
+                  <p>Ve srovnání s minulostí tak půjde o výrazné zklidnění. V době fungování zemědělského družstva se v areálu běžně pohybovala těžká technika, traktory, kombajny, nákladní vozy, zemědělské stroje i zásobování spojené se sklady a chovem zvířat. S tím souviselo také znečišťování komunikací bahnem a vyšší provoz v okolí. To v tomto případě nehrozí.</p>
+                  <p>Do areálu samozřejmě nebudou jezdit jen dodávky, ale také zaměstnanci. Pro ně jsme připravili krytý parkovací dům se 121 parkovacími místy. Vjezd do areálu je navržen tak, aby nevznikaly kolony, nedocházelo k omezení plynulosti dopravy a dopad na okolí byl co nejmenší.</p>
+                </div>
+              </details>
+            </div>
+          </article>
+          <article class="topic topic-stacked" id="zivotni-prostredi">
+            <figure class="topic-illustration"><img src="karousel3_premium_dss_v4_4k_preview.jpg" alt="Prémiová vizualizace zeleného veřejného prostoru a výsadby v areálu" loading="lazy" decoding="async"></figure>
+            <div class="topic-body">
+              <h2>Životní prostředí</h2>
+              <p class="topic-motto">Třikrát více zeleně a provoz šetrný k okolí.</p>
+              <p>Výroba sama o sobě není hlučná a celý provoz je umístěn uvnitř hal. Vznikat budou především běžné odpady, jako jsou kovové odřezky, papír nebo dřevo. Veškeré odpady budou tříděny a předávány k recyklaci v souladu s platnou legislativou. Součástí přípravy projektu je také zpracování dokumentace k nakládání s odpady a posouzení vlivu provozu na okolí.</p>
+              <details class="topic-accordion">
+                <summary>Číst více</summary>
+                <div class="safety-copy">
+                  <p>Při výrobě, kterou plánujeme, se nepoužívají chemikálie, vyjma těch běžných jako jsou olej, ředidlo či úklidové prostředky. Náročnější procesy, jako je chemické nebo tepelné zpracování kovů, budou probíhat mimo areál u specializovaných partnerů.</p>
+                  <p>Součástí projektu na přestavbu areálu je odstranění staré ekologické zátěže, která v místě zůstala. Budou tak odvezeny nevyhovující materiály, které zde zůstaly z minulosti.</p>
+                  <p>Velký důraz klademe i na zeleň a celkovou podobu areálu.</p>
+                  <p>Nemocné a nebezpečné stromy budou odstraněny na základě povolení příslušných orgánů státní správy a nahrazeny novou výsadbou. Celkové množství zeleně by mělo být přibližně trojnásobné oproti současnému stavu.</p>
+                  <p>V plánu jsou také zelené střechy na halách a nová vodní plocha, která pomůže přirozeně ochlazovat okolní prostředí. Ta může zároveň posloužit jako zásobárna vody pro případ požáru.</p>
+                  <p>Projekt počítá s dlouhodobě udržitelným provozem a splněním všech legislativních požadavků v oblasti ochrany životního prostředí, včetně standardů systému environmentálního řízení ISO 14000.</p>
+                  <p>Významnou součástí projektu je také komplexní sanace celého areálu a odstranění historických ekologických zátěží, které zde zůstaly z minulého využívání území. V rámci přípravy projektu byly identifikovány a postupně odstraněny nevyhovující materiály a staré ekologické zátěže, včetně pozůstatků technické infrastruktury z minulosti. Z areálu již byly odvezeny stovky tun odpadu a kontaminovaných materiálů, které představovaly dlouhodobý problém pro lokalitu.</p>
+                </div>
+              </details>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" id="prinosy">
+      <div class="wrap">
+        <div class="benefits-heading">
+          <h2>Co projekt přinese Cholupicím</h2>
+          <p class="benefits-motto">Nová pracovní místa, zachráněné dědictví a smysluplné využití zanedbaného areálu.</p>
+        </div>
+        <p class="benefits-intro">Proměna bývalého hospodářského areálu přinese více než jen nové budovy. Vytvoří pracovní příležitosti, podpoří místní podnikatele a služby, zachrání cenné historické objekty a přispěje ke kultivaci celého okolí. Chceme být dobrým sousedem, který svůj úspěch sdílí s místní komunitou a dlouhodobě podporuje život v Cholupicích.</p>
+        <div class="benefits">
+          <article class="benefit"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><path d="M3 12h18"></path><path d="M10 12v2h4v-2"></path></svg></div><h3>Práce blízko domova</h3><p>Nový areál vytvoří pracovní příležitosti pro různé profese a úrovně kvalifikace — od výroby, údržby a logistiky přes administrativu až po vývoj a vedoucí pozice. Nové zaměstnání tak mohou najít také lidé z Cholupic a blízkého okolí. Půjde o práci v technologicky vyspělém a perspektivním oboru, který nabízí dlouhodobou stabilitu i prostor pro profesní růst.</p></article>
+          <article class="benefit"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h11v9H3z"></path><path d="M14 9h4l3 3v3h-7z"></path><circle cx="7" cy="17" r="2"></circle><circle cx="18" cy="17" r="2"></circle></svg></div><h3>Zakázky a zákazníci pro místní</h3><p>Každodenní provoz areálu vytvoří poptávku po různých službách, například v oblasti autodopravy, údržby nebo zásobování. Do těchto činností se mohou zapojit podnikatelé, živnostníci a firmy z okolí. V areálu bude zároveň pracovat řada lidí, kteří si rádi zajdou na oběd nebo po práci posedět do místní hospody.</p></article>
+          <article class="benefit"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10v10h16V10"></path><path d="m3 10 2-6h14l2 6"></path><path d="M3 10a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"></path><path d="M8 20v-5h8v5"></path></svg></div><h3>Nové služby v Cholupicích</h3><p>Část obnoveného areálu navazující na náves může nabídnout prostory pro menší provozovny a služby využitelné místními obyvateli. Může jít například o drobný obchod, občerstvení, ordinaci lékaře nebo zázemí pro místního podnikatele. Statek se tak může znovu přirozeně zapojit do každodenního života Cholupic.</p></article>
+          <article class="benefit"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 20 6v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"></path><path d="m8.5 12 2.2 2.2 4.8-5"></path></svg></div><h3>Nový život a větší bezpečí</h3><p>Dlouhodobě chátrající a nevyužívaný areál se stal útočištěm lidí bez domova a představoval bezpečnostní riziko pro své okolí. Kompletní rekonstrukce, vyčištění a každodenní péče vrátí místu důstojnou podobu a smysluplné využití. Zmizí staré ekologické zátěže i nevyhovující materiály a zanedbaný prostor se promění v bezpečný a upravený areál.</p></article>
+          <article class="benefit"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-6 9 6"></path><path d="M5 10h14"></path><path d="M6 10v8M10 10v8M14 10v8M18 10v8"></path><path d="M3 18h18v2H3z"></path></svg></div><h3>Historie, která zůstane</h3><p>Historický špejchar ze 16. století a votivní deska z roku 1883 budou zachovány a citlivě obnoveny. Špejchar bude adaptován pro nové využití formou vestavby „nového do starého“, aby mohla zůstat zachována jeho původní konstrukce. Bez rekonstrukce by objekt dál chátral a jeho zánik by byl jen otázkou času.</p></article>
+          <article class="benefit benefit-neighbor"><div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.6c0 5.3-8.8 10.4-8.8 10.4S3.2 13.9 3.2 8.6A4.6 4.6 0 0 1 12 6a4.6 4.6 0 0 1 8.8 2.6Z"></path></svg></div><h3>Dobrý soused</h3><p>Dobrý soused se nepozná podle slov, ale podle toho, co dělá pro své okolí. Když se bude areálu dařit, chceme část jeho úspěchu vracet místní komunitě — podporou spolků, kulturních a sportovních akcí, aktivit pro děti a seniory i dalších dobrých nápadů, které zlepšují život v Cholupicích.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="news-section" id="novinky" hidden>
+      <div class="wrap">
+        <div class="news-heading">
+          <p class="news-kicker">NOVINKY</p>
+          <h2>Co je nového na Statku Cholupice</h2>
+          <p class="news-motto">Projekt se posouvá krok za krokem.</p>
+          <p class="news-intro">Na přípravě projektu průběžně pracujeme. Přinášíme proto přehled nejdůležitějších novinek, změn a milníků, které se týkají budoucnosti areálu.</p>
+        </div>
+
+        <div class="news-carousel" data-news-carousel>
+          <div class="news-carousel-toolbar">
+            <button class="news-carousel-button" type="button" data-news-prev aria-label="Předchozí novinky">←</button>
+            <button class="news-carousel-button" type="button" data-news-next aria-label="Další novinky">→</button>
+          </div>
+          <div class="news-carousel-viewport" data-news-viewport tabindex="0" aria-label="Novinky Statku Cholupice">
+            <div class="news-track" data-news-track></div>
+          </div>
+          <p class="news-carousel-status" data-news-status role="status" aria-live="polite"></p>
+        </div>
+        <a class="read-more news-all-link" data-news-all href="/novinky/">Všechny novinky</a>
+      </div>
+    </section>
+
+      <section class="faq-section" id="kontakt">
+      <div class="wrap faq-contact">
+        <div class="faq-heading">
+          <h2>Na co se nás lidé ptají nejčastěji</h2>
+          <p class="benefits-motto">Vše podstatné o proměně statku, budoucím provozu a jeho dopadech na okolí.</p>
+          <p class="faq-intro">Uvědomujeme si, že statek je významnou součástí Cholupic, a rozumíme proto tomu, že jeho plánovaná proměna vyvolává otázky. Na ty nejčastější zde otevřeně odpovídáme.</p>
+          <p class="faq-intro">Pokud odpověď na svou otázku nenajdete, <a href="#faq-contact-form">napište nám</a>. Vaše podněty budeme průběžně zpracovávat a nejčastější otázky doplňovat.</p>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-1">Proč zrovna Cholupice?</button>
+            <div class="faq-answer" id="faq-answer-1" aria-hidden="true">
+              <div class="faq-answer-inner">
+                <p>S růstem naší společnosti roste i potřeba nových prostor. Od začátku jsme ale nechtěli stavět „na zelené louce“. Naším cílem bylo najít místo s historií a potenciálem, kterému půjde vrátit život.</p>
+                <p>Bývalý hospodářský dvůr v Cholupicích nás zaujal svou atmosférou, historickou hodnotou i možností citlivé revitalizace. Dnes je areál dlouhodobě nevyužívaný a ve špatném technickém stavu. Projekt umožní jeho obnovu, odstranění ekologické zátěže a návrat smysluplného využití bez nutnosti zabírat další krajinu nebo zemědělskou půdu.</p>
+                <p>V Praze a Středočeském kraji existuje jen velmi málo míst, kde může podobný provoz vzniknout v již existujícím areálu a bez dalšího záboru krajiny. Jsme firma z Prahy, máme k tomuto regionu vztah a chceme zde dlouhodobě působit i investovat.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2">Bude se v areálu střílet?</button>
+            <div class="faq-answer" id="faq-answer-2" aria-hidden="true">
+              <div class="faq-answer-inner"><p>Ne. Součástí areálu nebude střelnice ani zkušební střelba. Provoz nebude spojen s pravidelným hlukem tohoto typu.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3">Jak bude zabezpečena munice a kdo ponese odpovědnost za případné škody?</button>
+            <div class="faq-answer" id="faq-answer-3" aria-hidden="true">
+              <div class="faq-answer-inner"><p>V areálu nebude skladována ani vyráběna munice. Projekt s tímto typem provozu vůbec nepočítá.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-4">Kolik kamionů bude denně jezdit do vaší továrny?</button>
+            <div class="faq-answer" id="faq-answer-4" aria-hidden="true">
+              <div class="faq-answer-inner"><p>Doprava bude oproti původnímu využití areálu výrazně menší. Předpokládá se především provoz menších zásobovacích vozů v rozsahu přibližně jedné až dvou dodávek denně. Nejde o těžký průmyslový nebo logistický provoz.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-5">Co to přinese Cholupicím?</button>
+            <div class="faq-answer" id="faq-answer-5" aria-hidden="true">
+              <div class="faq-answer-inner">
+                <p>Projekt přinese revitalizaci chátrajícího areálu, odstranění staré ekologické zátěže, nová pracovní místa a podporu místních služeb i podnikatelů. Součástí bude také nová zeleň, úprava okolí a zlepšení stavu návsi.</p>
+                <p>Zatímco v minulosti byl areál spojen s provozem zemědělského družstva, těžkou technikou, prašností a zanedbanými objekty, nový projekt přináší moderní výrobu s minimálními dopady na okolí a výrazné zlepšení celkového vzhledu lokality.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-6">Jak bude zajištěno, aby se výrobky nedostaly mimo kontrolovaný režim?</button>
+            <div class="faq-answer" id="faq-answer-6" aria-hidden="true">
+              <div class="faq-answer-inner"><p>Provoz bude podléhat přísným bezpečnostním opatřením i státní kontrole. Areál bude zabezpečen moderními technologiemi a režimem odpovídajícím legislativním požadavkům na tento typ provozu.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-7">Kdo nám vynahradí ztrátu hodnoty nemovitostí?</button>
+            <div class="faq-answer" id="faq-answer-7" aria-hidden="true">
+              <div class="faq-answer-inner"><p>Neexistují důkazy, že by podobné projekty automaticky vedly ke snížení hodnoty nemovitostí. Naopak revitalizace zanedbaného areálu, odstranění ekologické zátěže a úprava okolí mohou mít pozitivní vliv na vzhled i fungování celé lokality.</p></div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-8">Kdo za tímto projektem stojí?</button>
+            <div class="faq-answer" id="faq-answer-8" aria-hidden="true">
+              <div class="faq-answer-inner"><p>Projekt připravuje a vlastní společnost DSS a.s., která ponese odpovědnost za provoz areálu, jeho zabezpečení i dodržování všech zákonných povinností.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-contact-block">
+          <div class="faq-contact-copy">
+            <p class="faq-contact-kicker">KONTAKT</p>
+            <h3>Máte další otázku k projektu?</h3>
+            <p class="faq-contact-motto">Zajímá vás něco, co jsme nezodpověděli?</p>
+            <p class="faq-contact-text">Napište nám prostřednictvím formuláře nebo přímo na <a href="mailto:info@statekcholupice.cz">info@statekcholupice.cz</a>. Vaše podněty nám pomohou průběžně doplňovat informace, které jsou pro Cholupice důležité.</p>
+          </div>
+
+          <form class="faq-contact-form" id="faq-contact-form" novalidate>
+            <div class="contact-fields">
+              <div class="form-field">
+                <label for="contact-name">Jméno <span>(nepovinné)</span></label>
+                <input id="contact-name" name="name" type="text" autocomplete="name">
+              </div>
+              <div class="form-field">
+                <label for="contact-email">E-mail</label>
+                <input id="contact-email" name="email" type="email" autocomplete="email" required>
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="contact-message">Váš dotaz</label>
+              <textarea id="contact-message" name="message" required></textarea>
+            </div>
+            <button class="button" type="submit">Odeslat dotaz</button>
+            <p class="contact-privacy">Odesláním souhlasíte se zpracováním osobních údajů. <a href="https://www.statekcholupice.cz/ochrana-osobnich-udaju/">Zásady zpracování osobních údajů</a></p>
+            <p class="form-status" id="contact-form-status" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap footer-main">
+      <div class="footer-column">
+        <h3>Investor projektu</h3>
+        <p>DSS a.s.<br>Kloboučnická 1735/26, Nusle, 140 00 Praha 4<br>IČ: 26161541, DIČ: CZ26161541<br>Zapsaná v obchodním rejstříku vedeném Městským soudem v Praze, oddíl B, vložka 6434.</p>
+      </div>
+      <div class="footer-column">
+        <h3>Kontakt</h3>
+        <p><a href="mailto:info@statekcholupice.cz">info@statekcholupice.cz</a></p>
+      </div>
+      <div class="footer-column">
+        <h3>Dokumenty</h3>
+        <p><a href="https://www.statekcholupice.cz/ochrana-osobnich-udaju/">Zásady zpracování osobních údajů</a></p>
+      </div>
+    </div>
+    <div class="wrap footer-notice">
+      <div>
+        <h3>Aktuálnost informací</h3>
+        <p>Informace uvedené na tomto webu odpovídají stavu projektu v době jejich zveřejnění. Průběžně je aktualizujeme, mezi změnou projektu a jejím zveřejněním na webu však může vzniknout časová prodleva.</p>
+      </div>
+      <div>
+        <h3>Vizualizace projektu</h3>
+        <p>Vizualizace mají ilustrativní charakter a zachycují předpokládanou podobu projektu v době svého vzniku. V průběhu další přípravy, povolování a realizace může dojít k dílčím změnám architektonického, technického nebo materiálového řešení.</p>
+      </div>
+    </div>
+    <div class="wrap footer-bottom">
+      <span>© 2026 Statek Cholupice</span>
+      <div class="footer-bottom-links">
+        <a href="https://www.statekcholupice.cz/ochrana-osobnich-udaju/">Zásady zpracování osobních údajů</a>
+      </div>
+    </div>
+  </footer>
+  <script>
+    document.querySelectorAll("[data-before-after]").forEach((slider) => {
+      const range = slider.querySelector("input");
+      const after = slider.querySelector(".after");
+      const handle = slider.querySelector(".ba-handle");
+
+      function update(value) {
+        after.style.clipPath = `inset(0 0 0 ${value}%)`;
+        handle.style.left = `${value}%`;
+      }
+
+      range.addEventListener("input", (event) => update(event.target.value));
+      update(range.value);
+    });
+
+    const areaTabs = Array.from(document.querySelectorAll(".site-area-tab"));
+    const areaPanels = Array.from(document.querySelectorAll(".site-area-panel"));
+    function activateArea(index, moveFocus = false) {
+      areaTabs.forEach((tab, tabIndex) => {
+        const active = tabIndex === index;
+        tab.setAttribute("aria-selected", String(active));
+        tab.tabIndex = active ? 0 : -1;
+      });
+      const activePanelId = areaTabs[index].getAttribute("aria-controls");
+      areaPanels.forEach((panel) => {
+        panel.setAttribute("aria-hidden", String(panel.id !== activePanelId));
+      });
+      if (moveFocus) areaTabs[index].focus();
+    }
+    areaTabs.forEach((tab, index) => {
+      tab.addEventListener("click", () => activateArea(index));
+      tab.addEventListener("keydown", (event) => {
+        let nextIndex = index;
+        if (event.key === "ArrowRight") nextIndex = (index + 1) % areaTabs.length;
+        if (event.key === "ArrowLeft") nextIndex = (index - 1 + areaTabs.length) % areaTabs.length;
+        if (event.key === "Home") nextIndex = 0;
+        if (event.key === "End") nextIndex = areaTabs.length - 1;
+        if (nextIndex !== index || event.key === "Home" || event.key === "End") {
+          event.preventDefault();
+          activateArea(nextIndex, true);
+        }
+      });
+    });
+
+    const header = document.querySelector("header");
+    const mobileMenuToggle = document.querySelector("#mobile-menu-toggle");
+    const mobileMenu = document.querySelector("#mobile-menu");
+    const mobileMenuLinks = Array.from(document.querySelectorAll("#mobile-menu a"));
+    function setMobileMenu(open, returnFocus = true) {
+      if (!mobileMenu || !mobileMenuToggle) return;
+      mobileMenu.hidden = !open;
+      mobileMenu.classList.toggle("is-open", open);
+      mobileMenuToggle.setAttribute("aria-expanded", String(open));
+      mobileMenuToggle.setAttribute("aria-label", open ? "Zavřít menu" : "Otevřít menu");
+      document.body.classList.toggle("menu-open", open);
+      if (open) mobileMenuLinks[0]?.focus();
+      else if (returnFocus) mobileMenuToggle.focus();
+    }
+    mobileMenuToggle?.addEventListener("click", () => {
+      const open = mobileMenuToggle.getAttribute("aria-expanded") === "true";
+      setMobileMenu(!open);
+    });
+    mobileMenuLinks.forEach((link) => link.addEventListener("click", () => setMobileMenu(false, false)));
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && mobileMenuToggle?.getAttribute("aria-expanded") === "true") setMobileMenu(false);
+    });
+    document.addEventListener("click", (event) => {
+      if (mobileMenuToggle?.getAttribute("aria-expanded") !== "true" || header?.contains(event.target)) return;
+      setMobileMenu(false, false);
+    });
+
+    let scrollTicking = false;
+    window.addEventListener("scroll", () => {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      window.requestAnimationFrame(() => {
+        header?.classList.toggle("is-scrolled", window.scrollY > 56);
+        scrollTicking = false;
+      });
+    }, { passive: true });
+    header?.classList.toggle("is-scrolled", window.scrollY > 56);
+
+    const sectionLinks = Array.from(document.querySelectorAll("header a[href^='#']:not(.button)"));
+    const sectionIds = [...new Set(sectionLinks.map((link) => link.getAttribute("href").slice(1)))];
+    const sectionTargets = sectionIds.map((id) => document.getElementById(id)).filter(Boolean);
+    function setActiveSection(id) {
+      sectionLinks.forEach((link) => {
+        const active = link.getAttribute("href") === `#${id}`;
+        link.classList.toggle("is-active", active);
+        if (active) link.setAttribute("aria-current", "page");
+        else link.removeAttribute("aria-current");
+      });
+    }
+    if ("IntersectionObserver" in window) {
+      const sectionObserver = new IntersectionObserver((entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) setActiveSection(visible[0].target.id);
+      }, { rootMargin: "-22% 0px -62% 0px", threshold: [0, .2, .5] });
+      sectionTargets.forEach((section) => sectionObserver.observe(section));
+    }
+
+      const revealTargets = Array.from(document.querySelectorAll(".story-block, .principles-section, .principle-card, .site-area, .site-operation-section, .topic, .benefit, .faq-item, .faq-contact-block, footer .footer-main, footer .footer-notice, footer .footer-bottom"));
+    revealTargets.forEach((element) => element.classList.add("reveal"));
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedMotion || !("IntersectionObserver" in window)) {
+      revealTargets.forEach((element) => element.classList.add("is-visible"));
+    } else {
+      const revealObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      }, { threshold: .12, rootMargin: "0px 0px -8% 0px" });
+      revealTargets.forEach((element) => revealObserver.observe(element));
+    }
+
+    const faqItems = Array.from(document.querySelectorAll(".faq-item"));
+    function closeFaqItem(item) {
+      const button = item.querySelector(".faq-question");
+      const answer = item.querySelector(".faq-answer");
+      item.classList.remove("is-open");
+      button.setAttribute("aria-expanded", "false");
+      answer.setAttribute("aria-hidden", "true");
+    }
+    faqItems.forEach((item) => {
+      const button = item.querySelector(".faq-question");
+      const answer = item.querySelector(".faq-answer");
+      button.addEventListener("click", () => {
+        const shouldOpen = !item.classList.contains("is-open");
+        faqItems.forEach(closeFaqItem);
+        if (shouldOpen) {
+          item.classList.add("is-open");
+          button.setAttribute("aria-expanded", "true");
+          answer.setAttribute("aria-hidden", "false");
+        }
+      });
+    });
+
+    const publishedNews = [];
+    const NEWS_INDEX_URL = "";
+    const newsSection = document.querySelector("#novinky");
+    const newsTrack = document.querySelector("[data-news-track]");
+    const newsViewport = document.querySelector("[data-news-viewport]");
+    const newsPrev = document.querySelector("[data-news-prev]");
+    const newsNext = document.querySelector("[data-news-next]");
+    const newsStatus = document.querySelector("[data-news-status]");
+    const newsAllLink = document.querySelector("[data-news-all]");
+    let newsCards = [];
+    let newsIndex = 0;
+
+    const getNewsVisibleCount = () => {
+      if (window.innerWidth < 861) return 1;
+      if (window.innerWidth < 1101) return 2;
+      return 3;
+    };
+
+    const createNewsCard = (item) => {
+      const card = document.createElement("article");
+      card.className = "news-card";
+
+      const imageLink = document.createElement("a");
+      imageLink.href = `/novinky/${item.slug}/`;
+      imageLink.setAttribute("aria-label", `Číst více: ${item.title}`);
+
+      const image = document.createElement("img");
+      image.className = "news-card-image";
+      image.src = item.image;
+      image.alt = item.imageAlt;
+      image.loading = "lazy";
+      image.decoding = "async";
+      imageLink.append(image);
+
+      const body = document.createElement("div");
+      body.className = "news-card-body";
+
+      const date = document.createElement("time");
+      date.className = "news-card-date";
+      date.dateTime = item.date;
+      date.textContent = new Intl.DateTimeFormat("cs-CZ", { day: "numeric", month: "long", year: "numeric" }).format(new Date(item.date));
+
+      const title = document.createElement("h3");
+      title.textContent = item.title;
+
+      const excerpt = document.createElement("p");
+      excerpt.className = "news-card-excerpt";
+      excerpt.textContent = item.excerpt;
+
+      const readMore = document.createElement("a");
+      readMore.className = "news-card-link";
+      readMore.href = `/novinky/${item.slug}/`;
+      readMore.textContent = "Číst více";
+
+      body.append(date, title, excerpt, readMore);
+      card.append(imageLink, body);
+      return card;
+    };
+
+    function updateNewsCarousel(announce = false) {
+      if (!newsCards.length) return;
+      const visibleCount = getNewsVisibleCount();
+      const maxIndex = Math.max(0, newsCards.length - visibleCount);
+      newsIndex = Math.min(newsIndex, maxIndex);
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (window.innerWidth < 861) {
+        newsViewport.scrollTo({ left: newsCards[newsIndex].offsetLeft, behavior: reducedMotion ? "auto" : "smooth" });
+      } else {
+        newsTrack.style.transform = `translate3d(-${newsCards[newsIndex].offsetLeft}px, 0, 0)`;
+      }
+
+      newsPrev.disabled = newsIndex === 0;
+      newsNext.disabled = newsIndex === maxIndex;
+      if (announce) newsStatus.textContent = `Zobrazeny novinky ${newsIndex + 1} až ${Math.min(newsIndex + visibleCount, newsCards.length)} z ${newsCards.length}.`;
+    }
+
+    function renderNews(items) {
+      if (!newsSection || !newsTrack) return;
+      const visibleNews = items
+        .filter((item) => item.status === "published")
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      if (!visibleNews.length) {
+        newsSection.hidden = true;
+        return;
+      }
+
+      newsSection.hidden = false;
+      newsTrack.replaceChildren(...visibleNews.map(createNewsCard));
+      newsCards = Array.from(newsTrack.querySelectorAll(".news-card"));
+      newsIndex = 0;
+      newsAllLink.hidden = !NEWS_INDEX_URL;
+      if (NEWS_INDEX_URL) newsAllLink.href = NEWS_INDEX_URL;
+      updateNewsCarousel();
+    }
+
+    newsPrev?.addEventListener("click", () => {
+      newsIndex = Math.max(0, newsIndex - 1);
+      updateNewsCarousel(true);
+    });
+    newsNext?.addEventListener("click", () => {
+      newsIndex += 1;
+      updateNewsCarousel(true);
+    });
+    newsViewport?.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        newsIndex = Math.max(0, newsIndex - 1);
+        updateNewsCarousel(true);
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        newsIndex += 1;
+        updateNewsCarousel(true);
+      }
+    });
+    window.addEventListener("resize", () => updateNewsCarousel());
+    renderNews(publishedNews);
+
+    const CONTACT_ENDPOINT = ""; // TODO: doplnit produkční endpoint pro odesílání formuláře.
+    const contactForm = document.querySelector("#faq-contact-form");
+    const contactStatus = document.querySelector("#contact-form-status");
+    if (contactForm && contactStatus) {
+      const emailField = contactForm.querySelector("#contact-email");
+      const messageField = contactForm.querySelector("#contact-message");
+      const submitButton = contactForm.querySelector("button[type='submit']");
+      const clearFieldError = (field) => field.removeAttribute("aria-invalid");
+
+      [emailField, messageField].forEach((field) => {
+        field.addEventListener("input", () => {
+          clearFieldError(field);
+          if (contactStatus.classList.contains("is-error")) {
+            contactStatus.textContent = "";
+            contactStatus.className = "form-status";
+            contactStatus.setAttribute("role", "status");
+          }
+        });
+      });
+
+      contactForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        contactStatus.textContent = "";
+        contactStatus.className = "form-status";
+        contactStatus.setAttribute("role", "status");
+        clearFieldError(emailField);
+        clearFieldError(messageField);
+
+        const emailInvalid = !emailField.value.trim() || !emailField.validity.valid;
+        const messageInvalid = !messageField.value.trim();
+        if (emailInvalid || messageInvalid) {
+          if (emailInvalid) emailField.setAttribute("aria-invalid", "true");
+          if (messageInvalid) messageField.setAttribute("aria-invalid", "true");
+          contactStatus.className = "form-status is-error";
+          contactStatus.setAttribute("role", "alert");
+          contactStatus.textContent = "Vyplňte prosím platný e-mail a váš dotaz.";
+          (emailInvalid ? emailField : messageField).focus();
+          return;
+        }
+
+        if (!CONTACT_ENDPOINT) {
+          contactStatus.className = "form-status is-error";
+          contactStatus.setAttribute("role", "alert");
+          contactStatus.textContent = "Formulář zatím není aktivní. Napište nám prosím přímo na info@statekcholupice.cz.";
+          return;
+        }
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Odesílám…";
+        try {
+          const response = await fetch(CONTACT_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json" },
+            body: JSON.stringify({
+              name: contactForm.elements.name.value.trim(),
+              email: emailField.value.trim(),
+              message: messageField.value.trim()
+            })
+          });
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          contactForm.reset();
+          contactStatus.className = "form-status is-success";
+          contactStatus.setAttribute("role", "status");
+          contactStatus.textContent = "Děkujeme. Váš dotaz jsme přijali.";
+        } catch (error) {
+          contactStatus.className = "form-status is-error";
+          contactStatus.setAttribute("role", "alert");
+          contactStatus.textContent = "Dotaz se nepodařilo odeslat. Zkuste to prosím znovu nebo napište na info@statekcholupice.cz.";
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = "Odeslat dotaz";
+        }
+      });
+    }
+  </script>
+</body>
+</html>
