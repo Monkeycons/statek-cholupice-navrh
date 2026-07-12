@@ -17,9 +17,11 @@
       }
 
       function update(value) {
+        const numericValue = Math.round(Number(value));
         after.style.clipPath = `inset(0 0 0 ${value}%)`;
         handle.style.left = `${value}%`;
-        range.setAttribute("aria-valuenow", String(Math.round(Number(value))));
+        range.setAttribute("aria-valuenow", String(numericValue));
+        range.setAttribute("aria-valuetext", `${numericValue} % navrhované podoby`);
         updateLabels(value);
       }
 
@@ -163,7 +165,6 @@
       });
     });
 
-    const publishedNews = Array.isArray(window.StatekCholupice?.newsItems) ? window.StatekCholupice.newsItems : [];
     const NEWS_INDEX_URL = window.StatekCholupice?.newsIndexUrl || "";
     const newsSection = document.querySelector("#novinky");
     const newsTrack = document.querySelector("[data-news-track]");
@@ -179,47 +180,6 @@
       if (window.innerWidth < 861) return 1;
       if (window.innerWidth < 1101) return 2;
       return 3;
-    };
-
-    const createNewsCard = (item) => {
-      const card = document.createElement("article");
-      card.className = "news-card";
-
-      const imageLink = document.createElement("a");
-      imageLink.href = (item.url || `/novinky/${item.slug}/`);
-      imageLink.setAttribute("aria-label", `Číst více: ${item.title}`);
-
-      const image = document.createElement("img");
-      image.className = "news-card-image";
-      image.src = item.image;
-      image.alt = item.imageAlt;
-      image.loading = "lazy";
-      image.decoding = "async";
-      imageLink.append(image);
-
-      const body = document.createElement("div");
-      body.className = "news-card-body";
-
-      const date = document.createElement("time");
-      date.className = "news-card-date";
-      date.dateTime = item.date;
-      date.textContent = new Intl.DateTimeFormat("cs-CZ", { day: "numeric", month: "long", year: "numeric" }).format(new Date(item.date));
-
-      const title = document.createElement("h3");
-      title.textContent = item.title;
-
-      const excerpt = document.createElement("p");
-      excerpt.className = "news-card-excerpt";
-      excerpt.textContent = item.excerpt;
-
-      const readMore = document.createElement("a");
-      readMore.className = "news-card-link";
-      readMore.href = (item.url || `/novinky/${item.slug}/`);
-      readMore.textContent = "Číst více";
-
-      body.append(date, title, excerpt, readMore);
-      card.append(imageLink, body);
-      return card;
     };
 
     function updateNewsCarousel(announce = false) {
@@ -240,20 +200,15 @@
       if (announce) newsStatus.textContent = `Zobrazeny novinky ${newsIndex + 1} až ${Math.min(newsIndex + visibleCount, newsCards.length)} z ${newsCards.length}.`;
     }
 
-    function renderNews(items) {
+    function initializeNewsCarousel() {
       if (!newsSection || !newsTrack) return;
-      const visibleNews = items
-        .filter((item) => item.status === "published")
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-
-      if (!visibleNews.length) {
+      newsCards = Array.from(newsTrack.querySelectorAll(".news-card"));
+      if (!newsCards.length) {
         newsSection.hidden = true;
         return;
       }
 
       newsSection.hidden = false;
-      newsTrack.replaceChildren(...visibleNews.map(createNewsCard));
-      newsCards = Array.from(newsTrack.querySelectorAll(".news-card"));
       newsIndex = 0;
       newsAllLink.hidden = !NEWS_INDEX_URL;
       if (NEWS_INDEX_URL) newsAllLink.href = NEWS_INDEX_URL;
@@ -281,7 +236,7 @@
       }
     });
     window.addEventListener("resize", () => updateNewsCarousel());
-    renderNews(publishedNews);
+    initializeNewsCarousel();
 
     const CONTACT_ENDPOINT = window.StatekCholupice?.contactEndpoint || "";
     const contactForm = document.querySelector("#faq-contact-form");
@@ -344,15 +299,17 @@
               company: contactForm.elements.company?.value || ""
             })
           });
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const data = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(data.message || `HTTP ${response.status}`);
           contactForm.reset();
           contactStatus.className = "form-status is-success";
           contactStatus.setAttribute("role", "status");
-          contactStatus.textContent = "Děkujeme. Váš dotaz jsme přijali.";
+          contactStatus.textContent = data.message || "Děkujeme. Váš dotaz jsme přijali.";
         } catch (error) {
           contactStatus.className = "form-status is-error";
           contactStatus.setAttribute("role", "alert");
-          contactStatus.textContent = "Dotaz se nepodařilo odeslat. Zkuste to prosím znovu nebo napište na info@statekcholupice.cz.";
+          const email = window.StatekCholupice?.contactEmail || "info@statekcholupice.cz";
+          contactStatus.textContent = error.message || `Dotaz se nepodařilo odeslat. Zkuste to prosím znovu nebo napište na ${email}.`;
         } finally {
           submitButton.disabled = false;
           submitButton.textContent = "Odeslat dotaz";

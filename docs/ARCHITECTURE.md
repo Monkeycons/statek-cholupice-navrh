@@ -1,11 +1,17 @@
 # Architektura
 
-Zdroj pravdy: `github-pages/index.html`, lokální commit `1a8e2b5`.
+Zdroj vizuálního návrhu je aktuální lokální statický web. WordPress balík je rozdělený na:
 
-Šablona je klasická lehká WordPress šablona s `theme.json`. Vzhled je převeden ze statického webu do `assets/css/main.css`, prezentační chování do `assets/js/main.js`.
+- šablonu `statek-cholupice`,
+- companion plugin `statek-cholupice-core`.
 
-Companion plugin `statek-cholupice-core` řeší kontaktní formulář a základní inicializaci domovské stránky.
+Šablona řeší prezentaci, layout, responzivní obrázky, navigaci, homepage, archiv novinek a metadata.
 
-Domovská stránka je v `front-page.php`, hlavička a patička jsou oddělené v `header.php` a `footer.php`. Novinky používají běžné příspěvky WordPressu a na homepage se načítají přes `statek_cholupice_news_items()`.
+Plugin řeší:
 
-Schválené rendery jsou uložené v `assets/images`. Vedle nich jsou připravené optimalizované WebP varianty v `assets/images/optimized`, aby je bylo možné při produkčním nasazení napojit podle finální strategie hostingu a cache.
+- kontaktní REST endpoint,
+- globální nastavení e-mailu a URL zásad,
+- idempotentní inicializaci homepage a primárního menu,
+- nativní metaboxová pole pro vybrané texty homepage.
+
+Obrázky jsou obsloužené helperem `statek_cholupice_picture()`, který skládá AVIF, WebP a JPEG fallback varianty z `assets/images/optimized`. Velké originály zůstávají v pracovní složce jako zdroj, ale nejsou balené do produkčního ZIPu šablony.

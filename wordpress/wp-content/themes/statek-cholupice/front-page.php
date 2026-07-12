@@ -10,13 +10,27 @@ get_header();
 <main id="main-content">
 
     <section class="hero" id="uvod">
+      <?php
+      echo statek_cholupice_picture(
+        'images/hero_vizualizace/cholupice-hero-super-render-web-spravne.png',
+        '',
+        array(
+          'picture_class' => 'hero-media',
+          'class'         => 'hero-media-image',
+          'sizes'         => '100vw',
+          'loading'       => 'eager',
+          'fetchpriority' => 'high',
+          'aria_hidden'   => true,
+        )
+      );
+      ?>
       <div class="hero-inner">
-        <div class="kicker">Revitalizace brownfieldu</div>
-        <h1>Nový život pro Statek Cholupice</h1>
-        <p>Citlivá přestavba historického areálu propojí bydlení, služby pro obyvatele, moderní výrobu a respekt k místu.</p>
+        <div class="kicker"><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_hero_kicker', 'Revitalizace brownfieldu' ) ); ?></div>
+        <h1><?php echo nl2br( esc_html( statek_cholupice_home_meta( 'statek_home_hero_title', 'Nový život pro Statek Cholupice' ) ) ); ?></h1>
+        <p><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_hero_text', 'Citlivá přestavba historického areálu propojí bydlení, služby pro obyvatele, moderní výrobu a respekt k místu.' ) ); ?></p>
         <div class="hero-actions">
-          <a class="button" href="#projekt">Poznat projekt</a>
-          <a class="button secondary" href="#prinosy">Dobrý soused</a>
+          <a class="button" href="#projekt"><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_hero_primary', 'Poznat projekt' ) ); ?></a>
+          <a class="button secondary" href="#prinosy"><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_hero_secondary', 'Dobrý soused' ) ); ?></a>
         </div>
       </div>
     </section>
@@ -32,13 +46,13 @@ get_header();
             <p>Výroba bude probíhat uvnitř moderních budov bez výrazného hluku, zápachu nebo intenzivní dopravy.</p>
           </div>
           <figure class="story-media">
-            <img src="<?php echo esc_url( statek_cholupice_asset_url( 'images/statek_web_premium/hero-vjezd-preview-v4-lide-obchod.png' ) ); ?>" alt="Vizualizace vstupu do areálu s obchody a novým vjezdem">
+            <?php echo statek_cholupice_picture( 'images/statek_web_premium/hero-vjezd-preview-v4-lide-obchod.png', 'Vizualizace vstupu do areálu s obchody a novým vjezdem', array( 'sizes' => '(max-width: 900px) 100vw, 50vw' ) ); ?>
           </figure>
         </div>
         <div class="story-block reverse">
           <div class="before-after" data-before-after>
-            <img src="<?php echo esc_url( statek_cholupice_asset_url( 'images/statek_web_premium/pred_premium_documentary.png' ) ); ?>" alt="Současný stav areálu před revitalizací">
-            <img class="after" src="<?php echo esc_url( statek_cholupice_asset_url( 'images/statek_web_premium/po_premium_dss_van_logo_left.png' ) ); ?>" alt="Prémiová vizualizace navrženého stavu areálu s dodávkou DSS">
+            <?php echo statek_cholupice_picture( 'images/statek_web_premium/pred_premium_documentary.png', 'Současný stav areálu před revitalizací', array( 'sizes' => '(max-width: 900px) 100vw, 50vw' ) ); ?>
+            <?php echo statek_cholupice_picture( 'images/statek_web_premium/po_premium_dss_van_logo_left.png', 'Prémiová vizualizace navrženého stavu areálu s dodávkou DSS', array( 'class' => 'after', 'sizes' => '(max-width: 900px) 100vw, 50vw' ) ); ?>
             <span class="ba-label before">Současný stav</span>
             <span class="ba-label after-label">Navrhovaná podoba</span>
             <span class="ba-handle" aria-hidden="true"></span>
@@ -71,27 +85,27 @@ get_header();
           </div>
           <div class="site-area-content">
             <article class="site-area-panel" id="site-area-panel-1" role="tabpanel" aria-labelledby="site-area-tab-1" aria-hidden="false">
-              <figure class="site-area-media"><img src="<?php echo esc_url( statek_cholupice_asset_url( 'images/statek_web_premium/1_16_photo_premium_residential.png' ) ); ?>" alt="Prémiová vizualizace bytového domu" fetchpriority="high"></figure>
+              <figure class="site-area-media"><?php echo statek_cholupice_picture( 'images/statek_web_premium/1_16_photo_premium_residential.png', 'Prémiová vizualizace bytového domu', array( 'sizes' => '(max-width: 980px) 100vw, 58vw' ) ); ?></figure>
               <div class="site-area-copy"><p class="site-area-label">Popis areálu · 01</p><h3>Bytový dům</h3><p>Plánovaný bytový dům představuje novou tvář přestavby celého areálu. Navržen je s důrazem na kvalitní a klidné bydlení a počítá se samostatně řešeným parkováním v podzemí i na vlastním pozemku.</p><p>Dům bude mít dvě nadzemní podlaží a obytné podkroví, díky čemuž citlivě naváže na charakter okolní zástavby. Současně přirozeně oddělí veřejný prostor návsi od výrobní části areálu.</p></div>
             </article>
             <article class="site-area-panel" id="site-area-panel-2" role="tabpanel" aria-labelledby="site-area-tab-2" aria-hidden="true">
-              <figure class="site-area-media"><img src="<?php echo esc_url( statek_cholupice_asset_url( 'images/statek_web_premium/1_18_photo_premium_commerce_people_atm.png' ) ); ?>" alt="Prémiová vizualizace komerčních prostor s bankomatem" loading="lazy"></figure>
+              <figure class="site-area-media"><?php echo statek_cholupice_picture( 'images/statek_web_premium/1_18_photo_premium_commerce_people_atm.png', 'Prémiová vizualizace komerčních prostor s bankomatem', array( 'sizes' => '(max-width: 980px) 100vw, 58vw' ) ); ?></figure>
               <div class="site-area-copy"><p class="site-area-label">Popis areálu · 02</p><h3>Komerční prostory</h3><p>V přízemí bytového domu vzniknou také komerční prostory. Mohou zde najít místo například menší obchod, kavárna nebo služby každodenní potřeby, jako jsou kadeřnictví, kosmetika či ordinace lékaře.</p><p>Cílem je vytvořit příjemné místo pro místní obyvatele i návštěvníky a podpořit přirozený život v centru Cholupic.</p></div>
             </article>
             <article class="site-area-panel" id="site-area-panel-3" role="tabpanel" aria-labelledby="site-area-tab-3" aria-hidden="true">
-              <figure class="site-area-media"><img src="<?php echo esc_url( statek_cholupice_asset_url( 'images/statek_web_premium/administrativni_centrum_premium.png' ) ); ?>" alt="Vizualizace administrativního centra a špejcharu" loading="lazy"></figure>
+              <figure class="site-area-media"><?php echo statek_cholupice_picture( 'images/statek_web_premium/administrativni_centrum_premium.png', 'Vizualizace administrativního centra a špejcharu', array( 'sizes' => '(max-width: 980px) 100vw, 58vw' ) ); ?></figure>
               <div class="site-area-copy"><p class="site-area-label">Popis areálu · 03</p><h3>Administrativní centrum – Špejchar</h3><p>Špejchar projde pečlivou rekonstrukcí. Do původní historické budovy bude citlivě vsazena nová vnitřní konstrukce, která vytvoří moderní kancelářské a reprezentativní prostory například pro jednání s obchodními partnery a zahraničními delegacemi.</p><p>Součástí projektu je také statické zajištění a sanace historických konstrukcí s důrazem na jejich dlouhodobou ochranu.</p></div>
             </article>
             <article class="site-area-panel" id="site-area-panel-4" role="tabpanel" aria-labelledby="site-area-tab-4" aria-hidden="true">
-              <figure class="site-area-media"><img src="<?php echo esc_url( statek_cholupice_asset_url( 'images/statek_web_premium/hala_a_premium.png' ) ); ?>" alt="Vizualizace výrobních prostor" loading="lazy"></figure>
+              <figure class="site-area-media"><?php echo statek_cholupice_picture( 'images/statek_web_premium/hala_a_premium.png', 'Vizualizace výrobních prostor', array( 'sizes' => '(max-width: 980px) 100vw, 58vw' ) ); ?></figure>
               <div class="site-area-copy"><p class="site-area-label">Popis areálu · 04</p><h3>Výrobní prostory</h3><p>Ve výrobních prostorách bude probíhat zpracování kovových komponentů – od přípravy a prvotního opracování materiálu přes přesné CNC obrábění až po kontrolu kvality.</p><p>Součástí objektu budou moderní výrobní technologie, automatizované prvky a kontrolované pracovní prostředí odpovídající vysokým nárokům na kvalitu a bezpečnost. Veškeré činnosti budou probíhat uvnitř budovy s minimálním vlivem na okolí.</p></div>
             </article>
             <article class="site-area-panel" id="site-area-panel-5" role="tabpanel" aria-labelledby="site-area-tab-5" aria-hidden="true">
-              <figure class="site-area-media"><img src="<?php echo esc_url( statek_cholupice_asset_url( 'images/statek_web_premium/vyvojove_centrum_premium_engineers.png' ) ); ?>" alt="Vizualizace vývojového centra se dvěma inženýry" loading="lazy"></figure>
+              <figure class="site-area-media"><?php echo statek_cholupice_picture( 'images/statek_web_premium/vyvojove_centrum_premium_engineers.png', 'Vizualizace vývojového centra se dvěma inženýry', array( 'sizes' => '(max-width: 980px) 100vw, 58vw' ) ); ?></figure>
               <div class="site-area-copy"><p class="site-area-label">Popis areálu · 05</p><h3>Vývojové centrum</h3><p>Vývojové centrum vznikne vestavbou nového objektu do stávajících historických konstrukcí areálu. Prostor bude sloužit pro vývoj, výzkum a technickou přípravu nových řešení.</p><p>Návrh zachová původní charakter objektu a zároveň mu přinese nové a dlouhodobě udržitelné využití.</p></div>
             </article>
             <article class="site-area-panel" id="site-area-panel-6" role="tabpanel" aria-labelledby="site-area-tab-6" aria-hidden="true">
-              <figure class="site-area-media"><img src="<?php echo esc_url( statek_cholupice_asset_url( 'images/statek_web_premium/parkovaci_dum_premium.png' ) ); ?>" alt="Vizualizace parkovacího domu" loading="lazy"></figure>
+              <figure class="site-area-media"><?php echo statek_cholupice_picture( 'images/statek_web_premium/parkovaci_dum_premium.png', 'Vizualizace parkovacího domu', array( 'sizes' => '(max-width: 980px) 100vw, 58vw' ) ); ?></figure>
               <div class="site-area-copy"><p class="site-area-label">Popis areálu · 06</p><h3>Parkovací dům</h3><p>Dvoupodlažní parkovací objekt určený pro zaměstnance nabídne 121 parkovacích míst. Navržen je tak, aby omezil dopravní zatížení okolí a umožnil plynulý vjezd i výjezd bez tvorby kolon.</p><p>Parkování bude oddělené od výrobních částí areálu.</p></div>
             </article>
           </div>
@@ -118,7 +132,7 @@ get_header();
       <div class="wrap">
         <div class="topics">
           <article class="topic topic-stacked topic-safety" id="bezpecnost">
-            <figure class="topic-illustration"><img src="<?php echo esc_url( statek_cholupice_asset_url( 'images/statek_web_premium/bezpecnost-vstup-kontrola.png' ) ); ?>" alt="Kontrolovaný vstup zaměstnance do výrobního prostoru" loading="lazy" decoding="async"></figure>
+            <figure class="topic-illustration"><?php echo statek_cholupice_picture( 'images/statek_web_premium/bezpecnost-vstup-kontrola.png', 'Kontrolovaný vstup zaměstnance do výrobního prostoru', array( 'sizes' => '(max-width: 980px) 100vw, 46vw' ) ); ?></figure>
             <div class="topic-body">
               <h2>Bezpečnost</h2>
               <p class="topic-motto">Bezpečnost postavená na lidech, technologiích a jasných pravidlech</p>
@@ -136,7 +150,7 @@ get_header();
             </div>
           </article>
           <article class="topic topic-stacked" id="doprava">
-            <figure class="topic-illustration"><img src="<?php echo esc_url( statek_cholupice_asset_url( 'images/statek_web_premium/doprava-areal-delivery-truck-focus.png' ) ); ?>" alt="Vizualizace dopravy v areálu s výraznou dodávkou před výrobní halou" loading="lazy" decoding="async"></figure>
+            <figure class="topic-illustration"><?php echo statek_cholupice_picture( 'images/statek_web_premium/doprava-areal-delivery-truck-focus.png', 'Vizualizace dopravy v areálu s výraznou dodávkou před výrobní halou', array( 'sizes' => '(max-width: 980px) 100vw, 46vw' ) ); ?></figure>
             <div class="topic-body">
               <h2>Doprava</h2>
               <p class="topic-motto">Méně dopravy než v minulosti. Více klidu pro okolí.</p>
@@ -151,7 +165,7 @@ get_header();
             </div>
           </article>
           <article class="topic topic-stacked" id="zivotni-prostredi">
-            <figure class="topic-illustration"><img src="<?php echo esc_url( statek_cholupice_asset_url( 'images/karousel3_premium_dss_v4_4k_preview.jpg' ) ); ?>" alt="Prémiová vizualizace zeleného veřejného prostoru a výsadby v areálu" loading="lazy" decoding="async"></figure>
+            <figure class="topic-illustration"><?php echo statek_cholupice_picture( 'images/karousel3_premium_dss_v4_4k_preview.jpg', 'Prémiová vizualizace zeleného veřejného prostoru a výsadby v areálu', array( 'sizes' => '(max-width: 980px) 100vw, 46vw' ) ); ?></figure>
             <div class="topic-body">
               <h2>Životní prostředí</h2>
               <p class="topic-motto">Třikrát více zeleně a provoz šetrný k okolí.</p>
@@ -197,83 +211,30 @@ get_header();
     <section class="faq-section" id="kontakt">
       <div class="wrap faq-contact">
         <div class="faq-heading">
-          <h2>Na co se nás lidé ptají nejčastěji</h2>
-          <p class="benefits-motto">Vše podstatné o proměně statku, budoucím provozu a jeho dopadech na okolí.</p>
-          <p class="faq-intro">Uvědomujeme si, že statek je významnou součástí Cholupic, a rozumíme proto tomu, že jeho plánovaná proměna vyvolává otázky. Na ty nejčastější zde otevřeně odpovídáme.</p>
-          <p class="faq-intro">Pokud odpověď na svou otázku nenajdete, <a href="#faq-contact-form">napište nám</a>. Vaše podněty budeme průběžně zpracovávat a nejčastější otázky doplňovat.</p>
+          <h2><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_faq_heading', 'Na co se nás lidé ptají nejčastěji' ) ); ?></h2>
+          <p class="benefits-motto"><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_faq_motto', 'Vše podstatné o proměně statku, budoucím provozu a jeho dopadech na okolí.' ) ); ?></p>
+          <p class="faq-intro"><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_faq_intro_1', 'Uvědomujeme si, že statek je významnou součástí Cholupic, a rozumíme proto tomu, že jeho plánovaná proměna vyvolává otázky. Na ty nejčastější zde otevřeně odpovídáme.' ) ); ?></p>
+          <p class="faq-intro"><?php echo wp_kses_post( statek_cholupice_home_meta( 'statek_home_faq_intro_2', 'Pokud odpověď na svou otázku nenajdete, <a href="#faq-contact-form">napište nám</a>. Vaše podněty budeme průběžně zpracovávat a nejčastější otázky doplňovat.' ) ); ?></p>
         </div>
 
         <div class="faq-list">
-          <div class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-1">Proč zrovna Cholupice?</button>
-            <div class="faq-answer" id="faq-answer-1" aria-hidden="true">
-              <div class="faq-answer-inner">
-                <p>S růstem naší společnosti roste i potřeba nových prostor. Od začátku jsme ale nechtěli stavět „na zelené louce“. Naším cílem bylo najít místo s historií a potenciálem, kterému půjde vrátit život.</p>
-                <p>Bývalý hospodářský dvůr v Cholupicích nás zaujal svou atmosférou, historickou hodnotou i možností citlivé revitalizace. Dnes je areál dlouhodobě nevyužívaný a ve špatném technickém stavu. Projekt umožní jeho obnovu, odstranění ekologické zátěže a návrat smysluplného využití bez nutnosti zabírat další krajinu nebo zemědělskou půdu.</p>
-                <p>V Praze a Středočeském kraji existuje jen velmi málo míst, kde může podobný provoz vzniknout v již existujícím areálu a bez dalšího záboru krajiny. Jsme firma z Prahy, máme k tomuto regionu vztah a chceme zde dlouhodobě působit i investovat.</p>
+          <?php foreach ( statek_cholupice_faq_items() as $index => $faq_item ) : ?>
+            <?php $answer_id = 'faq-answer-' . ( $index + 1 ); ?>
+            <div class="faq-item">
+              <button class="faq-question" type="button" aria-expanded="false" aria-controls="<?php echo esc_attr( $answer_id ); ?>"><?php echo esc_html( $faq_item['question'] ); ?></button>
+              <div class="faq-answer" id="<?php echo esc_attr( $answer_id ); ?>" aria-hidden="true">
+                <div class="faq-answer-inner"><?php echo wp_kses_post( $faq_item['answer'] ); ?></div>
               </div>
             </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2">Bude se v areálu střílet?</button>
-            <div class="faq-answer" id="faq-answer-2" aria-hidden="true">
-              <div class="faq-answer-inner"><p>Ne. Součástí areálu nebude střelnice ani zkušební střelba. Provoz nebude spojen s pravidelným hlukem tohoto typu.</p></div>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3">Jak bude zabezpečena munice a kdo ponese odpovědnost za případné škody?</button>
-            <div class="faq-answer" id="faq-answer-3" aria-hidden="true">
-              <div class="faq-answer-inner"><p>V areálu nebude skladována ani vyráběna munice. Projekt s tímto typem provozu vůbec nepočítá.</p></div>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-4">Kolik kamionů bude denně jezdit do vaší továrny?</button>
-            <div class="faq-answer" id="faq-answer-4" aria-hidden="true">
-              <div class="faq-answer-inner"><p>Doprava bude oproti původnímu využití areálu výrazně menší. Předpokládá se především provoz menších zásobovacích vozů v rozsahu přibližně jedné až dvou dodávek denně. Nejde o těžký průmyslový nebo logistický provoz.</p></div>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-5">Co to přinese Cholupicím?</button>
-            <div class="faq-answer" id="faq-answer-5" aria-hidden="true">
-              <div class="faq-answer-inner">
-                <p>Projekt přinese revitalizaci chátrajícího areálu, odstranění staré ekologické zátěže, nová pracovní místa a podporu místních služeb i podnikatelů. Součástí bude také nová zeleň, úprava okolí a zlepšení stavu návsi.</p>
-                <p>Zatímco v minulosti byl areál spojen s provozem zemědělského družstva, těžkou technikou, prašností a zanedbanými objekty, nový projekt přináší moderní výrobu s minimálními dopady na okolí a výrazné zlepšení celkového vzhledu lokality.</p>
-              </div>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-6">Jak bude zajištěno, aby se výrobky nedostaly mimo kontrolovaný režim?</button>
-            <div class="faq-answer" id="faq-answer-6" aria-hidden="true">
-              <div class="faq-answer-inner"><p>Provoz bude podléhat přísným bezpečnostním opatřením i státní kontrole. Areál bude zabezpečen moderními technologiemi a režimem odpovídajícím legislativním požadavkům na tento typ provozu.</p></div>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-7">Kdo nám vynahradí ztrátu hodnoty nemovitostí?</button>
-            <div class="faq-answer" id="faq-answer-7" aria-hidden="true">
-              <div class="faq-answer-inner"><p>Neexistují důkazy, že by podobné projekty automaticky vedly ke snížení hodnoty nemovitostí. Naopak revitalizace zanedbaného areálu, odstranění ekologické zátěže a úprava okolí mohou mít pozitivní vliv na vzhled i fungování celé lokality.</p></div>
-            </div>
-          </div>
-
-          <div class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-8">Kdo za tímto projektem stojí?</button>
-            <div class="faq-answer" id="faq-answer-8" aria-hidden="true">
-              <div class="faq-answer-inner"><p>Projekt připravuje a vlastní společnost DSS a.s., která ponese odpovědnost za provoz areálu, jeho zabezpečení i dodržování všech zákonných povinností.</p></div>
-            </div>
-          </div>
+          <?php endforeach; ?>
         </div>
 
         <div class="faq-contact-block">
           <div class="faq-contact-copy">
             <p class="faq-contact-kicker">KONTAKT</p>
-            <h3>Máte další otázku k projektu?</h3>
-            <p class="faq-contact-motto">Zajímá vás něco, co jsme nezodpověděli?</p>
-            <p class="faq-contact-text">Napište nám prostřednictvím formuláře nebo přímo na <a href="mailto:info@statekcholupice.cz">info@statekcholupice.cz</a>. Vaše podněty nám pomohou průběžně doplňovat informace, které jsou pro Cholupice důležité.</p>
+            <h3><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_contact_heading', 'Máte další otázku k projektu?' ) ); ?></h3>
+            <p class="faq-contact-motto"><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_contact_motto', 'Zajímá vás něco, co jsme nezodpověděli?' ) ); ?></p>
+            <p class="faq-contact-text"><?php echo wp_kses_post( statek_cholupice_home_meta( 'statek_home_contact_text', 'Napište nám prostřednictvím formuláře nebo přímo na <a href="mailto:' . esc_attr( statek_cholupice_contact_email() ) . '">' . esc_html( statek_cholupice_contact_email() ) . '</a>. Vaše podněty nám pomohou průběžně doplňovat informace, které jsou pro Cholupice důležité.' ) ); ?></p>
           </div>
 
           <form class="faq-contact-form" id="faq-contact-form" novalidate data-contact-form>
@@ -296,7 +257,7 @@ get_header();
               <textarea id="contact-message" name="message" required></textarea>
             </div>
             <button class="button" type="submit">Odeslat dotaz</button>
-            <p class="contact-privacy">Odesláním souhlasíte se zpracováním osobních údajů. <a href="https://www.statekcholupice.cz/ochrana-osobnich-udaju/">Zásady zpracování osobních údajů</a></p>
+            <p class="contact-privacy">Odesláním souhlasíte se zpracováním osobních údajů. <a href="<?php echo esc_url( statek_cholupice_privacy_url() ); ?>">Zásady zpracování osobních údajů</a></p>
             <p class="form-status" id="contact-form-status" role="status" aria-live="polite"></p>
           </form>
         </div>

@@ -13,11 +13,11 @@
 		</div>
 		<div class="footer-column">
 			<h3>Kontakt</h3>
-			<p><a href="mailto:info@statekcholupice.cz">info@statekcholupice.cz</a></p>
+			<p><a href="mailto:<?php echo esc_attr( statek_cholupice_contact_email() ); ?>"><?php echo esc_html( statek_cholupice_contact_email() ); ?></a></p>
 		</div>
 		<div class="footer-column">
 			<h3>Dokumenty</h3>
-			<p><a href="https://www.statekcholupice.cz/ochrana-osobnich-udaju/">Zásady zpracování osobních údajů</a></p>
+			<p><a href="<?php echo esc_url( statek_cholupice_privacy_url() ); ?>">Zásady zpracování osobních údajů</a></p>
 		</div>
 	</div>
 	<div class="wrap footer-notice">
@@ -33,7 +33,7 @@
 	<div class="wrap footer-bottom">
 		<span>© <?php echo esc_html( gmdate( 'Y' ) ); ?> Statek Cholupice</span>
 		<div class="footer-bottom-links">
-			<a href="https://www.statekcholupice.cz/ochrana-osobnich-udaju/">Zásady zpracování osobních údajů</a>
+			<a href="<?php echo esc_url( statek_cholupice_privacy_url() ); ?>">Zásady zpracování osobních údajů</a>
 		</div>
 	</div>
 </footer>

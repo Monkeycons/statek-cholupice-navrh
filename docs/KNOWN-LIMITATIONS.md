@@ -1,6 +1,6 @@
 # Známá omezení
 
-- Font Inter je přiložen lokálně včetně licence v `assets/fonts`.
-- Obrázky jsou přeneseny v původní schválené kvalitě a zároveň mají připravené WebP varianty v `assets/images/optimized`. V první verzi šablony zůstávají kritické vizualizace napojené na originály, aby se neměnila schválená podoba; produkční nasazení může WebP varianty zapojit podle hostingu.
-- Plná redakční editace všech sekcí homepage není dokončena v této první lokální konverzi.
-- PHP syntax check a běh ve WordPressu nebyly lokálně ověřeny, protože v tomto prostředí není dostupný PHP runtime ani lokální WordPress instalace.
+- Lokální prostředí neobsahuje PHP ani čistou WordPress instalaci, proto nebyl proveden runtime test aktivace šablony, aktivace pluginu ani reálné odeslání přes `wp_mail()`.
+- Kontaktní endpoint vrací stav podle výsledku `wp_mail()`, ale samotné `wp_mail()` negarantuje doručení e-mailu. Na cílovém hostingu je nutné ověřit SMTP / mailer konfiguraci.
+- Homepage má nativní editaci hlavních textů, FAQ a kontaktního bloku. Zbývající schválené prezentační sekce jsou záměrně pevné, aby zůstala zachovaná grafika a rozložení.
+- ZIPy jsou připravené jako release candidate. Před produkčním nasazením je potřeba provést test na čistém WordPressu.

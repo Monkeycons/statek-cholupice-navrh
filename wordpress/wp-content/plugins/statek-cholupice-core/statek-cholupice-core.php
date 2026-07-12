@@ -15,3 +15,4 @@ define( 'STATEK_CHOLUPICE_CORE_VERSION', '1.0.0' );
 
 require_once __DIR__ . '/includes/contact.php';
 require_once __DIR__ . '/includes/setup.php';
+require_once __DIR__ . '/includes/homepage-admin.php';

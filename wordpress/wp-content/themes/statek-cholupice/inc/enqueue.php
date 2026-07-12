@@ -31,8 +31,9 @@ function statek_cholupice_enqueue_assets(): void {
 		array(
 			'contactEndpoint' => esc_url_raw( rest_url( 'statek-cholupice/v1/contact' ) ),
 			'contactNonce'    => wp_create_nonce( 'wp_rest' ),
+			'contactEmail'    => statek_cholupice_contact_email(),
+			'privacyUrl'      => statek_cholupice_privacy_url(),
 			'newsIndexUrl'    => esc_url_raw( get_post_type_archive_link( 'post' ) ?: home_url( '/novinky/' ) ),
-			'newsItems'       => statek_cholupice_news_items(),
 		)
 	);
 }

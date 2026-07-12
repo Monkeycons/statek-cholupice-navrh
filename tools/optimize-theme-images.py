@@ -35,8 +35,9 @@ def resize_image(image: Image.Image, width: int) -> Image.Image:
     return image.resize((width, height), Image.Resampling.LANCZOS)
 
 
-rows: list[tuple[str, str, str, int]] = []
+rows: list[tuple[str, str, str, int, str]] = []
 OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
+supports_avif = "AVIF" in Image.registered_extensions().values()
 
 for source in sorted(IMAGE_ROOT.rglob("*")):
     if not source.is_file() or should_skip(source):
@@ -55,22 +56,35 @@ for source in sorted(IMAGE_ROOT.rglob("*")):
 
         for width in sorted(set(target_widths)):
             optimized = resize_image(image, width)
-            target = OUTPUT_ROOT / stem_path.parent / f"{stem_path.name}-{width}.webp"
-            target.parent.mkdir(parents=True, exist_ok=True)
-            optimized.save(target, "WEBP", quality=84, method=6)
-            rows.append((str(relative).replace("\\", "/"), str(target.relative_to(IMAGE_ROOT)).replace("\\", "/"), human_size(source.stat().st_size), target.stat().st_size))
+            target_dir = OUTPUT_ROOT / stem_path.parent
+            target_dir.mkdir(parents=True, exist_ok=True)
+
+            jpg_target = target_dir / f"{stem_path.name}-{width}.jpg"
+            optimized.save(jpg_target, "JPEG", quality=86, optimize=True, progressive=True)
+            rows.append((str(relative).replace("\\", "/"), str(jpg_target.relative_to(IMAGE_ROOT)).replace("\\", "/"), human_size(source.stat().st_size), jpg_target.stat().st_size, "JPEG fallback"))
+
+            webp_target = target_dir / f"{stem_path.name}-{width}.webp"
+            optimized.save(webp_target, "WEBP", quality=84, method=6)
+            rows.append((str(relative).replace("\\", "/"), str(webp_target.relative_to(IMAGE_ROOT)).replace("\\", "/"), human_size(source.stat().st_size), webp_target.stat().st_size, "WebP"))
+
+            if supports_avif:
+                avif_target = target_dir / f"{stem_path.name}-{width}.avif"
+                optimized.save(avif_target, "AVIF", quality=52)
+                rows.append((str(relative).replace("\\", "/"), str(avif_target.relative_to(IMAGE_ROOT)).replace("\\", "/"), human_size(source.stat().st_size), avif_target.stat().st_size, "AVIF"))
 
 summary = [
     "# Asset report",
     "",
-    "Originální schválené vizualizace zůstávají v balíčku beze změny. Vedle nich jsou připravené lehčí WebP varianty pro produkční nasazení nebo následné napojení přes WordPress media pipeline.",
+    "Produkční šablona je napojená na responzivní `<picture>` výstup. Pro každou použitou vizualizaci vzniká JPEG fallback, WebP varianta a podle podpory knihovny také AVIF.",
     "",
-    "| Zdroj | WebP varianta | Původní velikost | WebP velikost |",
-    "| --- | --- | ---: | ---: |",
+    f"AVIF podpora v tomto běhu: {'ano' if supports_avif else 'ne'}.",
+    "",
+    "| Zdroj | Varianta | Formát | Původní velikost | Velikost varianty |",
+    "| --- | --- | --- | ---: | ---: |",
 ]
 
-for source, target, original_size, optimized_size in rows:
-    summary.append(f"| `{source}` | `{target}` | {original_size} | {human_size(optimized_size)} |")
+for source, target, original_size, optimized_size, label in rows:
+    summary.append(f"| `{source}` | `{target}` | {label} | {original_size} | {human_size(optimized_size)} |")
 
 REPORT.write_text("\n".join(summary) + "\n", encoding="utf-8")
 print(f"Created {len(rows)} optimized image variants.")
