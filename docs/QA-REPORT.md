@@ -4,14 +4,15 @@ Zdrojový commit schváleného statického webu: `1a8e2b5 Improve before after c
 
 Pracovní větev WordPress balíku: `feat/wordpress-production-theme`.
 
-Tato revize navazuje na release candidate commit: `4ff8caa Address WordPress RC review findings`.
+Tato revize navazuje na commit: `fbf38dd Complete homepage editorial admin`.
 
 ## Externě ověřeno před touto opravou
 
-Externí kontrola potvrdila, že předchozí RC balík byl technicky vhodný pro staging: ZIPy měly bezpečnou strukturu, 18 PHP souborů prošlo syntaktickou kontrolou na PHP 8.4.16, JavaScript prošel kontrolou syntaxe, `theme.json` byl platný, screenshot byl zmenšený, kontaktní formulář posílal `X-WP-Nonce`, stránka Novinky se nastavovala jako `page_for_posts`, menu používalo `wp_nav_menu()` a přetahovačka, mobilní menu i kontaktní formulář fungovaly bez JavaScript chyb.
+Externí kontrola potvrdila správnou strukturu obou ZIPů, úspěšný PHP lint všech 20 PHP souborů, správnou syntaxi veřejného i administračního JavaScriptu a skutečnou implementaci nativních metaboxů homepage.
 
 ## Provedené opravy v této revizi
 
+- Ukládání JSON metadat respektuje WordPress slashing pravidla: JSON se předává do `update_post_meta()` přes `wp_slash()` a sanitizační callback jej znovu neodslashuje.
 - Homepage dostala datovou vrstvu `inc/content.php` se schválenými fallbacky.
 - Front page nově čte obsah sekcí O projektu, Popis areálu, Jak bude areál fungovat, Bezpečnost / Doprava / Životní prostředí a Přínosy z editovatelných dat.
 - Patička nově čte investorské údaje a informační upozornění z editovatelných dat.
@@ -30,7 +31,7 @@ Externí kontrola potvrdila, že předchozí RC balík byl technicky vhodný pro
 - Kontrola starého JSON editoru FAQ: ve WordPress PHP souborech nebyl nalezen původní text „FAQ položky JSON“.
 - ZIP balíčky byly znovu vytvořeny skriptem `tools/package-wordpress.py`.
 - Test extrakce ZIPů prošel: jedna kořenová složka, dopředná lomítka, žádné absolutní cesty.
-- Výsledné velikosti: `statek-cholupice-theme.zip` 19 462 896 B, `statek-cholupice-core.zip` 12 512 B.
+- Výsledné velikosti: `statek-cholupice-theme.zip` 19 462 896 B, `statek-cholupice-core.zip` 12 539 B.
 - Manifest potvrzuje 142 položek v šabloně a 6 položek v pluginu včetně `assets/admin-homepage.css` a `assets/admin-homepage.js`.
 
 ## Neprovedené kontroly v tomto lokálním prostředí

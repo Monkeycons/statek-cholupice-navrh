@@ -56,7 +56,7 @@ function statek_cholupice_core_sanitize_home_meta( $value, string $key = '' ): s
 	$value = is_scalar( $value ) ? (string) $value : '';
 	$field = statek_cholupice_core_home_fields()[ $key ] ?? null;
 	if ( $field && 'json' === $field['type'] ) {
-		$decoded = json_decode( wp_unslash( $value ), true );
+		$decoded = json_decode( $value, true );
 		return is_array( $decoded ) ? (string) wp_json_encode( $decoded, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) : '';
 	}
 	if ( $field && 'html' === $field['type'] ) {
@@ -442,7 +442,13 @@ function statek_cholupice_core_save_json_meta( int $post_id, string $key, array 
 		delete_post_meta( $post_id, $key );
 		return;
 	}
-	update_post_meta( $post_id, $key, wp_json_encode( $value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) );
+
+	$json = wp_json_encode( $value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES );
+	if ( false === $json ) {
+		return;
+	}
+
+	update_post_meta( $post_id, $key, wp_slash( $json ) );
 }
 
 function statek_cholupice_core_clean_textarea( $value, int $limit = 1200 ): string {
