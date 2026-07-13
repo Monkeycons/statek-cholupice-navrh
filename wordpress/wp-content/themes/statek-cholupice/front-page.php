@@ -134,7 +134,7 @@ get_header();
         <div class="topics">
           <?php foreach ( $topics as $topic ) : ?>
             <article class="topic topic-stacked <?php echo esc_attr( $topic['class'] ); ?>" id="<?php echo esc_attr( $topic['id'] ); ?>">
-              <figure class="topic-illustration"><?php echo statek_cholupice_editable_image( $topic['image'], array( 'sizes' => '(max-width: 980px) 100vw, 46vw' ) ); ?></figure>
+              <figure class="topic-illustration"><?php echo statek_cholupice_editable_image( $topic['image'], array( 'sizes' => '(max-width: 860px) calc(100vw - 48px), (max-width: 1280px) calc((100vw - 86px) * 0.56), 640px' ) ); ?></figure>
               <div class="topic-body">
                 <h2><?php echo esc_html( $topic['title'] ); ?></h2>
                 <p class="topic-motto"><?php echo esc_html( $topic['motto'] ); ?></p>

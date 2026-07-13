@@ -5,3 +5,8 @@
 - Kontaktní endpoint vrací stav podle `wp_mail()`, které samo o sobě negarantuje doručení. Na cílovém hostingu je nutné ověřit SMTP nebo jinou mailer konfiguraci.
 - Řazení používá číselné pole; drag and drop není součástí této verze.
 - ZIPy jsou release candidate a před produkčním nasazením vyžadují runtime test na čistém WordPressu.
+## Stav po 1.1.0-rc.2
+
+- Sablona byla zvysena na `1.1.0-rc.2`; companion plugin zustava `1.1.0-rc.1`.
+- V teto revizi nebyl menen administracni model, kontaktni formular ani pluginovy kod.
+- Ziva vizualni kontrola ve WordPress Playgroundu je doporucena zejmena pro otevrene tematicke sekce a blok Novinek na sirce 1440 px, 1920 px a mobilu 390 px.

@@ -48,3 +48,24 @@ PHP runtime v tomto lokálním prostředí není dostupný. Aktuálně upravené
 - ověřit media modal, alt text, vlastní hero attachment, odebrání attachmentu a responzivní `srcset`;
 - ověřit hash, relativní a externí HTTPS CTA a fallback pro `javascript:`, `data:` a `vbscript:`;
 - odeslat kontaktní formulář a potvrdit doručení přes konfiguraci cílového hostingu.
+## Dodatek 1.1.0-rc.2
+
+Aktualni kombinace balicku: sablona `1.1.0-rc.2`, companion plugin `1.1.0-rc.1`.
+
+Opravena byla pouze dvojice vizualnich regresi nalezenych v runtime testu Playgroundu:
+
+- Tematicke obrazky v sekcich Bezpecnost, Doprava a Zivotni prostredi pouzivaly pri desktopovem dvousloupci prilis obecny `sizes` atribut a pri otevrenem detailu se levy obrazovy panel mohl roztahovat na vysku textu. To vedlo hlavne u Zivotniho prostredi k optickemu zmekceni obrazu. Oprava nastavuje presnejsi `sizes` pro skutecnou sirku leveho panelu a drzi tematickou ilustraci v pomeru 16:9 misto natahovani na vysku otevreneho textu.
+- Pred opravou se pro desktopovy panel mohla pri beznem DPR nacitat 960px varianta; po oprave je pro 1440px a 1920px desktop vybirana 1280px nebo 1600/1672px varianta podle formatu a DPI. U Zivotniho prostredi jsou dostupne varianty 960, 1280 a 1600 px.
+- Karty Novinek mely zbytecne vysokou textovou cast a obraz pusobil prilis portretne. Oprava vynucuje 16:9 na klikacim obrazovem wrapperu, pridava spravne `sizes` pro nahledove obrazky, zmensuje vnitrni odsazeni, omezuje nadpis na 2 radky a perex na 3 radky. Celkovy obsah karty zustava dostupny pres detail clanku.
+
+Kontrola rozmeru podle CSS po oprave:
+
+- Tematicky obraz desktop 1440 px: rendered width priblizne 640 px, DPR 1 vybere minimalne 1280px zdroj pri dostupnosti; DPR 2 vybere nejvetsi dostupnou 1600/1672px variantu.
+- Tematicky obraz desktop 1920 px: rendered width zustava omezeny kontejnerem priblizne 640 px; nejvetsi dostupna varianta zabranuje upscalingu.
+- Novinky desktop 1440 px: 3 karty vedle sebe, karta priblizne 379 px, obraz priblizne 379 x 213 px, pomer 16:9.
+- Novinky tablet 1024 px: 2 karty vedle sebe, obraz zustava 16:9, bez horizontalniho overflow.
+- Novinky mobil 390 px: horizontalni scroll/snap zustava zachovan, karta ma sirku priblizne 82vw a obraz zustava 16:9.
+
+Neprovedene testy:
+
+- Plnohodnotny vizualni screenshot v zivem Playgroundu a PHP lint nebyly v tomto lokalnim prostredi znovu spusteny, protoze zde neni dostupny systemovy PHP runtime a network/browser runtime muze vyzadovat rucni pristup. ZIP struktura, verze a staticke kontroly byly znovu overeny lokalne.

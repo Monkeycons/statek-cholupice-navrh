@@ -2,7 +2,7 @@
   "$schema": "https://playground.wordpress.net/blueprint-schema.json",
   "meta": {
     "title": "Statek Cholupice - runtime test",
-    "description": "Docasna instance pro runtime kontrolu release candidate 1.1.0-rc.1.",
+    "description": "Docasna instance pro runtime kontrolu sablony 1.1.0-rc.2 a pluginu 1.1.0-rc.1.",
     "author": "Monkeycons"
   },
   "preferredVersions": {

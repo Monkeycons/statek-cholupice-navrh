@@ -1022,10 +1022,10 @@
 
     .topic-stacked .topic-illustration {
       margin: 0;
-      height: 100%;
+      height: auto;
       min-height: 0;
-      align-self: stretch;
-      aspect-ratio: auto;
+      align-self: start;
+      aspect-ratio: 16 / 9;
       border: 1px solid var(--line);
       border-radius: 4px;
       background: var(--sage);
@@ -1292,6 +1292,7 @@
 
     .news-track {
       display: flex;
+      align-items: stretch;
       gap: 22px;
       transition: transform .32s ease;
       will-change: transform;
@@ -1299,6 +1300,7 @@
 
     .news-card {
       display: flex;
+      height: auto;
       min-width: 0;
       flex: 0 0 calc((100% - 44px) / 3);
       flex-direction: column;
@@ -1335,7 +1337,13 @@
     .news-card-image {
       display: block;
       width: 100%;
+      height: 100%;
       aspect-ratio: 16 / 9;
+    }
+
+    .news-card > a {
+      flex: 0 0 auto;
+      overflow: hidden;
     }
 
     .news-card-image {
@@ -1348,11 +1356,11 @@
       display: flex;
       flex: 1;
       flex-direction: column;
-      padding: 24px;
+      padding: 18px 20px 20px;
     }
 
     .news-card-date {
-      margin: 0 0 10px;
+      margin: 0 0 8px;
       color: var(--muted);
       font-size: 13px;
       line-height: 1.4;
@@ -1361,12 +1369,12 @@
     .news-card h3 {
       display: -webkit-box;
       overflow: hidden;
-      margin: 0 0 10px;
+      margin: 0 0 8px;
       color: var(--graphite);
-      font-size: 23px;
+      font-size: 21px;
       line-height: 1.2;
       -webkit-box-orient: vertical;
-      -webkit-line-clamp: 3;
+      -webkit-line-clamp: 2;
     }
 
     .news-card-excerpt {
@@ -1375,16 +1383,16 @@
       margin: 0;
       color: var(--muted);
       font-size: 15px;
-      line-height: 1.55;
+      line-height: 1.5;
       -webkit-box-orient: vertical;
-      -webkit-line-clamp: 4;
+      -webkit-line-clamp: 3;
     }
 
     .news-card-link {
       display: inline-block;
       align-self: flex-start;
       margin-top: auto;
-      padding-top: 22px;
+      padding-top: 18px;
       color: var(--green-dark);
       font-weight: 800;
       text-decoration-thickness: 1px;

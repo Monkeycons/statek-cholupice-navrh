@@ -12,7 +12,8 @@ PLUGIN_ROOT = ROOT / "wordpress" / "wp-content" / "plugins" / "statek-cholupice-
 DIST_ROOT = ROOT / "dist"
 TEST_ROOT = DIST_ROOT / "zip-test"
 MANIFEST = DIST_ROOT / "ZIP-MANIFEST.txt"
-EXPECTED_VERSION = "1.1.0-rc.1"
+EXPECTED_THEME_VERSION = "1.1.0-rc.2"
+EXPECTED_PLUGIN_VERSION = "1.1.0-rc.1"
 
 
 def package_file_policy(path: Path, source_root: Path) -> str:
@@ -98,10 +99,10 @@ def test_extract(zip_path: Path, expected_root: str) -> None:
         raise RuntimeError(f"{zip_path.name} did not extract to {expected_root}")
 
 
-def test_version(zip_path: Path, member: str, marker: str) -> None:
+def test_version(zip_path: Path, member: str, marker: str, expected_version: str) -> None:
     with zipfile.ZipFile(zip_path) as archive:
         content = archive.read(member).decode("utf-8")
-    expected = f"{marker}{EXPECTED_VERSION}"
+    expected = f"{marker}{expected_version}"
     if expected not in content:
         raise RuntimeError(f"{zip_path.name} does not contain {expected!r} in {member}")
 
@@ -135,11 +136,12 @@ def main() -> None:
 
     test_extract(theme_zip, "statek-cholupice")
     test_extract(plugin_zip, "statek-cholupice-core")
-    test_version(theme_zip, "statek-cholupice/style.css", "Version: ")
+    test_version(theme_zip, "statek-cholupice/style.css", "Version: ", EXPECTED_THEME_VERSION)
     test_version(
         plugin_zip,
         "statek-cholupice-core/statek-cholupice-core.php",
         " * Version: ",
+        EXPECTED_PLUGIN_VERSION,
     )
     test_no_secret_signatures(theme_zip)
     test_no_secret_signatures(plugin_zip)
@@ -149,7 +151,8 @@ def main() -> None:
     lines = [
         "WordPress ZIP manifest",
         "",
-        f"Release candidate version: {EXPECTED_VERSION}",
+        f"Theme release candidate version: {EXPECTED_THEME_VERSION}",
+        f"Companion plugin version: {EXPECTED_PLUGIN_VERSION}",
         "",
         f"{theme_zip.name}: {len(theme_entries)} entries",
         *[f"  {entry}" for entry in theme_entries[:80]],

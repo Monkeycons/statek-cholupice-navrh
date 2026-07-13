@@ -37,6 +37,7 @@ $news_query = statek_cholupice_news_query( 6 );
 											'class'    => 'news-card-image',
 											'loading'  => 'lazy',
 											'decoding' => 'async',
+											'sizes'    => '(max-width: 860px) 82vw, (max-width: 1100px) calc((100vw - 70px) / 2), 379px',
 										)
 									);
 								} else {
@@ -45,7 +46,7 @@ $news_query = statek_cholupice_news_query( 6 );
 										'Vizualizace vstupu do areálu',
 										array(
 											'class' => 'news-card-image',
-											'sizes' => '(max-width: 860px) 88vw, 360px',
+											'sizes' => '(max-width: 860px) 82vw, (max-width: 1100px) calc((100vw - 70px) / 2), 379px',
 										)
 									);
 								}

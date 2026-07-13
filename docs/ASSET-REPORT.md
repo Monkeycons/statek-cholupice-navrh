@@ -123,3 +123,11 @@ AVIF podpora v tomto běhu: ano.
 | `statek_web_premium/vyvojove_centrum_premium_engineers.png` | `optimized/statek_web_premium/vyvojove_centrum_premium_engineers-1672.jpg` | JPEG fallback | 2.3 MB | 258.4 KB |
 | `statek_web_premium/vyvojove_centrum_premium_engineers.png` | `optimized/statek_web_premium/vyvojove_centrum_premium_engineers-1672.webp` | WebP | 2.3 MB | 171.4 KB |
 | `statek_web_premium/vyvojove_centrum_premium_engineers.png` | `optimized/statek_web_premium/vyvojove_centrum_premium_engineers-1672.avif` | AVIF | 2.3 MB | 82.6 KB |
+## Dodatek 1.1.0-rc.2
+
+Pro tematicke sekce Bezpecnost, Doprava a Zivotni prostredi se nezavadely nove obrazove soubory. Zmenilo se pouziti existujicich variant:
+
+- `sizes` tematickych obrazku: `(max-width: 860px) calc(100vw - 48px), (max-width: 1280px) calc((100vw - 86px) * 0.56), 640px`.
+- Tematicke obrazky zustavaji v AVIF/WebP/JPEG pipeline a maji pevny vizualni pomer 16:9, aby se pri otevreni textu nenatahovaly nad prirozene rozliseni.
+- Obrazky Novinek pouzivaji `sizes`: `(max-width: 860px) 82vw, (max-width: 1100px) calc((100vw - 70px) / 2), 379px`.
+- Fallback obrazek Novinek dale pouziva optimalizovane varianty vstupni vizualizace, nikoli puvodni PNG.
