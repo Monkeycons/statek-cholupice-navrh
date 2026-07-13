@@ -151,6 +151,20 @@ function statek_cholupice_default_area_items(): array {
 	);
 }
 
+function statek_cholupice_stable_order_sort( array $items ): array {
+	usort(
+		$items,
+		static fn( $first, $second ) => ( $first['order'] <=> $second['order'] ) ?: ( $first['_position'] <=> $second['_position'] )
+	);
+	return array_map(
+		static function ( $item ) {
+			unset( $item['_position'] );
+			return $item;
+		},
+		$items
+	);
+}
+
 function statek_cholupice_area_items(): array {
 	$defaults = statek_cholupice_default_area_items();
 	$saved    = statek_cholupice_home_json_meta( 'statek_home_area_items', array() );
@@ -160,14 +174,14 @@ function statek_cholupice_area_items(): array {
 		$item = is_array( $saved[ $index ] ?? null ) ? $saved[ $index ] : array();
 		$items[] = array(
 			'order'      => isset( $item['order'] ) ? max( 1, min( 6, (int) $item['order'] ) ) : $index + 1,
+			'_position'  => $index,
 			'title'      => statek_cholupice_text_or_fallback( $item['title'] ?? '', $default['title'] ),
 			'paragraphs' => statek_cholupice_paragraphs_or_fallback( $item['paragraphs'] ?? array(), $default['paragraphs'], 3 ),
 			'image'      => statek_cholupice_image_data( $item['image'] ?? array(), $default['image'] ),
 		);
 	}
 
-	usort( $items, static fn( $a, $b ) => ( $a['order'] <=> $b['order'] ) );
-	return array_slice( $items, 0, 6 );
+	return array_slice( statek_cholupice_stable_order_sort( $items ), 0, 6 );
 }
 
 function statek_cholupice_default_operation(): array {
@@ -277,9 +291,9 @@ function statek_cholupice_benefits_data(): array {
 		$text    = statek_cholupice_text_or_fallback( $item['text'] ?? '', $fallback_card['text'] );
 		$order   = isset( $item['order'] ) ? max( 1, min( 6, (int) $item['order'] ) ) : (int) $fallback_card['order'];
 		$icon    = statek_cholupice_valid_icon( $item['icon'] ?? $fallback_card['icon'] );
-		$cards[] = compact( 'order', 'icon', 'title', 'text' );
+		$cards[] = compact( 'order', 'icon', 'title', 'text' ) + array( '_position' => $index );
 	}
-	usort( $cards, static fn( $a, $b ) => ( $a['order'] <=> $b['order'] ) );
+	$cards = statek_cholupice_stable_order_sort( $cards );
 
 	return array(
 		'heading' => statek_cholupice_text_or_fallback( $saved['heading'] ?? '', $default['heading'] ),

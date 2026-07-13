@@ -1,37 +1,34 @@
 # Editor Guide
 
-## Co se spravuje v administraci
+Tento návod platí pro release candidate `1.1.0-rc.1`. Obsah úvodní stránky se upravuje pouze na stránce nastavené ve WordPressu jako statická homepage (`page_on_front`). Metaboxy se na jiných stránkách nezobrazují.
 
-Novinky se spravují jako běžné příspěvky WordPressu. Plugin při nové instalaci vytvoří nebo najde stránku `Novinky` a nastaví ji jako blog index (`page_for_posts`), pokud už správce dříve nezvolil jinou stránku. Na homepage se zobrazí posledních 6 publikovaných příspěvků. Samostatný archiv novinek používá `home.php`, H1 „Novinky“ a standardní stránkování.
+## Hero a CTA
 
-V Nastavení > Statek Cholupice lze nastavit:
+- Texty hero sekce mají vlastní pole a zobrazený maximální počet znaků.
+- Hero obrázek vyberte přes tlačítko **Vybrat obrázek**. Doporučený rozměr je alespoň 1920 × 1080 px v poměru 16:9.
+- Hero je dekorativní, proto se u něj alt text nezadává.
+- Tlačítko **Odebrat vybraný obrázek** obnoví schválený optimalizovaný obrázek šablony.
+- Cíle CTA mohou být kotvy, například `#projekt`, relativní interní cesty nebo absolutní HTTPS adresy.
+- Výchozí cíle jsou `#projekt` a `#prinosy`. Neplatná nebo nebezpečná adresa se nahradí odpovídající výchozí kotvou.
 
-- e-mail pro kontaktní formulář a viditelné kontaktní odkazy,
-- URL zásad zpracování osobních údajů.
+## Obrázky a alt text
 
-Na stránce nastavené jako homepage jsou samostatné metaboxy „Statek Cholupice“. Zobrazují se pouze u stránky nastavené jako `page_on_front`, ne u ostatních běžných stránek.
+Všechna obrazová pole používají standardní WordPress knihovnu médií omezenou pouze na obrázky. Po výběru se uloží attachment ID a zobrazí náhled. U obsahových fotografií zkontrolujte alt text; při výměně se načte alt nové přílohy nebo se pole vyprázdní. Alt se nikdy nevytváří z názvu souboru. Každý vlastní obrázek lze odebrat a vrátit se tak k výchozí fotografii šablony.
 
-Spravovat lze:
+## Časté dotazy
 
-- hero texty a CTA tlačítka,
-- úvod sekce častých dotazů,
-- O projektu včetně hlavního obrázku a dvojice obrázků Před / Po,
-- šest částí areálu včetně pořadí, textů, obrázků a alt textů,
-- sekci „Jak bude areál fungovat“ včetně seznamů „bude“ a „nebude“,
-- sekce Bezpečnost, Doprava a Životní prostředí včetně rozklikávacího textu a ilustračních fotografií,
-- Přínosy včetně šesti karet, pořadí a předdefinované ikony,
-- Časté dotazy přes běžné repeater rozhraní bez ručního JSON,
-- kontaktní blok pod FAQ,
-- investorské údaje a upozornění v patičce.
+- Novou otázku přidejte tlačítkem **Přidat otázku**.
+- Pole **Pořadí** je číslo od 1 do 12. Nová otázka dostane automaticky další volné číslo.
+- Při stejném čísle zůstane zachováno pořadí položek ve formuláři; žádná otázka se neztratí.
+- Odpověď pište jako běžný text. Samostatné odstavce oddělte prázdným řádkem; jednoduché zalomení zůstane zalomením uvnitř odstavce.
+- Vyplněná otázka se před odebráním ještě potvrdí. Maximální počet je 12 položek.
 
-## Obrázky
+## Další editovatelný obsah
 
-Obrázky se vybírají přes standardní WordPress media modal. Pokud editor obrázek nevybere, web použije schválený výchozí obrázek ze šablony. Alt text lze upravit samostatně.
+Spravovat lze O projektu, části areálu, provoz, Bezpečnost, Dopravu, Životní prostředí, Přínosy, úvod FAQ, kontaktní blok a patičku. Novinky se spravují jako běžné příspěvky WordPressu. Nastavení kontaktního e-mailu a odkazu na ochranu osobních údajů je v **Nastavení > Statek Cholupice**.
 
-## FAQ
+## Délkové limity
 
-FAQ se needituje jako JSON. Každá otázka má vlastní řádek s polem „Otázka“ a „Odpověď“. Odpověď pište jako běžný text, odstavce oddělte prázdným řádkem. Maximální počet je 12 otázek.
+Každé pole zobrazuje svůj limit a stejnou hodnotu vynucuje server. Hlavní limity jsou: hero kicker 50 znaků, H1 90, hero text 320, CTA popisek 40, nadpis sekce 140, nadpis karty 90, motto 240, krátký perex a text přínosu 500, FAQ otázka 180 a odpověď 3000 znaků. Delší odstavce mají samostatný limit 1800 znaků.
 
-## Fallback
-
-Prázdná pole nepřepisují schválený výchozí obsah šablony. Pokud editor některou hodnotu smaže a uloží, návštěvnický web se vrátí k původnímu schválenému textu nebo obrázku.
+Prázdné obsahové pole obnoví schválený fallback šablony. Výjimkou jsou CTA adresy, které se při neplatné hodnotě bezpečně vrátí na výchozí kotvu.

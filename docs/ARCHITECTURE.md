@@ -1,20 +1,23 @@
 # Architektura
 
-Zdroj vizuálního návrhu je aktuální lokální statický web. WordPress balík je rozdělený na:
+Release candidate `1.1.0-rc.1` je rozdělený na šablonu `statek-cholupice` a companion plugin `statek-cholupice-core`.
 
-- šablonu `statek-cholupice`,
-- companion plugin `statek-cholupice-core`.
+Šablona řeší schválený vzhled, layout, front-endové interakce, navigaci, homepage, archiv novinek, metadata a responzivní vykreslení obrázků. Plugin řeší kontaktní REST endpoint, globální nastavení, idempotentní inicializaci webu a nativní administrační metaboxy bez ACF.
 
-Šablona řeší prezentaci, layout, responzivní obrázky, navigaci, homepage, archiv novinek a metadata.
+## Homepage data
 
-Plugin řeší:
+Schválený obsah je uložen jako fallback v `inc/content.php`. Redakční data jsou post meta stránky nastavené jako `page_on_front`. Jednoduchá pole jsou samostatná metadata; opakovatelné struktury jsou JSON s bezpečným WordPress slashing postupem. Sanitizace i HTML `maxlength` používají jednu centrální mapu limitů v companion pluginu.
 
-- kontaktní REST endpoint,
-- globální nastavení e-mailu a URL zásad,
-- idempotentní inicializaci homepage, stránky Novinky, blog indexu a primárního menu,
-- nativní metaboxová pole pro redakční editaci homepage bez ACF,
-- media modal pro výměnu obrázků a repeater rozhraní pro FAQ a opakovatelné seznamy.
+Repeatery používají jednotný token `__INDEX__` a lokální inkrementální čítač odvozený od nejvyššího existujícího indexu. Číselné pořadí se normalizuje na serveru a duplicity se řadí stabilně podle původní pozice.
 
-Výchozí schválený obsah homepage je uložen ve fallback helperu šablony `inc/content.php`. Pokud v administraci není uložená hodnota, front-end použije tento fallback. Uložená redakční data se drží jako post meta stránky nastavené jako `page_on_front`; patička je napojená na stejný zdroj, protože jde o obsah konkrétní prezentační microsite.
+## Obrázky
 
-Obrázky jsou obsloužené helperem `statek_cholupice_picture()`, který skládá AVIF, WebP a JPEG fallback varianty z `assets/images/optimized`. Hledání variant a čtení rozměrů se cachuje v rámci jednoho requestu, aby se neopakovalo `glob()` a `getimagesize()` pro stejné soubory. Velké originály zůstávají v pracovní složce jako zdroj, ale nejsou balené do produkčního ZIPu šablony.
+Výchozí obrázky zajišťuje `statek_cholupice_picture()`, který skládá AVIF, WebP a JPEG varianty z `assets/images/optimized`. Vlastní obsahové obrázky a hero se ukládají jako WordPress attachment ID.
+
+`statek_cholupice_hero_picture()` použije pro vlastní hero WordPress attachment API, které doplní rozměry, `srcset` a `sizes`; obrázek zůstává v původním wrapperu a zachovává schválený crop i overlay. Pokud attachment chybí nebo není platný obrázek, helper použije původní optimalizovanou picture pipeline šablony.
+
+## CTA a asset cache
+
+Hero CTA cíle mohou být bezpečné hash kotvy, relativní interní cesty nebo HTTPS adresy. Neplatná schémata se vracejí na `#projekt` nebo `#prinosy`. Veřejný výstup používá `esc_url()`.
+
+Veřejné i administrační CSS a JavaScript assety používají jako verzi `filemtime()` existujícího souboru a verzi šablony nebo pluginu pouze jako fallback.

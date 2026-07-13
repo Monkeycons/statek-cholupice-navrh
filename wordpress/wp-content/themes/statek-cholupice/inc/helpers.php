@@ -115,17 +115,28 @@ function statek_cholupice_faq_items(): array {
 		return statek_cholupice_default_faq_items();
 	}
 	$clean = array();
-	foreach ( array_slice( $items, 0, 12 ) as $item ) {
+	foreach ( array_slice( $items, 0, 12 ) as $index => $item ) {
 		if ( ! is_array( $item ) ) {
 			continue;
 		}
 		$question = sanitize_text_field( $item['question'] ?? '' );
 		$answer   = wp_kses_post( $item['answer'] ?? '' );
 		if ( '' !== $question && '' !== $answer ) {
-			$clean[] = compact( 'question', 'answer' );
+			$order   = isset( $item['order'] ) ? max( 1, min( 12, (int) $item['order'] ) ) : $index + 1;
+			$clean[] = compact( 'order', 'question', 'answer' ) + array( '_position' => $index );
 		}
 	}
-	return $clean ?: statek_cholupice_default_faq_items();
+	if ( ! $clean ) {
+		return statek_cholupice_default_faq_items();
+	}
+	usort( $clean, static fn( $first, $second ) => ( $first['order'] <=> $second['order'] ) ?: ( $first['_position'] <=> $second['_position'] ) );
+	return array_map(
+		static function ( $item ) {
+			unset( $item['_position'] );
+			return $item;
+		},
+		$clean
+	);
 }
 
 function statek_cholupice_image_variants( string $path, string $extension ): array {
@@ -264,6 +275,42 @@ function statek_cholupice_picture( string $path, string $alt, array $args = arra
 	$output .= '</picture>';
 
 	return $output;
+}
+
+function statek_cholupice_hero_picture(): string {
+	$image_id = absint( statek_cholupice_home_meta( 'statek_home_hero_image_id', '0' ) );
+	if ( $image_id && wp_attachment_is_image( $image_id ) ) {
+		$image = wp_get_attachment_image(
+			$image_id,
+			'full',
+			false,
+			array(
+				'class'         => 'hero-media-image',
+				'alt'           => '',
+				'sizes'         => '100vw',
+				'loading'       => 'eager',
+				'decoding'      => 'async',
+				'fetchpriority' => 'high',
+				'aria-hidden'   => 'true',
+			)
+		);
+		if ( $image ) {
+			return '<picture class="hero-media">' . $image . '</picture>';
+		}
+	}
+
+	return statek_cholupice_picture(
+		'images/hero_vizualizace/cholupice-hero-super-render-web-spravne.png',
+		'',
+		array(
+			'picture_class' => 'hero-media',
+			'class'         => 'hero-media-image',
+			'sizes'         => '100vw',
+			'loading'       => 'eager',
+			'fetchpriority' => 'high',
+			'aria_hidden'   => true,
+		)
+	);
 }
 
 function statek_cholupice_default_menu_items(): array {

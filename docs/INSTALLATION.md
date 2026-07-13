@@ -1,12 +1,14 @@
 # Instalace
 
-1. Nainstalujte ZIP šablony `dist/statek-cholupice-theme.zip`.
-2. Aktivujte šablonu Statek Cholupice.
-3. Nainstalujte a aktivujte plugin `dist/statek-cholupice-core.zip`.
-4. Při aktivaci plugin vytvoří homepage a pokud neexistuje primární menu, založí ho bez duplikování existujícího menu.
-5. V Nastavení > Statek Cholupice nastavte e-mail pro dotazy a URL zásad zpracování osobních údajů.
-6. Zkontrolujte Nastavení > Čtení, zda je správně vybraná statická homepage.
-7. Zkontrolujte menu v Vzhled > Menu. Pokud už bylo upravené ručně, plugin ho nepřepisuje.
-8. Otestujte kontaktní formulář na cílovém hostingu včetně doručování e-mailů.
+Balíčky šablony i companion pluginu mají verzi `1.1.0-rc.1`.
 
-Balíček je release candidate. Před veřejným spuštěním proveďte runtime test na čisté WordPress instalaci.
+1. Nainstalujte `dist/statek-cholupice-theme.zip` a aktivujte šablonu **Statek Cholupice**.
+2. Nainstalujte `dist/statek-cholupice-core.zip` a aktivujte plugin **Statek Cholupice Core**.
+3. Plugin při první aktivaci vytvoří nebo najde homepage a stránku Novinky. Existující nastavení ani ručně upravené menu neduplikuje.
+4. V **Nastavení > Čtení** ověřte správnou statickou homepage.
+5. V **Nastavení > Statek Cholupice** nastavte e-mail pro dotazy a URL zásad zpracování osobních údajů.
+6. Otevřete editaci homepage a zkontrolujte hero fallback, CTA adresy, obrázky a FAQ.
+7. Ověřte primární menu ve **Vzhled > Menu**.
+8. Otestujte kontaktní formulář a skutečné doručení e-mailu.
+
+Před veřejným spuštěním proveďte PHP lint a kompletní runtime test na čisté instalaci WordPressu se zapnutým `WP_DEBUG`.

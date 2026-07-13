@@ -1,7 +1,7 @@
 # Známá omezení
 
-- Lokální prostředí neobsahuje PHP ani čistou WordPress instalaci, proto nebyl proveden runtime test aktivace šablony, aktivace pluginu ani reálné odeslání přes `wp_mail()`.
-- Kontaktní endpoint vrací stav podle výsledku `wp_mail()`, ale samotné `wp_mail()` negarantuje doručení e-mailu. Na cílovém hostingu je nutné ověřit SMTP / mailer konfiguraci.
-- Homepage má nativní editaci hlavních obsahových sekcí přes post meta na stránce nastavené jako `page_on_front`. Metaboxy jsou záměrně dostupné pouze na této stránce, aby se obsah nespravoval duplicitně na běžných stránkách.
-- Editace je navržena bez ACF a bez dalších pluginů. Pokročilé typy polí, drag-and-drop řazení nebo redakční workflow proto nejsou součástí této verze.
-- ZIPy jsou připravené jako release candidate. Před produkčním nasazením je potřeba provést test na čistém WordPressu.
+- Lokální prostředí neobsahuje PHP runtime ani běžící čistou instalaci WordPressu. PHP lint, aktivace balíčků a reálné uložení metaboxů proto musí být ověřeny v následujícím WordPress Playground nebo staging testu.
+- Chování WordPress media modalu, generování `srcset` pro nově nahranou hero přílohu a návrat k fallbacku jsou implementované, ale čekají na potvrzení v reálné administraci.
+- Kontaktní endpoint vrací stav podle `wp_mail()`, které samo o sobě negarantuje doručení. Na cílovém hostingu je nutné ověřit SMTP nebo jinou mailer konfiguraci.
+- Řazení používá číselné pole; drag and drop není součástí této verze.
+- ZIPy jsou release candidate a před produkčním nasazením vyžadují runtime test na čistém WordPressu.

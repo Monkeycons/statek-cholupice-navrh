@@ -14,6 +14,7 @@
 }
 
 .statek-admin-card {
+	min-width: 0;
 	margin: 18px 0;
 	padding: 18px;
 	border: 1px solid #d7dfd9;
@@ -28,6 +29,7 @@
 
 .statek-admin-field {
 	display: block;
+	min-width: 0;
 	margin: 0 0 14px;
 }
 
@@ -41,7 +43,13 @@
 .statek-admin-field input,
 .statek-admin-field select,
 .statek-admin-field textarea {
+	box-sizing: border-box;
 	width: 100%;
+	max-width: 100%;
+}
+
+.statek-admin-field .statek-order-input {
+	width: 112px;
 	max-width: 100%;
 }
 
@@ -56,6 +64,7 @@
 .statek-admin-inline-row,
 .statek-admin-nested {
 	position: relative;
+	min-width: 0;
 	margin: 0 0 12px;
 	padding: 12px;
 	border: 1px solid #e2e7e3;
@@ -90,6 +99,20 @@
 
 .statek-repeater-add {
 	margin-top: 4px !important;
+}
+
+.statek-media-status {
+	margin: 8px 0 0;
+	color: #52605a;
+}
+
+.statek-media-status:empty {
+	display: none;
+}
+
+.statek-repeater,
+.statek-repeater-items {
+	min-width: 0;
 }
 
 @media (max-width: 782px) {

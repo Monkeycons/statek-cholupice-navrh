@@ -148,10 +148,9 @@ Theme Name: Statek Cholupice
 Theme URI: https://www.statekcholupice.cz/
 Author: Monkey Consulting
 Description: Lehká zakázková šablona pro projekt Statek Cholupice.
-Version: 1.0.0
+Version: 1.1.0-rc.1
 Text Domain: statek-cholupice
 Requires at least: 6.5
-Tested up to: 6.6
 Requires PHP: 8.0
 License: Proprietary
 */
@@ -565,7 +564,7 @@ write(path.join(pluginRoot, "statek-cholupice-core.php"), `<?php
 /**
  * Plugin Name: Statek Cholupice Core
  * Description: Projektové funkce pro web Statek Cholupice.
- * Version: 1.0.0
+ * Version: 1.1.0-rc.1
  * Author: Monkey Consulting
  * Text Domain: statek-cholupice
  */
@@ -574,7 +573,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'STATEK_CHOLUPICE_CORE_VERSION', '1.0.0' );
+define( 'STATEK_CHOLUPICE_CORE_VERSION', '1.1.0-rc.1' );
 
 require_once __DIR__ . '/includes/contact.php';
 require_once __DIR__ . '/includes/setup.php';

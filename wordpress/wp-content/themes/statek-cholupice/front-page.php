@@ -16,27 +16,14 @@ get_header();
 <main id="main-content">
 
     <section class="hero" id="uvod">
-      <?php
-      echo statek_cholupice_picture(
-        'images/hero_vizualizace/cholupice-hero-super-render-web-spravne.png',
-        '',
-        array(
-          'picture_class' => 'hero-media',
-          'class'         => 'hero-media-image',
-          'sizes'         => '100vw',
-          'loading'       => 'eager',
-          'fetchpriority' => 'high',
-          'aria_hidden'   => true,
-        )
-      );
-      ?>
+      <?php echo statek_cholupice_hero_picture(); ?>
       <div class="hero-inner">
         <div class="kicker"><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_hero_kicker', 'Revitalizace brownfieldu' ) ); ?></div>
         <h1><?php echo nl2br( esc_html( statek_cholupice_home_meta( 'statek_home_hero_title', 'Nový život pro Statek Cholupice' ) ) ); ?></h1>
         <p><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_hero_text', 'Citlivá přestavba historického areálu propojí bydlení, služby pro obyvatele, moderní výrobu a respekt k místu.' ) ); ?></p>
         <div class="hero-actions">
-          <a class="button" href="#projekt"><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_hero_primary', 'Poznat projekt' ) ); ?></a>
-          <a class="button secondary" href="#prinosy"><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_hero_secondary', 'Dobrý soused' ) ); ?></a>
+          <a class="button" href="<?php echo esc_url( statek_cholupice_home_meta( 'statek_home_hero_primary_url', '#projekt' ) ); ?>"><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_hero_primary', 'Poznat projekt' ) ); ?></a>
+          <a class="button secondary" href="<?php echo esc_url( statek_cholupice_home_meta( 'statek_home_hero_secondary_url', '#prinosy' ) ); ?>"><?php echo esc_html( statek_cholupice_home_meta( 'statek_home_hero_secondary', 'Dobrý soused' ) ); ?></a>
         </div>
       </div>
     </section>

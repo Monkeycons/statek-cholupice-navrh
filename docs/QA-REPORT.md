@@ -1,49 +1,50 @@
 # QA Report
 
-Zdrojový commit schváleného statického webu: `1a8e2b5 Improve before after comparison control`.
+Výchozí bod této revize: commit `a4cde36 Preserve FAQ answer paragraphs` na větvi `feat/wordpress-production-theme`.
 
-Pracovní větev WordPress balíku: `feat/wordpress-production-theme`.
+Release candidate šablony a companion pluginu: `1.1.0-rc.1`.
 
-Tato revize navazuje na commit: `fbf38dd Complete homepage editorial admin`.
+## Implementované opravy
 
-## Externě ověřeno před touto opravou
+- Repeatery používají pouze globálně nahrazovaný token `__INDEX__` a lokální inkrementální čítač od nejvyššího existujícího indexu.
+- Nová řazená položka dostane další volné číslo; server nahrazuje prázdné a neplatné hodnoty pozicí ve formuláři, omezuje rozsah a při duplicitách řadí stabilně.
+- Jedna centrální mapa řídí HTML `maxlength`, českou informaci editorovi i serverové zkrácení textů. Unicode fallback nevyžaduje `mbstring`.
+- Administrace umožňuje zvolit vlastní hero attachment a cíle obou CTA. Bez vlastního obrázku zůstává původní optimalizovaný fallback.
+- Media modal je omezený na obrázky. Výměna obrázku načte alt nové přílohy nebo pole vyprázdní; odebrání obnoví fallback.
+- Veřejné a administrační assety používají `filemtime()` s verzí balíčku jako fallbackem.
+- ZIP balení kontroluje kořenovou složku, cesty, verzi, extrakci a vylučuje vývojové nebo potenciálně citlivé soubory.
 
-Externí kontrola potvrdila správnou strukturu obou ZIPů, úspěšný PHP lint všech 20 PHP souborů, správnou syntaxi veřejného i administračního JavaScriptu a skutečnou implementaci nativních metaboxů homepage.
+## Provedené automatické kontroly
 
-## Provedené opravy v této revizi
+- Veřejný JavaScript: `node --check wordpress/wp-content/themes/statek-cholupice/assets/js/main.js` — **OK**.
+- Administrační JavaScript: `node --check wordpress/wp-content/plugins/statek-cholupice-core/assets/admin-homepage.js` — **OK**.
+- Repeater test `tools/test-homepage-admin.mjs` — **OK**: pět rychlých vložení, globální náhrada v `name`, `id`, `for`, ARIA a data atributech, nový index po mezeře a automatické pořadí pro prázdný seznam, duplicity i chybějící hodnotu.
+- Zdrojový preflight `tools/test-wordpress-preflight.py` — **OK**: centrální limity, `maxlength`, Unicode helper, media modal image-only, hero attachment API, CTA napojení a bezpečný JSON save.
+- JSON fixture — **OK** pro češtinu, `Výraz "brownfield"`, zpětná lomítka, HTTPS URL, víceřádkový text a HTML entitu.
+- FAQ převodní funkce — **OK**: její zdroj je shodný s commitem `a4cde36`; zachována je obsluha jednoho až tří odstavců, sousedních `<p>`, jednoduchého `<br>`, uvozovek a víceřádkového textu.
+- `git diff --check` — **OK**.
+- Python syntaxe balicího a preflight skriptu — **OK**.
+- ZIP extrakce — **OK** pro oba balíčky.
+- ZIP verze — **OK**, šablona i plugin obsahují `1.1.0-rc.1`.
+- ZIP bezpečnost — **OK**: jedna kořenová složka, dopředná lomítka, žádné absolutní nebo nadřazené cesty, `node_modules`, dočasné soubory, logy ani soubory klíčů.
 
-- Ukládání JSON metadat respektuje WordPress slashing pravidla: JSON se předává do `update_post_meta()` přes `wp_slash()` a sanitizační callback jej znovu neodslashuje.
-- Převod FAQ odpovědí mezi uloženým HTML a textovým editorem zachovává samostatné odstavce pomocí prázdného řádku; jednoduché `<br>` zůstává jedním zalomením.
-- Homepage dostala datovou vrstvu `inc/content.php` se schválenými fallbacky.
-- Front page nově čte obsah sekcí O projektu, Popis areálu, Jak bude areál fungovat, Bezpečnost / Doprava / Životní prostředí a Přínosy z editovatelných dat.
-- Patička nově čte investorské údaje a informační upozornění z editovatelných dat.
-- Companion plugin má samostatné metaboxy pro jednotlivé obsahové části homepage.
-- Obrázky v editovatelných sekcích lze měnit přes WordPress media modal včetně alt textů.
-- FAQ už se needituje jako ruční JSON, ale přes repeater s otázkou, odpovědí, pořadím, přidáním a odebráním položky.
-- Přínosy mají editovatelné karty, pořadí a výběr z předdefinovaných ikon.
-- Dokumentace byla aktualizována podle nové redakční administrace.
-- Produkční ZIPy byly znovu vytvořeny včetně nových admin assetů pluginu.
+Výsledné balíčky:
 
-## Lokálně ověřeno po opravě
+- `dist/statek-cholupice-theme.zip` — 19 463 253 B.
+- `dist/statek-cholupice-core.zip` — 16 046 B.
+- `dist/ZIP-MANIFEST.txt` — extrakční a verzovací kontrola **OK**.
 
-- JavaScript syntaxe webu: `node --check wordpress/wp-content/themes/statek-cholupice/assets/js/main.js` prošla bez chyby.
-- JavaScript syntaxe adminu: `node --check wordpress/wp-content/plugins/statek-cholupice-core/assets/admin-homepage.js` prošla bez chyby.
-- Kontrola diagnostických výpisů: ve WordPress PHP/JS souborech nebyl nalezen `console.log`.
-- Kontrola starého JSON editoru FAQ: ve WordPress PHP souborech nebyl nalezen původní text „FAQ položky JSON“.
-- ZIP balíčky byly znovu vytvořeny skriptem `tools/package-wordpress.py`.
-- Test extrakce ZIPů prošel: jedna kořenová složka, dopředná lomítka, žádné absolutní cesty.
-- Výsledné velikosti: `statek-cholupice-theme.zip` 19 462 896 B, `statek-cholupice-core.zip` 12 616 B.
-- Manifest potvrzuje 142 položek v šabloně a 6 položek v pluginu včetně `assets/admin-homepage.css` a `assets/admin-homepage.js`.
+## PHP kontrola
 
-## Neprovedené kontroly v tomto lokálním prostředí
+PHP runtime v tomto lokálním prostředí není dostupný. Aktuálně upravené PHP soubory proto nebylo možné pravdivě označit jako úspěšně lintované. Seznam všech 20 souborů pro následující runtime kontrolu je v `docs/PHP-LINT-FILES.txt`. Byl proveden zdrojový audit diffu, ale ten nenahrazuje `php -l`.
 
-Na tomto počítači není dostupný PHP runtime ani čistá WordPress instalace, proto zde nebylo možné znovu ověřit:
+## Zbývá pro WordPress runtime test
 
-- PHP lint nově upravených PHP souborů,
-- aktivaci šablony a pluginu po této konkrétní opravě,
-- WP_DEBUG=true v běžícím WordPressu,
-- reálné uložení všech nových metaboxů v administraci,
-- reálné odeslání kontaktního formuláře přes `wp_mail()`,
-- chování media modalu v běžící administraci WordPressu.
-
-Tyto body je potřeba krátce potvrdit na staging WordPressu před produkčním nasazením.
+- spustit `php -l` nad seznamem 20 PHP souborů;
+- nainstalovat a aktivovat oba ZIPy na čistém WordPressu se zapnutým `WP_DEBUG`;
+- uložit texty na hranici limitu a o znak delší včetně češtiny, emoji, více řádků a HTML entity;
+- ověřit JSON round-trip přes skutečné `update_post_meta()`;
+- v administraci rychle přidat, odebrat, seřadit, uložit a znovu načíst FAQ a zkontrolovat DOM bez duplicitních ID;
+- ověřit media modal, alt text, vlastní hero attachment, odebrání attachmentu a responzivní `srcset`;
+- ověřit hash, relativní a externí HTTPS CTA a fallback pro `javascript:`, `data:` a `vbscript:`;
+- odeslat kontaktní formulář a potvrdit doručení přes konfiguraci cílového hostingu.

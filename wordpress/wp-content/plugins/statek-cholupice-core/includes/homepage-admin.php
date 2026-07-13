@@ -9,29 +9,141 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+function statek_cholupice_core_field_limits(): array {
+	return array(
+		'hero_kicker'      => 50,
+		'hero_title'       => 90,
+		'hero_text'        => 320,
+		'cta_label'        => 40,
+		'cta_url'          => 2048,
+		'section_heading'  => 140,
+		'card_heading'     => 90,
+		'motto'            => 240,
+		'short_intro'      => 500,
+		'benefit_text'     => 500,
+		'list_text'        => 700,
+		'long_paragraph'   => 1800,
+		'faq_question'     => 180,
+		'faq_answer'       => 3000,
+		'contact_heading'  => 140,
+		'rich_text'        => 900,
+		'footer_short'     => 500,
+		'footer_text'      => 1200,
+		'alt_text'         => 180,
+	);
+}
+
+function statek_cholupice_core_field_limit( string $key ): int {
+	$limits = statek_cholupice_core_field_limits();
+	return isset( $limits[ $key ] ) ? (int) $limits[ $key ] : 0;
+}
+
+function statek_cholupice_core_unicode_substr( string $value, int $limit ): string {
+	if ( $limit <= 0 ) {
+		return $value;
+	}
+	if ( function_exists( 'mb_substr' ) ) {
+		return (string) mb_substr( $value, 0, $limit, 'UTF-8' );
+	}
+	$match_count = preg_match_all( '/./us', $value, $characters );
+	if ( false !== $match_count ) {
+		return implode( '', array_slice( $characters[0], 0, $limit ) );
+	}
+	return substr( $value, 0, $limit );
+}
+
+function statek_cholupice_core_clean_html( $value, int $limit ): string {
+	$value = statek_cholupice_core_unicode_substr( (string) $value, $limit );
+	return trim( force_balance_tags( wp_kses_post( $value ) ) );
+}
+
+function statek_cholupice_core_cta_url_fallback( string $key ): string {
+	return 'statek_home_hero_secondary_url' === $key ? '#prinosy' : '#projekt';
+}
+
+function statek_cholupice_core_sanitize_cta_url( $value, string $fallback ): string {
+	$value = trim( statek_cholupice_core_unicode_substr( (string) $value, statek_cholupice_core_field_limit( 'cta_url' ) ) );
+	if ( '' === $value ) {
+		return $fallback;
+	}
+	if ( str_starts_with( $value, '#' ) ) {
+		return preg_match( '/^#[A-Za-z][A-Za-z0-9_.:-]*$/', $value ) ? $value : $fallback;
+	}
+	if ( preg_match( '/[\\x00-\\x20\\x7f]/', $value ) || str_contains( $value, '\\' ) || str_starts_with( $value, '//' ) ) {
+		return $fallback;
+	}
+
+	$parts  = wp_parse_url( $value );
+	$scheme = is_array( $parts ) && isset( $parts['scheme'] ) ? strtolower( (string) $parts['scheme'] ) : '';
+	if ( '' !== $scheme ) {
+		if ( 'https' !== $scheme || empty( $parts['host'] ) ) {
+			return $fallback;
+		}
+		$clean = esc_url_raw( $value, array( 'https' ) );
+		return '' !== $clean ? $clean : $fallback;
+	}
+
+	if ( ! preg_match( '#^(?:/(?!/)|\.{1,2}/|\?|[A-Za-z0-9_-])#', $value ) ) {
+		return $fallback;
+	}
+	$prefixed = ! str_starts_with( $value, '/' ) && ! str_starts_with( $value, '?' );
+	$clean    = esc_url_raw( $prefixed ? './' . $value : $value, array( 'https' ) );
+	if ( $prefixed && str_starts_with( $clean, './' ) ) {
+		$clean = substr( $clean, 2 );
+	}
+	return '' !== $clean ? $clean : $fallback;
+}
+
+function statek_cholupice_core_clean_image_id( $value ): int {
+	$image_id = absint( $value );
+	return $image_id && wp_attachment_is_image( $image_id ) ? $image_id : 0;
+}
+
+function statek_cholupice_core_normalize_order( $value, int $position, int $maximum ): int {
+	$order = is_scalar( $value ) && preg_match( '/^[0-9]+$/', trim( (string) $value ) ) ? (int) $value : $position + 1;
+	return max( 1, min( $maximum, $order ) );
+}
+
+function statek_cholupice_core_stable_order_sort( array $items ): array {
+	usort(
+		$items,
+		static fn( $first, $second ) => ( $first['order'] <=> $second['order'] ) ?: ( $first['_position'] <=> $second['_position'] )
+	);
+	return array_map(
+		static function ( $item ) {
+			unset( $item['_position'] );
+			return $item;
+		},
+		$items
+	);
+}
+
 function statek_cholupice_core_home_fields(): array {
 	return array(
-		'statek_home_hero_kicker'     => array( 'type' => 'text' ),
-		'statek_home_hero_title'      => array( 'type' => 'text' ),
-		'statek_home_hero_text'       => array( 'type' => 'text' ),
-		'statek_home_hero_primary'    => array( 'type' => 'text' ),
-		'statek_home_hero_secondary'  => array( 'type' => 'text' ),
-		'statek_home_faq_heading'     => array( 'type' => 'text' ),
-		'statek_home_faq_motto'       => array( 'type' => 'text' ),
-		'statek_home_faq_intro_1'     => array( 'type' => 'text' ),
-		'statek_home_faq_intro_2'     => array( 'type' => 'html' ),
-		'statek_home_contact_heading' => array( 'type' => 'text' ),
-		'statek_home_contact_motto'   => array( 'type' => 'text' ),
-		'statek_home_contact_text'    => array( 'type' => 'html' ),
-		'statek_home_area_heading'    => array( 'type' => 'text' ),
-		'statek_home_area_motto'      => array( 'type' => 'text' ),
-		'statek_home_project_blocks'  => array( 'type' => 'json' ),
-		'statek_home_area_items'      => array( 'type' => 'json' ),
-		'statek_home_operation'       => array( 'type' => 'json' ),
-		'statek_home_topics'          => array( 'type' => 'json' ),
-		'statek_home_benefits'        => array( 'type' => 'json' ),
-		'statek_home_faq_items'       => array( 'type' => 'json' ),
-		'statek_home_footer'          => array( 'type' => 'json' ),
+		'statek_home_hero_kicker'        => array( 'type' => 'text', 'limit' => 'hero_kicker' ),
+		'statek_home_hero_title'         => array( 'type' => 'text', 'limit' => 'hero_title' ),
+		'statek_home_hero_text'          => array( 'type' => 'text', 'limit' => 'hero_text' ),
+		'statek_home_hero_primary'       => array( 'type' => 'text', 'limit' => 'cta_label' ),
+		'statek_home_hero_secondary'     => array( 'type' => 'text', 'limit' => 'cta_label' ),
+		'statek_home_hero_primary_url'   => array( 'type' => 'url', 'limit' => 'cta_url' ),
+		'statek_home_hero_secondary_url' => array( 'type' => 'url', 'limit' => 'cta_url' ),
+		'statek_home_hero_image_id'      => array( 'type' => 'image_id' ),
+		'statek_home_faq_heading'        => array( 'type' => 'text', 'limit' => 'section_heading' ),
+		'statek_home_faq_motto'          => array( 'type' => 'text', 'limit' => 'motto' ),
+		'statek_home_faq_intro_1'        => array( 'type' => 'text', 'limit' => 'short_intro' ),
+		'statek_home_faq_intro_2'        => array( 'type' => 'html', 'limit' => 'rich_text' ),
+		'statek_home_contact_heading'    => array( 'type' => 'text', 'limit' => 'contact_heading' ),
+		'statek_home_contact_motto'      => array( 'type' => 'text', 'limit' => 'motto' ),
+		'statek_home_contact_text'       => array( 'type' => 'html', 'limit' => 'rich_text' ),
+		'statek_home_area_heading'       => array( 'type' => 'text', 'limit' => 'section_heading' ),
+		'statek_home_area_motto'         => array( 'type' => 'text', 'limit' => 'motto' ),
+		'statek_home_project_blocks'     => array( 'type' => 'json' ),
+		'statek_home_area_items'         => array( 'type' => 'json' ),
+		'statek_home_operation'          => array( 'type' => 'json' ),
+		'statek_home_topics'             => array( 'type' => 'json' ),
+		'statek_home_benefits'           => array( 'type' => 'json' ),
+		'statek_home_faq_items'          => array( 'type' => 'json' ),
+		'statek_home_footer'             => array( 'type' => 'json' ),
 	);
 }
 
@@ -60,9 +172,15 @@ function statek_cholupice_core_sanitize_home_meta( $value, string $key = '' ): s
 		return is_array( $decoded ) ? (string) wp_json_encode( $decoded, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES ) : '';
 	}
 	if ( $field && 'html' === $field['type'] ) {
-		return wp_kses_post( $value );
+		return statek_cholupice_core_clean_html( $value, statek_cholupice_core_field_limit( $field['limit'] ?? '' ) );
 	}
-	return sanitize_textarea_field( $value );
+	if ( $field && 'url' === $field['type'] ) {
+		return statek_cholupice_core_sanitize_cta_url( $value, statek_cholupice_core_cta_url_fallback( $key ) );
+	}
+	if ( $field && 'image_id' === $field['type'] ) {
+		return (string) statek_cholupice_core_clean_image_id( $value );
+	}
+	return statek_cholupice_core_clean_textarea( $value, statek_cholupice_core_field_limit( $field['limit'] ?? '' ) );
 }
 
 function statek_cholupice_core_is_front_page_edit( ?WP_Post $post ): bool {
@@ -111,10 +229,16 @@ function statek_cholupice_core_enqueue_home_admin( string $hook ): void {
 		return;
 	}
 
-	$base_url = plugin_dir_url( dirname( __DIR__ ) . '/statek-cholupice-core.php' );
+	$plugin_file = dirname( __DIR__ ) . '/statek-cholupice-core.php';
+	$base_url    = plugin_dir_url( $plugin_file );
+	$base_path   = plugin_dir_path( $plugin_file );
+	$css_path    = $base_path . 'assets/admin-homepage.css';
+	$js_path     = $base_path . 'assets/admin-homepage.js';
+	$css_version = file_exists( $css_path ) ? (string) filemtime( $css_path ) : STATEK_CHOLUPICE_CORE_VERSION;
+	$js_version  = file_exists( $js_path ) ? (string) filemtime( $js_path ) : STATEK_CHOLUPICE_CORE_VERSION;
 	wp_enqueue_media();
-	wp_enqueue_style( 'statek-cholupice-home-admin', $base_url . 'assets/admin-homepage.css', array(), STATEK_CHOLUPICE_CORE_VERSION );
-	wp_enqueue_script( 'statek-cholupice-home-admin', $base_url . 'assets/admin-homepage.js', array(), STATEK_CHOLUPICE_CORE_VERSION, true );
+	wp_enqueue_style( 'statek-cholupice-home-admin', $base_url . 'assets/admin-homepage.css', array(), $css_version );
+	wp_enqueue_script( 'statek-cholupice-home-admin', $base_url . 'assets/admin-homepage.js', array(), $js_version, true );
 }
 add_action( 'admin_enqueue_scripts', 'statek_cholupice_core_enqueue_home_admin' );
 
@@ -127,6 +251,65 @@ function statek_cholupice_core_meta_value( WP_Post $post, string $key, string $f
 	return '' !== trim( $value ) ? $value : $fallback;
 }
 
+function statek_cholupice_core_field_id( string $name ): string {
+	$name = str_replace( '__INDEX__', 'statekrepeaterindextoken', $name );
+	$id   = sanitize_key( str_replace( array( '[', ']' ), '_', $name ) );
+	return str_replace( 'statekrepeaterindextoken', '__INDEX__', $id );
+}
+
+function statek_cholupice_core_limit_key_for_name( string $name ): string {
+	$field = statek_cholupice_core_home_fields()[ $name ] ?? null;
+	if ( is_array( $field ) && ! empty( $field['limit'] ) ) {
+		return (string) $field['limit'];
+	}
+	if ( str_ends_with( $name, '[alt]' ) ) {
+		return 'alt_text';
+	}
+	if ( str_ends_with( $name, '[question]' ) ) {
+		return 'faq_question';
+	}
+	if ( str_ends_with( $name, '[answer]' ) ) {
+		return 'faq_answer';
+	}
+	if ( str_contains( $name, 'statek_home_benefits[cards]' ) && str_ends_with( $name, '[text]' ) ) {
+		return 'benefit_text';
+	}
+	if ( str_contains( $name, 'statek_home_topics' ) && str_ends_with( $name, '[title]' ) ) {
+		return 'section_heading';
+	}
+	if ( str_contains( $name, 'statek_home_topics' ) && str_ends_with( $name, '[intro]' ) ) {
+		return 'long_paragraph';
+	}
+	if ( str_contains( $name, 'statek_home_footer' ) ) {
+		if ( str_ends_with( $name, '[info_text]' ) || str_ends_with( $name, '[visuals_text]' ) ) {
+			return 'footer_text';
+		}
+		if ( str_ends_with( $name, '[info_heading]' ) || str_ends_with( $name, '[visuals_heading]' ) ) {
+			return 'section_heading';
+		}
+		return 'footer_short';
+	}
+	if ( str_contains( $name, '[paragraphs]' ) || str_contains( $name, '[details]' ) || str_contains( $name, '[intro][' ) ) {
+		return 'long_paragraph';
+	}
+	if ( str_ends_with( $name, '[heading]' ) ) {
+		return 'section_heading';
+	}
+	if ( str_ends_with( $name, '[motto]' ) ) {
+		return 'motto';
+	}
+	if ( str_ends_with( $name, '[intro]' ) ) {
+		return 'short_intro';
+	}
+	if ( str_ends_with( $name, '[title]' ) ) {
+		return 'card_heading';
+	}
+	if ( str_ends_with( $name, '[text]' ) ) {
+		return 'list_text';
+	}
+	return '';
+}
+
 function statek_cholupice_core_render_field( string $name, string $label, string $value, array $args = array() ): void {
 	$args = wp_parse_args(
 		$args,
@@ -135,18 +318,56 @@ function statek_cholupice_core_render_field( string $name, string $label, string
 			'rows'        => 3,
 			'description' => '',
 			'class'       => '',
+			'input_class' => '',
+			'limit'       => '',
+			'min'         => '',
+			'max'         => '',
+			'order'       => false,
 		)
 	);
-	$id = sanitize_key( str_replace( array( '[', ']' ), '_', $name ) );
+	$id        = statek_cholupice_core_field_id( $name );
+	$limit_key = $args['limit'] ?: statek_cholupice_core_limit_key_for_name( $name );
+	$maxlength = statek_cholupice_core_field_limit( (string) $limit_key );
+	$attrs     = array(
+		'id="' . esc_attr( $id ) . '"',
+		'name="' . esc_attr( $name ) . '"',
+	);
+	if ( $args['input_class'] ) {
+		$attrs[] = 'class="' . esc_attr( (string) $args['input_class'] ) . '"';
+	}
+	if ( $maxlength > 0 && 'number' !== $args['type'] ) {
+		$attrs[] = 'maxlength="' . esc_attr( (string) $maxlength ) . '"';
+	}
+	if ( '' !== (string) $args['min'] ) {
+		$attrs[] = 'min="' . esc_attr( (string) $args['min'] ) . '"';
+	}
+	if ( '' !== (string) $args['max'] ) {
+		$attrs[] = 'max="' . esc_attr( (string) $args['max'] ) . '"';
+	}
+	if ( $args['order'] ) {
+		$attrs[] = 'data-order-field';
+	}
 	echo '<label class="statek-admin-field ' . esc_attr( $args['class'] ) . '" for="' . esc_attr( $id ) . '">';
 	echo '<span>' . esc_html( $label ) . '</span>';
 	if ( 'textarea' === $args['type'] ) {
-		echo '<textarea id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" rows="' . esc_attr( (string) $args['rows'] ) . '">' . esc_textarea( $value ) . '</textarea>';
+		$attrs[] = 'rows="' . esc_attr( (string) $args['rows'] ) . '"';
+		echo '<textarea ' . implode( ' ', $attrs ) . '>' . esc_textarea( $value ) . '</textarea>';
 	} else {
-		echo '<input id="' . esc_attr( $id ) . '" name="' . esc_attr( $name ) . '" type="text" value="' . esc_attr( $value ) . '">';
+		if ( 'url' === $args['type'] ) {
+			$attrs[] = 'inputmode="url"';
+			$attrs[] = 'autocapitalize="off"';
+			$attrs[] = 'spellcheck="false"';
+		}
+		$attrs[] = 'type="' . esc_attr( 'url' === $args['type'] ? 'text' : (string) $args['type'] ) . '"';
+		$attrs[] = 'value="' . esc_attr( $value ) . '"';
+		echo '<input ' . implode( ' ', $attrs ) . '>';
 	}
-	if ( $args['description'] ) {
-		echo '<small>' . esc_html( $args['description'] ) . '</small>';
+	$description = trim( (string) $args['description'] );
+	if ( $maxlength > 0 ) {
+		$description = trim( $description . ' Maximálně ' . $maxlength . ' znaků.' );
+	}
+	if ( $description ) {
+		echo '<small>' . esc_html( $description ) . '</small>';
 	}
 	echo '</label>';
 }
@@ -163,45 +384,78 @@ function statek_cholupice_core_render_paragraphs( string $name, array $paragraph
 	statek_cholupice_core_render_paragraph_row( $name, '__INDEX__', '' );
 	echo '</template>';
 	echo '<button type="button" class="button statek-repeater-add">Přidat odstavec</button>';
-	echo '<small>Doporučení: kratší odstavce drží layout přehledný. Maximum ' . esc_html( (string) $max ) . '.</small>';
+	echo '<small>Doporučení: kratší odstavce drží layout přehledný. Maximum ' . esc_html( (string) $max ) . ' odstavců, každý nejvýše ' . esc_html( (string) statek_cholupice_core_field_limit( 'long_paragraph' ) ) . ' znaků.</small>';
 	echo '</div>';
 }
 
 function statek_cholupice_core_render_paragraph_row( string $name, $index, string $value ): void {
-	echo '<div class="statek-repeater-row statek-admin-inline-row">';
-	echo '<textarea name="' . esc_attr( $name . '[' . $index . ']' ) . '" rows="3">' . esc_textarea( $value ) . '</textarea>';
+	$field_name = $name . '[' . $index . ']';
+	$limit      = statek_cholupice_core_field_limit( 'long_paragraph' );
+	echo '<div class="statek-repeater-row statek-admin-inline-row" data-repeater-index="' . esc_attr( (string) $index ) . '">';
+	echo '<textarea id="' . esc_attr( statek_cholupice_core_field_id( $field_name ) ) . '" name="' . esc_attr( $field_name ) . '" rows="3" maxlength="' . esc_attr( (string) $limit ) . '">' . esc_textarea( $value ) . '</textarea>';
 	echo '<button type="button" class="button-link-delete statek-repeater-remove">Odebrat</button>';
 	echo '</div>';
 }
 
-function statek_cholupice_core_render_media_field( string $name, array $image, string $label ): void {
+function statek_cholupice_core_render_media_field( string $name, array $image, string $label, array $args = array() ): void {
+	$args = wp_parse_args(
+		$args,
+		array(
+			'id_name'      => $name . '[id]',
+			'show_alt'     => true,
+			'description'  => '',
+			'fallback_text' => 'Je použit schválený výchozí obrázek šablony.',
+		)
+	);
 	$id      = absint( $image['id'] ?? 0 );
 	$alt     = (string) ( $image['alt'] ?? '' );
 	$preview = $id ? wp_get_attachment_image_url( $id, 'thumbnail' ) : '';
-	echo '<div class="statek-admin-field statek-media-field">';
+	echo '<div class="statek-admin-field statek-media-field" data-fallback-text="' . esc_attr( (string) $args['fallback_text'] ) . '">';
 	echo '<span>' . esc_html( $label ) . '</span>';
-	echo '<input class="statek-media-id" name="' . esc_attr( $name . '[id]' ) . '" type="hidden" value="' . esc_attr( (string) $id ) . '">';
+	echo '<input class="statek-media-id" name="' . esc_attr( (string) $args['id_name'] ) . '" type="hidden" value="' . esc_attr( (string) $id ) . '">';
 	echo '<div class="statek-media-preview">';
 	if ( $preview ) {
 		echo '<img src="' . esc_url( $preview ) . '" alt="">';
 	} else {
-		echo '<em>Je použit schválený výchozí obrázek šablony.</em>';
+		echo '<em>' . esc_html( (string) $args['fallback_text'] ) . '</em>';
 	}
 	echo '</div>';
 	echo '<p><button type="button" class="button statek-media-select">Vybrat obrázek</button> <button type="button" class="button-link-delete statek-media-clear">Odebrat vybraný obrázek</button></p>';
-	statek_cholupice_core_render_field( $name . '[alt]', 'Alt text obrázku', $alt, array( 'description' => 'Krátce popište, co je na obrázku. Pokud necháte prázdné, použije se schválený fallback.' ) );
+	if ( $args['show_alt'] ) {
+		statek_cholupice_core_render_field( $name . '[alt]', 'Alt text obrázku', $alt, array( 'description' => 'Po výměně obrázku zkontrolujte jeho alt text. Nevytváří se automaticky z názvu souboru.' ) );
+	}
+	if ( $args['description'] ) {
+		echo '<small>' . esc_html( (string) $args['description'] ) . '</small>';
+	}
+	echo '<p class="statek-media-status" aria-live="polite"></p>';
 	echo '</div>';
 }
 
 function statek_cholupice_core_render_home_hero_metabox( WP_Post $post ): void {
+	$hero_image_id = absint( get_post_meta( $post->ID, 'statek_home_hero_image_id', true ) );
 	wp_nonce_field( 'statek_cholupice_home_save', 'statek_cholupice_home_nonce' );
-	echo '<p class="statek-admin-help">Prázdné pole ponechá schválený výchozí obsah. Tato část upravuje pouze texty, nikoli vzhled hero sekce.</p>';
+	echo '<p class="statek-admin-help">Prázdné textové pole ponechá schválený výchozí obsah. Vlastní obrázek a cíle tlačítek nemění schválený layout hero sekce.</p>';
 	echo '<div class="statek-admin-grid">';
-	statek_cholupice_core_render_field( 'statek_home_hero_kicker', 'Hero - malý nadpis', statek_cholupice_core_meta_value( $post, 'statek_home_hero_kicker', 'Revitalizace brownfieldu' ), array( 'description' => 'Doporučeně do 40 znaků.' ) );
-	statek_cholupice_core_render_field( 'statek_home_hero_title', 'Hero - hlavní nadpis', statek_cholupice_core_meta_value( $post, 'statek_home_hero_title', 'Nový život pro Statek Cholupice' ), array( 'description' => 'Doporučeně do 60 znaků.' ) );
+	statek_cholupice_core_render_field( 'statek_home_hero_kicker', 'Hero - malý nadpis', statek_cholupice_core_meta_value( $post, 'statek_home_hero_kicker', 'Revitalizace brownfieldu' ) );
+	statek_cholupice_core_render_field( 'statek_home_hero_title', 'Hero - hlavní nadpis', statek_cholupice_core_meta_value( $post, 'statek_home_hero_title', 'Nový život pro Statek Cholupice' ) );
 	statek_cholupice_core_render_field( 'statek_home_hero_text', 'Hero - podnadpis', statek_cholupice_core_meta_value( $post, 'statek_home_hero_text', 'Citlivá přestavba historického areálu propojí bydlení, služby pro obyvatele, moderní výrobu a respekt k místu.' ), array( 'type' => 'textarea', 'rows' => 3 ) );
 	statek_cholupice_core_render_field( 'statek_home_hero_primary', 'Hero - první tlačítko', statek_cholupice_core_meta_value( $post, 'statek_home_hero_primary', 'Poznat projekt' ) );
 	statek_cholupice_core_render_field( 'statek_home_hero_secondary', 'Hero - druhé tlačítko', statek_cholupice_core_meta_value( $post, 'statek_home_hero_secondary', 'Dobrý soused' ) );
+	statek_cholupice_core_render_field( 'statek_home_hero_primary_url', 'Cíl prvního tlačítka', statek_cholupice_core_meta_value( $post, 'statek_home_hero_primary_url', '#projekt' ), array( 'type' => 'url', 'description' => 'Kotva, interní cesta nebo bezpečná HTTPS URL.' ) );
+	statek_cholupice_core_render_field( 'statek_home_hero_secondary_url', 'Cíl druhého tlačítka', statek_cholupice_core_meta_value( $post, 'statek_home_hero_secondary_url', '#prinosy' ), array( 'type' => 'url', 'description' => 'Kotva, interní cesta nebo bezpečná HTTPS URL.' ) );
+	echo '<div class="statek-admin-wide">';
+	statek_cholupice_core_render_media_field(
+		'statek_home_hero_image',
+		array( 'id' => $hero_image_id, 'alt' => '' ),
+		'Hero obrázek',
+		array(
+			'id_name'       => 'statek_home_hero_image_id',
+			'show_alt'      => false,
+			'description'   => 'Doporučeno alespoň 1920 × 1080 px v poměru 16:9. Hero je dekorativní a používá prázdný alt text.',
+			'fallback_text' => 'Je použit schválený optimalizovaný hero obrázek šablony.',
+		)
+	);
+	echo '</div>';
 	statek_cholupice_core_render_field( 'statek_home_faq_heading', 'Časté dotazy - nadpis', statek_cholupice_core_meta_value( $post, 'statek_home_faq_heading', 'Na co se nás lidé ptají nejčastěji' ) );
 	statek_cholupice_core_render_field( 'statek_home_faq_motto', 'Časté dotazy - podnadpis', statek_cholupice_core_meta_value( $post, 'statek_home_faq_motto', 'Vše podstatné o proměně statku, budoucím provozu a jeho dopadech na okolí.' ), array( 'type' => 'textarea', 'rows' => 2 ) );
 	statek_cholupice_core_render_field( 'statek_home_faq_intro_1', 'Časté dotazy - úvodní odstavec', statek_cholupice_core_meta_value( $post, 'statek_home_faq_intro_1', 'Uvědomujeme si, že statek je významnou součástí Cholupic, a rozumíme proto tomu, že jeho plánovaná proměna vyvolává otázky. Na ty nejčastější zde otevřeně odpovídáme.' ), array( 'type' => 'textarea', 'rows' => 4, 'class' => 'statek-admin-wide' ) );
@@ -236,7 +490,7 @@ function statek_cholupice_core_render_area_metabox( WP_Post $post ): void {
 	foreach ( array_slice( $items, 0, 6 ) as $index => $item ) {
 		echo '<div class="statek-admin-card">';
 		echo '<h3>' . esc_html( (string) ( $item['title'] ?? 'Část areálu' ) ) . '</h3>';
-		statek_cholupice_core_render_field( "statek_home_area_items[$index][order]", 'Pořadí', (string) ( $item['order'] ?? ( $index + 1 ) ), array( 'description' => 'Číslo 1 až 6.' ) );
+		statek_cholupice_core_render_field( "statek_home_area_items[$index][order]", 'Pořadí', (string) ( $item['order'] ?? ( $index + 1 ) ), array( 'type' => 'number', 'min' => 1, 'max' => 6, 'order' => true, 'input_class' => 'statek-order-input', 'description' => 'Číslo 1 až 6.' ) );
 		statek_cholupice_core_render_field( "statek_home_area_items[$index][title]", 'Název', (string) ( $item['title'] ?? '' ) );
 		statek_cholupice_core_render_paragraphs( "statek_home_area_items[$index][paragraphs]", (array) ( $item['paragraphs'] ?? array() ), 'Odstavce', 3 );
 		statek_cholupice_core_render_media_field( "statek_home_area_items[$index][image]", (array) ( $item['image'] ?? array() ), 'Obrázek' );
@@ -271,7 +525,7 @@ function statek_cholupice_core_render_list_repeater( string $name, array $items,
 }
 
 function statek_cholupice_core_render_list_row( string $name, $index, array $item ): void {
-	echo '<div class="statek-repeater-row statek-admin-nested">';
+	echo '<div class="statek-repeater-row statek-admin-nested" data-repeater-index="' . esc_attr( (string) $index ) . '">';
 	statek_cholupice_core_render_field( $name . '[' . $index . '][title]', 'Nadpis položky', (string) ( $item['title'] ?? '' ) );
 	statek_cholupice_core_render_field( $name . '[' . $index . '][text]', 'Text položky', (string) ( $item['text'] ?? '' ), array( 'type' => 'textarea', 'rows' => 3 ) );
 	echo '<button type="button" class="button-link-delete statek-repeater-remove">Odebrat položku</button>';
@@ -302,7 +556,7 @@ function statek_cholupice_core_render_benefits_metabox(): void {
 	foreach ( array_slice( (array) ( $benefits['cards'] ?? array() ), 0, 6 ) as $index => $card ) {
 		echo '<div class="statek-admin-card">';
 		echo '<h3>Karta ' . esc_html( (string) ( $index + 1 ) ) . '</h3>';
-		statek_cholupice_core_render_field( "statek_home_benefits[cards][$index][order]", 'Pořadí', (string) ( $card['order'] ?? ( $index + 1 ) ) );
+		statek_cholupice_core_render_field( "statek_home_benefits[cards][$index][order]", 'Pořadí', (string) ( $card['order'] ?? ( $index + 1 ) ), array( 'type' => 'number', 'min' => 1, 'max' => 6, 'order' => true, 'input_class' => 'statek-order-input' ) );
 		echo '<label class="statek-admin-field"><span>Ikona</span><select name="' . esc_attr( "statek_home_benefits[cards][$index][icon]" ) . '">';
 		foreach ( statek_cholupice_core_icon_options() as $icon => $label ) {
 			echo '<option value="' . esc_attr( $icon ) . '"' . selected( $icon, (string) ( $card['icon'] ?? 'work' ), false ) . '>' . esc_html( $label ) . '</option>';
@@ -339,8 +593,8 @@ function statek_cholupice_core_render_faq_metabox(): void {
 }
 
 function statek_cholupice_core_render_faq_row( $index, array $item ): void {
-	echo '<div class="statek-admin-card statek-repeater-row statek-admin-nested">';
-	statek_cholupice_core_render_field( "statek_home_faq_items[$index][order]", 'Pořadí', (string) ( $item['order'] ?? ( is_numeric( $index ) ? ( (int) $index + 1 ) : '' ) ) );
+	echo '<div class="statek-admin-card statek-repeater-row statek-admin-nested" data-repeater-index="' . esc_attr( (string) $index ) . '">';
+	statek_cholupice_core_render_field( "statek_home_faq_items[$index][order]", 'Pořadí', (string) ( $item['order'] ?? ( is_numeric( $index ) ? ( (int) $index + 1 ) : '' ) ), array( 'type' => 'number', 'min' => 1, 'max' => 12, 'order' => true, 'input_class' => 'statek-order-input' ) );
 	statek_cholupice_core_render_field( "statek_home_faq_items[$index][question]", 'Otázka', (string) ( $item['question'] ?? '' ) );
 	statek_cholupice_core_render_field( "statek_home_faq_items[$index][answer]", 'Odpověď', statek_cholupice_core_answer_to_edit_text( (string) ( $item['answer'] ?? '' ) ), array( 'type' => 'textarea', 'rows' => 6 ) );
 	echo '<button type="button" class="button-link-delete statek-repeater-remove">Odebrat otázku</button>';
@@ -389,11 +643,22 @@ function statek_cholupice_core_save_home_metabox( int $post_id ): void {
 		return;
 	}
 
-	foreach ( statek_cholupice_core_scalar_save_fields() as $key => $type ) {
+	foreach ( statek_cholupice_core_scalar_save_fields() as $key => $field ) {
 		if ( ! array_key_exists( $key, $_POST ) ) {
 			continue;
 		}
-		$value = 'html' === $type ? wp_kses_post( wp_unslash( $_POST[ $key ] ) ) : statek_cholupice_core_clean_textarea( wp_unslash( $_POST[ $key ] ), 1600 );
+		$raw   = wp_unslash( $_POST[ $key ] );
+		$type  = (string) ( $field['type'] ?? 'text' );
+		$limit = statek_cholupice_core_field_limit( (string) ( $field['limit'] ?? '' ) );
+		if ( 'image_id' === $type ) {
+			$value = (string) statek_cholupice_core_clean_image_id( $raw );
+		} elseif ( 'url' === $type ) {
+			$value = statek_cholupice_core_sanitize_cta_url( $raw, statek_cholupice_core_cta_url_fallback( $key ) );
+		} elseif ( 'html' === $type ) {
+			$value = statek_cholupice_core_clean_html( $raw, $limit );
+		} else {
+			$value = statek_cholupice_core_clean_textarea( $raw, $limit );
+		}
 		statek_cholupice_core_update_or_delete_meta( $post_id, $key, $value );
 	}
 
@@ -408,21 +673,9 @@ function statek_cholupice_core_save_home_metabox( int $post_id ): void {
 add_action( 'save_post_page', 'statek_cholupice_core_save_home_metabox' );
 
 function statek_cholupice_core_scalar_save_fields(): array {
-	return array(
-		'statek_home_hero_kicker'     => 'text',
-		'statek_home_hero_title'      => 'text',
-		'statek_home_hero_text'       => 'text',
-		'statek_home_hero_primary'    => 'text',
-		'statek_home_hero_secondary'  => 'text',
-		'statek_home_faq_heading'     => 'text',
-		'statek_home_faq_motto'       => 'text',
-		'statek_home_faq_intro_1'     => 'text',
-		'statek_home_faq_intro_2'     => 'html',
-		'statek_home_contact_heading' => 'text',
-		'statek_home_contact_motto'   => 'text',
-		'statek_home_contact_text'    => 'html',
-		'statek_home_area_heading'    => 'text',
-		'statek_home_area_motto'      => 'text',
+	return array_filter(
+		statek_cholupice_core_home_fields(),
+		static fn( $field ) => 'json' !== ( $field['type'] ?? '' )
 	);
 }
 
@@ -435,7 +688,7 @@ function statek_cholupice_core_post_array( string $key ): array {
 
 function statek_cholupice_core_update_or_delete_meta( int $post_id, string $key, string $value ): void {
 	$value = trim( $value );
-	if ( '' === $value ) {
+	if ( '' === $value || ( 'statek_home_hero_image_id' === $key && '0' === $value ) ) {
 		delete_post_meta( $post_id, $key );
 		return;
 	}
@@ -458,10 +711,7 @@ function statek_cholupice_core_save_json_meta( int $post_id, string $key, array 
 
 function statek_cholupice_core_clean_textarea( $value, int $limit = 1200 ): string {
 	$value = sanitize_textarea_field( (string) $value );
-	if ( function_exists( 'mb_substr' ) ) {
-		return trim( mb_substr( $value, 0, $limit ) );
-	}
-	return trim( substr( $value, 0, $limit ) );
+	return trim( statek_cholupice_core_unicode_substr( $value, $limit ) );
 }
 
 function statek_cholupice_core_clean_paragraphs( $value, int $max = 6, int $limit = 1200 ): array {
@@ -479,8 +729,8 @@ function statek_cholupice_core_clean_paragraphs( $value, int $max = 6, int $limi
 function statek_cholupice_core_clean_image( $value ): array {
 	$value = is_array( $value ) ? $value : array();
 	return array(
-		'id'  => absint( $value['id'] ?? 0 ),
-		'alt' => statek_cholupice_core_clean_textarea( $value['alt'] ?? '', 180 ),
+		'id'  => statek_cholupice_core_clean_image_id( $value['id'] ?? 0 ),
+		'alt' => statek_cholupice_core_clean_textarea( $value['alt'] ?? '', statek_cholupice_core_field_limit( 'alt_text' ) ),
 	);
 }
 
@@ -489,8 +739,8 @@ function statek_cholupice_core_clean_project_blocks( array $raw ): array {
 	for ( $index = 0; $index < 2; $index++ ) {
 		$item  = is_array( $raw[ $index ] ?? null ) ? $raw[ $index ] : array();
 		$block = array(
-			'title'      => statek_cholupice_core_clean_textarea( $item['title'] ?? '', 180 ),
-			'paragraphs' => statek_cholupice_core_clean_paragraphs( $item['paragraphs'] ?? array(), 5, 1400 ),
+			'title'      => statek_cholupice_core_clean_textarea( $item['title'] ?? '', statek_cholupice_core_field_limit( 'card_heading' ) ),
+			'paragraphs' => statek_cholupice_core_clean_paragraphs( $item['paragraphs'] ?? array(), 5, statek_cholupice_core_field_limit( 'long_paragraph' ) ),
 		);
 		if ( 0 === $index ) {
 			$block['image'] = statek_cholupice_core_clean_image( $item['image'] ?? array() );
@@ -510,13 +760,14 @@ function statek_cholupice_core_clean_area_items( array $raw ): array {
 			continue;
 		}
 		$items[] = array(
-			'order'      => max( 1, min( 6, absint( $item['order'] ?? ( $index + 1 ) ) ) ),
-			'title'      => statek_cholupice_core_clean_textarea( $item['title'] ?? '', 120 ),
-			'paragraphs' => statek_cholupice_core_clean_paragraphs( $item['paragraphs'] ?? array(), 3, 1200 ),
+			'order'      => statek_cholupice_core_normalize_order( $item['order'] ?? '', (int) $index, 6 ),
+			'_position'  => (int) $index,
+			'title'      => statek_cholupice_core_clean_textarea( $item['title'] ?? '', statek_cholupice_core_field_limit( 'card_heading' ) ),
+			'paragraphs' => statek_cholupice_core_clean_paragraphs( $item['paragraphs'] ?? array(), 3, statek_cholupice_core_field_limit( 'long_paragraph' ) ),
 			'image'      => statek_cholupice_core_clean_image( $item['image'] ?? array() ),
 		);
 	}
-	return $items;
+	return statek_cholupice_core_stable_order_sort( $items );
 }
 
 function statek_cholupice_core_clean_list_items( $raw, int $max = 6 ): array {
@@ -526,8 +777,8 @@ function statek_cholupice_core_clean_list_items( $raw, int $max = 6 ): array {
 		if ( ! is_array( $item ) ) {
 			continue;
 		}
-		$title = statek_cholupice_core_clean_textarea( $item['title'] ?? '', 140 );
-		$text  = statek_cholupice_core_clean_textarea( $item['text'] ?? '', 700 );
+		$title = statek_cholupice_core_clean_textarea( $item['title'] ?? '', statek_cholupice_core_field_limit( 'card_heading' ) );
+		$text  = statek_cholupice_core_clean_textarea( $item['text'] ?? '', statek_cholupice_core_field_limit( 'list_text' ) );
 		if ( '' !== $title && '' !== $text ) {
 			$items[] = compact( 'title', 'text' );
 		}
@@ -537,9 +788,9 @@ function statek_cholupice_core_clean_list_items( $raw, int $max = 6 ): array {
 
 function statek_cholupice_core_clean_operation( array $raw ): array {
 	return array(
-		'heading' => statek_cholupice_core_clean_textarea( $raw['heading'] ?? '', 120 ),
-		'motto'   => statek_cholupice_core_clean_textarea( $raw['motto'] ?? '', 160 ),
-		'intro'   => statek_cholupice_core_clean_paragraphs( $raw['intro'] ?? array(), 4, 1200 ),
+		'heading' => statek_cholupice_core_clean_textarea( $raw['heading'] ?? '', statek_cholupice_core_field_limit( 'section_heading' ) ),
+		'motto'   => statek_cholupice_core_clean_textarea( $raw['motto'] ?? '', statek_cholupice_core_field_limit( 'motto' ) ),
+		'intro'   => statek_cholupice_core_clean_paragraphs( $raw['intro'] ?? array(), 4, statek_cholupice_core_field_limit( 'long_paragraph' ) ),
 		'include' => statek_cholupice_core_clean_list_items( $raw['include'] ?? array(), 6 ),
 		'exclude' => statek_cholupice_core_clean_list_items( $raw['exclude'] ?? array(), 6 ),
 	);
@@ -552,10 +803,10 @@ function statek_cholupice_core_clean_topics( array $raw ): array {
 			continue;
 		}
 		$topics[] = array(
-			'title'   => statek_cholupice_core_clean_textarea( $item['title'] ?? '', 120 ),
-			'motto'   => statek_cholupice_core_clean_textarea( $item['motto'] ?? '', 180 ),
-			'intro'   => statek_cholupice_core_clean_textarea( $item['intro'] ?? '', 1400 ),
-			'details' => statek_cholupice_core_clean_paragraphs( $item['details'] ?? array(), 8, 1400 ),
+			'title'   => statek_cholupice_core_clean_textarea( $item['title'] ?? '', statek_cholupice_core_field_limit( 'section_heading' ) ),
+			'motto'   => statek_cholupice_core_clean_textarea( $item['motto'] ?? '', statek_cholupice_core_field_limit( 'motto' ) ),
+			'intro'   => statek_cholupice_core_clean_textarea( $item['intro'] ?? '', statek_cholupice_core_field_limit( 'long_paragraph' ) ),
+			'details' => statek_cholupice_core_clean_paragraphs( $item['details'] ?? array(), 8, statek_cholupice_core_field_limit( 'long_paragraph' ) ),
 			'image'   => statek_cholupice_core_clean_image( $item['image'] ?? array() ),
 		);
 	}
@@ -568,24 +819,25 @@ function statek_cholupice_core_clean_benefits( array $raw ): array {
 		if ( ! is_array( $item ) ) {
 			continue;
 		}
-		$title = statek_cholupice_core_clean_textarea( $item['title'] ?? '', 120 );
-		$text  = statek_cholupice_core_clean_textarea( $item['text'] ?? '', 1000 );
+		$title = statek_cholupice_core_clean_textarea( $item['title'] ?? '', statek_cholupice_core_field_limit( 'card_heading' ) );
+		$text  = statek_cholupice_core_clean_textarea( $item['text'] ?? '', statek_cholupice_core_field_limit( 'benefit_text' ) );
 		if ( '' === $title || '' === $text ) {
 			continue;
 		}
 		$icon    = sanitize_key( $item['icon'] ?? 'work' );
 		$cards[] = array(
-			'order' => max( 1, min( 6, absint( $item['order'] ?? ( $index + 1 ) ) ) ),
-			'icon'  => array_key_exists( $icon, statek_cholupice_core_icon_options() ) ? $icon : 'work',
-			'title' => $title,
-			'text'  => $text,
+			'order'     => statek_cholupice_core_normalize_order( $item['order'] ?? '', (int) $index, 6 ),
+			'_position' => (int) $index,
+			'icon'      => array_key_exists( $icon, statek_cholupice_core_icon_options() ) ? $icon : 'work',
+			'title'     => $title,
+			'text'      => $text,
 		);
 	}
 	return array(
-		'heading' => statek_cholupice_core_clean_textarea( $raw['heading'] ?? '', 120 ),
-		'motto'   => statek_cholupice_core_clean_textarea( $raw['motto'] ?? '', 220 ),
-		'intro'   => statek_cholupice_core_clean_textarea( $raw['intro'] ?? '', 900 ),
-		'cards'   => $cards,
+		'heading' => statek_cholupice_core_clean_textarea( $raw['heading'] ?? '', statek_cholupice_core_field_limit( 'section_heading' ) ),
+		'motto'   => statek_cholupice_core_clean_textarea( $raw['motto'] ?? '', statek_cholupice_core_field_limit( 'motto' ) ),
+		'intro'   => statek_cholupice_core_clean_textarea( $raw['intro'] ?? '', statek_cholupice_core_field_limit( 'short_intro' ) ),
+		'cards'   => statek_cholupice_core_stable_order_sort( $cards ),
 	);
 }
 
@@ -595,33 +847,28 @@ function statek_cholupice_core_clean_faq_items( array $raw ): array {
 		if ( ! is_array( $item ) ) {
 			continue;
 		}
-		$question = statek_cholupice_core_clean_textarea( $item['question'] ?? '', 220 );
+		$question = statek_cholupice_core_clean_textarea( $item['question'] ?? '', statek_cholupice_core_field_limit( 'faq_question' ) );
 		$answer   = trim( (string) ( $item['answer'] ?? '' ) );
 		if ( '' === $question || '' === $answer ) {
 			continue;
 		}
-		$answer  = wpautop( esc_html( statek_cholupice_core_clean_textarea( $answer, 2200 ) ) );
+		$answer  = wpautop( esc_html( statek_cholupice_core_clean_textarea( $answer, statek_cholupice_core_field_limit( 'faq_answer' ) ) ) );
 		$items[] = array(
-			'order'    => absint( $item['order'] ?? ( $index + 1 ) ),
-			'question' => $question,
-			'answer'   => wp_kses_post( $answer ),
+			'order'     => statek_cholupice_core_normalize_order( $item['order'] ?? '', (int) $index, 12 ),
+			'_position' => (int) $index,
+			'question'  => $question,
+			'answer'    => wp_kses_post( $answer ),
 		);
 	}
-	usort( $items, static fn( $a, $b ) => ( $a['order'] <=> $b['order'] ) );
-	return array_map(
-		static fn( $item ) => array(
-			'question' => $item['question'],
-			'answer'   => $item['answer'],
-		),
-		$items
-	);
+	return statek_cholupice_core_stable_order_sort( $items );
 }
 
 function statek_cholupice_core_clean_footer( array $raw ): array {
 	$keys  = array( 'investor_name', 'investor_address', 'investor_id', 'investor_registry', 'info_heading', 'info_text', 'visuals_heading', 'visuals_text' );
 	$clean = array();
 	foreach ( $keys as $key ) {
-		$clean[ $key ] = statek_cholupice_core_clean_textarea( $raw[ $key ] ?? '', 900 );
+		$limit_key     = in_array( $key, array( 'info_text', 'visuals_text' ), true ) ? 'footer_text' : ( str_ends_with( $key, '_heading' ) ? 'section_heading' : 'footer_short' );
+		$clean[ $key ] = statek_cholupice_core_clean_textarea( $raw[ $key ] ?? '', statek_cholupice_core_field_limit( $limit_key ) );
 	}
 	return $clean;
 }

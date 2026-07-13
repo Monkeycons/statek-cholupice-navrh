@@ -1,4 +1,5 @@
 WordPress ZIP manifest
+Release candidate version: 1.1.0-rc.1
 statek-cholupice-theme.zip: 142 entries
   statek-cholupice/404.php
   statek-cholupice/archive.php
@@ -89,4 +90,6 @@ statek-cholupice-core.zip: 6 entries
   statek-cholupice-core/includes/setup.php
   statek-cholupice-core/statek-cholupice-core.php
 Extraction test: OK
-ZIP paths: forward slashes only, one root folder, no absolute paths.
+Version test: OK for theme and companion plugin.
+Package policy: no node_modules, temporary files, development logs, key files, or common secret signatures.
+ZIP paths: forward slashes only, one root folder, no absolute or parent-traversal paths.
