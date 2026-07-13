@@ -13,6 +13,7 @@ Externí kontrola potvrdila správnou strukturu obou ZIPů, úspěšný PHP lint
 ## Provedené opravy v této revizi
 
 - Ukládání JSON metadat respektuje WordPress slashing pravidla: JSON se předává do `update_post_meta()` přes `wp_slash()` a sanitizační callback jej znovu neodslashuje.
+- Převod FAQ odpovědí mezi uloženým HTML a textovým editorem zachovává samostatné odstavce pomocí prázdného řádku; jednoduché `<br>` zůstává jedním zalomením.
 - Homepage dostala datovou vrstvu `inc/content.php` se schválenými fallbacky.
 - Front page nově čte obsah sekcí O projektu, Popis areálu, Jak bude areál fungovat, Bezpečnost / Doprava / Životní prostředí a Přínosy z editovatelných dat.
 - Patička nově čte investorské údaje a informační upozornění z editovatelných dat.
@@ -31,7 +32,7 @@ Externí kontrola potvrdila správnou strukturu obou ZIPů, úspěšný PHP lint
 - Kontrola starého JSON editoru FAQ: ve WordPress PHP souborech nebyl nalezen původní text „FAQ položky JSON“.
 - ZIP balíčky byly znovu vytvořeny skriptem `tools/package-wordpress.py`.
 - Test extrakce ZIPů prošel: jedna kořenová složka, dopředná lomítka, žádné absolutní cesty.
-- Výsledné velikosti: `statek-cholupice-theme.zip` 19 462 896 B, `statek-cholupice-core.zip` 12 539 B.
+- Výsledné velikosti: `statek-cholupice-theme.zip` 19 462 896 B, `statek-cholupice-core.zip` 12 616 B.
 - Manifest potvrzuje 142 položek v šabloně a 6 položek v pluginu včetně `assets/admin-homepage.css` a `assets/admin-homepage.js`.
 
 ## Neprovedené kontroly v tomto lokálním prostředí

@@ -348,9 +348,14 @@ function statek_cholupice_core_render_faq_row( $index, array $item ): void {
 }
 
 function statek_cholupice_core_answer_to_edit_text( string $answer ): string {
-	$answer = str_replace( array( '</p>', '<br>', '<br />', '<br/>' ), "\n", $answer );
-	$answer = str_replace( '<p>', '', $answer );
-	return trim( html_entity_decode( wp_strip_all_tags( $answer ), ENT_QUOTES, get_bloginfo( 'charset' ) ) );
+	$answer = (string) preg_replace( "/\r\n?/", "\n", $answer );
+	$answer = (string) preg_replace( '#</p>\s*<p\b[^>]*>#i', "\n\n", $answer );
+	$answer = (string) preg_replace( '#<br\s*/?>#i', "\n", $answer );
+	$answer = (string) preg_replace( '#</?p\b[^>]*>#i', '', $answer );
+	$answer = html_entity_decode( wp_strip_all_tags( $answer ), ENT_QUOTES | ENT_HTML5, get_bloginfo( 'charset' ) );
+	$answer = (string) preg_replace( "/[ \t]*\n[ \t]*/", "\n", $answer );
+	$answer = (string) preg_replace( "/\n{3,}/", "\n\n", $answer );
+	return trim( $answer );
 }
 
 function statek_cholupice_core_render_contact_footer_metabox( WP_Post $post ): void {
