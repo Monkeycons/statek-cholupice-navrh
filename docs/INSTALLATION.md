@@ -16,3 +16,8 @@ Před veřejným spuštěním proveďte PHP lint a kompletní runtime test na č
 
 - Sablona: `1.1.0-rc.2`
 - Companion plugin: `1.1.0-rc.1`
+
+## Aktualni kombinace balicku po prednasazovaci kontrole
+
+- Sablona: `1.1.0-rc.3`
+- Companion plugin: `1.1.0-rc.3`

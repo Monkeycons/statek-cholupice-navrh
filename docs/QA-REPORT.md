@@ -69,3 +69,29 @@ Kontrola rozmeru podle CSS po oprave:
 Neprovedene testy:
 
 - Plnohodnotny vizualni screenshot v zivem Playgroundu a PHP lint nebyly v tomto lokalnim prostredi znovu spusteny, protoze zde neni dostupny systemovy PHP runtime a network/browser runtime muze vyzadovat rucni pristup. ZIP struktura, verze a staticke kontroly byly znovu overeny lokalne.
+
+## Dodatek 1.1.0-rc.3
+
+Aktualni kombinace balicku: sablona `1.1.0-rc.3`, companion plugin `1.1.0-rc.3`.
+
+Prednasazovaci opravy:
+
+- Vlastni 404 stranka zachovava hlavicku a paticku, obsahuje text `Stránka nebyla nalezena`, tlacitko na homepage, odkaz na Novinky a kontaktni e-mail.
+- Kotvy pod sticky hlavickou byly upraveny pres `--anchor-offset`, `scroll-padding-top` a obecne `scroll-margin-top` pro prvky s ID. Hodnoty pocitaji i s WordPress admin barem.
+- Inline CSS kontrola sablony a pluginu: v produkcni sablone ani companion pluginu nebyly nalezeny velke inline CSS bloky, `style` atributy ani `wp_add_inline_style()`. CSS zustava v externim `assets/css/main.css` a admin CSS souboru pluginu.
+- Pridan dokument `docs/HOSTING-SECURITY.md` s doporucenymi security headers, HTTPS redirectem, HSTS postupem, ochranou administrace, XML-RPC omezenim, zalohami a aktualizacemi.
+- Kontaktní formular ma nonce, honeypot, IP rate limit a novou ochranu proti prilis rychlemu odeslani. Rate limit se nastavuje pred volanim `wp_mail()`, aby chranil i pri chybovem stavu maileru.
+- Cloudflare Turnstile neni aktivovany. Kontaktni handler ma pripraveny rozsirujici antispam filter `statek_cholupice_core_contact_extra_antispam`, aby slo Turnstile pozdeji doplnit az po dodani klicu.
+
+Playground/staging interpretace:
+
+- Formulář neni oznacen jako dorucovaci cesta overena.
+- V Playgroundu se ma kontrolovat validace povinnych poli, REST pozadavek, chybovy stav maileru a to, ze pri chybe `wp_mail()` nevznikne falesny uspech.
+- Skutecne doruceni e-mailu se potvrdi az na staging hostingu se skutecnou mail konfiguraci.
+
+Automaticke kontroly teto revize:
+
+- Verejny JavaScript a administracni JavaScript: syntaxe OK.
+- Zdrojovy WordPress preflight: OK.
+- ZIP manifest a struktura: OK po prebaleni obou balicku.
+- PHP lint nebyl v lokalnim prostredi spusten, protoze systemovy PHP runtime neni dostupny.

@@ -261,7 +261,10 @@
       const emailField = contactForm.querySelector("#contact-email");
       const messageField = contactForm.querySelector("#contact-message");
       const submitButton = contactForm.querySelector("button[type='submit']");
+      const startedAtField = contactForm.querySelector("[data-form-started-at]");
       const clearFieldError = (field) => field.removeAttribute("aria-invalid");
+
+      if (startedAtField) startedAtField.value = String(Date.now());
 
       [emailField, messageField].forEach((field) => {
         field.addEventListener("input", () => {
@@ -313,7 +316,8 @@
               email: emailField.value.trim(),
               message: messageField.value.trim(),
               nonce: contactNonce,
-              company: contactForm.elements.company?.value || ""
+              company: contactForm.elements.company?.value || "",
+              form_started_at: contactForm.elements.form_started_at?.value || ""
             })
           });
           const data = await response.json().catch(() => ({}));

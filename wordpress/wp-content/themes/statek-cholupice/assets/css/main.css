@@ -8,7 +8,7 @@
       --cream: #fbfaf6;
       --line: #d8e1d9;
       --graphite: #303631;
-      --anchor-offset: 104px;
+      --anchor-offset: 128px;
     }
 
     * { box-sizing: border-box; }
@@ -70,7 +70,7 @@
     }
 
     body.admin-bar {
-      --anchor-offset: 136px;
+      --anchor-offset: 168px;
     }
 
       header {
@@ -93,7 +93,7 @@
 
       @media (max-width: 782px) {
         body.admin-bar {
-          --anchor-offset: 150px;
+          --anchor-offset: 190px;
         }
 
         .admin-bar header {
@@ -403,6 +403,10 @@
         padding-block: clamp(56px, 6vw, 88px);
         scroll-margin-top: var(--anchor-offset);
       }
+
+    [id] {
+      scroll-margin-top: var(--anchor-offset);
+    }
 
     .wrap {
       width: min(1180px, calc(100% - 48px));
@@ -1114,6 +1118,67 @@
 
     .read-more {
       margin-top: 24px;
+      color: var(--green-dark);
+      font-weight: 800;
+    }
+
+    .not-found-section {
+      padding-top: calc(var(--anchor-offset) + clamp(48px, 7vw, 88px));
+      background: var(--cream);
+    }
+
+    .not-found-card {
+      max-width: 760px;
+      padding: clamp(34px, 5vw, 58px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 20px 52px rgba(34, 45, 36, .08);
+    }
+
+    .not-found-kicker {
+      margin: 0 0 10px;
+      color: var(--green-dark);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      line-height: 1.2;
+      text-transform: uppercase;
+    }
+
+    .not-found-card h1 {
+      margin: 0 0 18px;
+      color: var(--graphite);
+      font-size: clamp(40px, 5vw, 64px);
+      line-height: 1.04;
+    }
+
+    .not-found-card p {
+      max-width: 620px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    .not-found-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 18px 24px;
+      margin-top: 28px;
+    }
+
+    .not-found-actions .read-more {
+      margin-top: 0;
+    }
+
+    .not-found-card .not-found-contact {
+      margin-top: 26px;
+      font-size: 15px;
+    }
+
+    .not-found-contact a {
       color: var(--green-dark);
       font-weight: 800;
     }

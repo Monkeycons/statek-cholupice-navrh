@@ -12,8 +12,8 @@ PLUGIN_ROOT = ROOT / "wordpress" / "wp-content" / "plugins" / "statek-cholupice-
 DIST_ROOT = ROOT / "dist"
 TEST_ROOT = DIST_ROOT / "zip-test"
 MANIFEST = DIST_ROOT / "ZIP-MANIFEST.txt"
-EXPECTED_THEME_VERSION = "1.1.0-rc.2"
-EXPECTED_PLUGIN_VERSION = "1.1.0-rc.1"
+EXPECTED_THEME_VERSION = "1.1.0-rc.3"
+EXPECTED_PLUGIN_VERSION = "1.1.0-rc.3"
 
 
 def package_file_policy(path: Path, source_root: Path) -> str:

@@ -219,6 +219,7 @@ get_header();
               <label for="contact-company">Firma</label>
               <input id="contact-company" name="company" type="text" tabindex="-1" autocomplete="off">
             </div>
+            <input type="hidden" name="form_started_at" value="" data-form-started-at>
             <div class="form-field">
               <label for="contact-message">Váš dotaz</label>
               <textarea id="contact-message" name="message" required></textarea>

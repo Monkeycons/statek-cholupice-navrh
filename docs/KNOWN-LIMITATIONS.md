@@ -10,3 +10,9 @@
 - Sablona byla zvysena na `1.1.0-rc.2`; companion plugin zustava `1.1.0-rc.1`.
 - V teto revizi nebyl menen administracni model, kontaktni formular ani pluginovy kod.
 - Ziva vizualni kontrola ve WordPress Playgroundu je doporucena zejmena pro otevrene tematicke sekce a blok Novinek na sirce 1440 px, 1920 px a mobilu 390 px.
+
+## Stav po 1.1.0-rc.3
+
+- Sablona i companion plugin jsou ve verzi `1.1.0-rc.3`.
+- Doručení e-mailu z kontaktního formuláře není považováno za ověřené. Playground ověřuje pouze validaci, REST odpověď a chybové hlášení maileru; skutečné doručení se musí potvrdit na staging hostingu.
+- Cloudflare Turnstile není aktivní, protože nejsou vložené site/secret klíče. Integraci je vhodné přidat až po staging testu.

@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+const STATEK_CHOLUPICE_CORE_MIN_FORM_SECONDS = 3;
+
 function statek_cholupice_core_contact_email(): string {
 	$email = get_option( 'statek_cholupice_contact_email', 'info@statekcholupice.cz' );
 	return is_email( $email ) ? $email : 'info@statekcholupice.cz';
@@ -101,6 +103,12 @@ function statek_cholupice_core_handle_contact( WP_REST_Request $request ): WP_RE
 		return new WP_REST_Response( array( 'message' => 'Dotaz byl přijat.' ), 200 );
 	}
 
+	$started_at = (int) $request->get_param( 'form_started_at' );
+	$elapsed_ms = (int) floor( microtime( true ) * 1000 ) - $started_at;
+	if ( $started_at <= 0 || $elapsed_ms < STATEK_CHOLUPICE_CORE_MIN_FORM_SECONDS * 1000 ) {
+		return new WP_REST_Response( array( 'message' => 'Formulář byl odeslán příliš rychle. Zkuste to prosím znovu.' ), 429 );
+	}
+
 	$ip       = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? 'unknown' ) );
 	$limited = get_transient( 'statek_contact_' . md5( $ip ) );
 	if ( $limited ) {
@@ -115,6 +123,19 @@ function statek_cholupice_core_handle_contact( WP_REST_Request $request ): WP_RE
 		return new WP_REST_Response( array( 'message' => 'Vyplňte prosím platný e-mail a dotaz.' ), 400 );
 	}
 
+	$extra_antispam = apply_filters( 'statek_cholupice_core_contact_extra_antispam', true, $request );
+	if ( is_wp_error( $extra_antispam ) ) {
+		return new WP_REST_Response(
+			array( 'message' => $extra_antispam->get_error_message() ),
+			400
+		);
+	}
+	if ( true !== $extra_antispam ) {
+		return new WP_REST_Response( array( 'message' => 'Odeslání se nepodařilo ověřit. Zkuste to prosím znovu.' ), 400 );
+	}
+
+	set_transient( 'statek_contact_' . md5( $ip ), 1, MINUTE_IN_SECONDS );
+
 	$subject = 'Dotaz z webu Statek Cholupice';
 	$body    = "Jméno: {$name}
 E-mail: {$email}
@@ -127,8 +148,6 @@ Dotaz:
 	if ( ! $sent ) {
 		return new WP_REST_Response( array( 'message' => 'Dotaz se nepodařilo odeslat. Napište prosím přímo na ' . statek_cholupice_core_contact_email() . '.' ), 500 );
 	}
-
-	set_transient( 'statek_contact_' . md5( $ip ), 1, MINUTE_IN_SECONDS );
 
 	return new WP_REST_Response( array( 'message' => 'Děkujeme. Váš dotaz jsme přijali.' ), 200 );
 }

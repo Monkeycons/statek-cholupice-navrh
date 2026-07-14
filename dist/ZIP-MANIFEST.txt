@@ -1,6 +1,6 @@
 WordPress ZIP manifest
-Theme release candidate version: 1.1.0-rc.2
-Companion plugin version: 1.1.0-rc.1
+Theme release candidate version: 1.1.0-rc.3
+Companion plugin version: 1.1.0-rc.3
 statek-cholupice-theme.zip: 142 entries
   statek-cholupice/404.php
   statek-cholupice/archive.php
