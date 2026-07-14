@@ -10,6 +10,10 @@ ADMIN_PHP = ROOT / "wordpress/wp-content/plugins/statek-cholupice-core/includes/
 ADMIN_JS = ROOT / "wordpress/wp-content/plugins/statek-cholupice-core/assets/admin-homepage.js"
 FRONT_PAGE = ROOT / "wordpress/wp-content/themes/statek-cholupice/front-page.php"
 HELPERS = ROOT / "wordpress/wp-content/themes/statek-cholupice/inc/helpers.php"
+HOME_ARCHIVE = ROOT / "wordpress/wp-content/themes/statek-cholupice/home.php"
+HOME_NEWS = ROOT / "wordpress/wp-content/themes/statek-cholupice/template-parts/home/news.php"
+HEADER = ROOT / "wordpress/wp-content/themes/statek-cholupice/header.php"
+MAIN_CSS = ROOT / "wordpress/wp-content/themes/statek-cholupice/assets/css/main.css"
 
 
 def require(condition: bool, message: str) -> None:
@@ -65,6 +69,10 @@ admin_php = ADMIN_PHP.read_text(encoding="utf-8")
 admin_js = ADMIN_JS.read_text(encoding="utf-8")
 front_page = FRONT_PAGE.read_text(encoding="utf-8")
 helpers = HELPERS.read_text(encoding="utf-8")
+home_archive = HOME_ARCHIVE.read_text(encoding="utf-8")
+home_news = HOME_NEWS.read_text(encoding="utf-8")
+header = HEADER.read_text(encoding="utf-8")
+main_css = MAIN_CSS.read_text(encoding="utf-8")
 
 for php_file in sorted((ROOT / "wordpress").rglob("*.php")):
     check_php_delimiters(php_file)
@@ -126,6 +134,28 @@ require("statek_cholupice_core_sanitize_cta_url" in admin_php, "Missing CTA sani
 require("'https' !== $scheme" in admin_php, "CTA sanitizer does not enforce HTTPS")
 require("statek_cholupice_core_cta_url_fallback" in admin_php, "Missing CTA fallbacks")
 
+require(
+    '.news-card > a {\n      display: block;\n      width: 100%;\n      aspect-ratio: 16 / 9;\n      height: auto;' in main_css,
+    "News image link must own the 16:9 ratio without filling the card height",
+)
+require(
+    '.news-card > a picture {\n      display: block;\n      width: 100%;\n      height: 100%;' in main_css,
+    "News picture must fill only the image link",
+)
+require(
+    '.news-card-image {\n      display: block;\n      width: 100%;\n      height: 100%;\n      object-fit: cover;' in main_css,
+    "News image does not fill and crop inside its wrapper",
+)
+linked_title = '<h3><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3>'
+require(linked_title in home_archive, "News archive title is not linked")
+require(linked_title in home_news, "Homepage news title is not linked")
+require(
+    "is_front_page() ? '' : ' site-header--solid'" in header,
+    "Interior pages do not receive the server-rendered solid header class",
+)
+require("header.site-header--solid .nav" in main_css, "Solid interior header style is missing")
+
 print("WordPress preflight source checks: OK")
 print("PHP delimiter checks (20 files): OK")
 print("JSON round-trip fixture: OK")
+print("News card and interior header regression checks: OK")

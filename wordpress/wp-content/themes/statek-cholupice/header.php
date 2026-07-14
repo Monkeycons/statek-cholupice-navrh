@@ -15,7 +15,7 @@
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 <a class="skip-link" href="#main-content"><?php esc_html_e( 'Přejít na obsah', 'statek-cholupice' ); ?></a>
-<header>
+<header class="site-header<?php echo is_front_page() ? '' : ' site-header--solid'; ?>">
 	<div class="nav">
 		<a class="brand brand-link" href="<?php echo esc_url( statek_cholupice_anchor_url( 'uvod' ) ); ?>" aria-label="<?php esc_attr_e( 'Statek Cholupice - zpět na úvod', 'statek-cholupice' ); ?>">Statek Cholupice</a>
 		<nav aria-label="<?php esc_attr_e( 'Hlavní menu', 'statek-cholupice' ); ?>">

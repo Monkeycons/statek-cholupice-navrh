@@ -95,3 +95,14 @@ Automaticke kontroly teto revize:
 - Zdrojovy WordPress preflight: OK.
 - ZIP manifest a struktura: OK po prebaleni obou balicku.
 - PHP lint nebyl v lokalnim prostredi spusten, protoze systemovy PHP runtime neni dostupny.
+
+## Dodatek 1.1.0-rc.4
+
+Aktualni kombinace balicku: sablona `1.1.0-rc.4`, companion plugin `1.1.0-rc.3`.
+
+- Obrazovy odkaz karty Novinek nese pomer 16:9 a `height: auto`; pouze vnitrni `picture` a obrazek vyplnuji obrazovy wrapper.
+- Datum, klikaci nadpis, perex a odkaz `Cist vice` zustavaji viditelne pod obrazkem v archivu i homepage carouselu.
+- Dlouhy nadpis je omezen na dva radky a dlouhy perex na tri radky bez neprimereneho rustu karty.
+- Nadpis i obrazek smeruji na stejny detail clanku. Prispevek bez vlastniho obrazku pouziva existujici fallback.
+- Vnitrni stranky dostavaji tmavou hlavicku serverove; homepage zustava bez teto tridy a zachovava pruhlednou hlavicku nad hero obrazkem.
+- Regresni zdrojovy test hlida CSS wrapperu, klikaci nadpis v obou sablonach a podminenou tridu vnitrni hlavicky.

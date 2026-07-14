@@ -11,4 +11,4 @@ WordPress Playground spustí dočasný WordPress přímo v prohlížeči, nainst
 Praktický postup kontroly je v dokumentu [playground/TESTING.md](playground/TESTING.md).
 
 Změny provedené v dočasné instanci Playgroundu nejsou trvalé. Playground rovněž neověřuje skutečné doručení e-mailů přes konfiguraci cílového hostingu.
-Aktualni WordPress balicky: sablona `1.1.0-rc.3`, companion plugin `1.1.0-rc.3`.
+Aktualni WordPress balicky: sablona `1.1.0-rc.4`, companion plugin `1.1.0-rc.3`.
