@@ -115,7 +115,8 @@
         transition: background-color .22s ease, border-color .22s ease, box-shadow .22s ease, backdrop-filter .22s ease;
       }
 
-      header.is-scrolled .nav {
+      header.is-scrolled .nav,
+      body.error404 header .nav {
         background: rgba(29, 38, 31, .91);
         border-color: rgba(255, 255, 255, .14);
         box-shadow: 0 4px 14px rgba(0, 0, 0, .08);
@@ -1122,9 +1123,13 @@
       font-weight: 800;
     }
 
-    .not-found-section {
-      padding-top: calc(var(--anchor-offset) + clamp(48px, 7vw, 88px));
+    body.error404 .not-found-section {
+      padding-top: calc(76px + clamp(24px, 3vw, 40px));
       background: var(--cream);
+    }
+
+    body.admin-bar.error404 .not-found-section {
+      padding-top: calc(108px + clamp(24px, 3vw, 40px));
     }
 
     .not-found-card {
@@ -1865,6 +1870,20 @@
         .nav { min-height: 56px; }
         .nav > nav { display: none; }
         .mobile-menu-toggle { display: flex; }
+
+        body.error404 .not-found-section {
+          padding-top: calc(68px + clamp(20px, 5vw, 32px));
+        }
+
+        body.admin-bar.error404 .not-found-section {
+          padding-top: calc(100px + clamp(20px, 5vw, 32px));
+        }
+      }
+
+      @media (max-width: 782px) {
+        body.admin-bar.error404 .not-found-section {
+          padding-top: calc(114px + clamp(20px, 5vw, 32px));
+        }
       }
 
     @media (max-width: 860px) {
