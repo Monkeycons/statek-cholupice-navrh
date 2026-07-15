@@ -17,7 +17,7 @@
 - Doručení e-mailu z kontaktního formuláře není považováno za ověřené. Playground ověřuje pouze validaci, REST odpověď a chybové hlášení maileru; skutečné doručení se musí potvrdit na staging hostingu.
 - Cloudflare Turnstile není aktivní, protože nejsou vložené site/secret klíče. Integraci je vhodné přidat až po staging testu.
 
-## Stav po 1.1.0-rc.4
+## Stav po 1.1.0-rc.5
 
-- Sablona je ve verzi `1.1.0-rc.4`; companion plugin zustava beze zmeny ve verzi `1.1.0-rc.3`.
+- Sablona je ve verzi `1.1.0-rc.5`; companion plugin zustava beze zmeny ve verzi `1.1.0-rc.3`.
 - Oprava karet Novinek a tmave hlavicky vnitrnich stranek nemeni administracni model ani kontaktni formular.

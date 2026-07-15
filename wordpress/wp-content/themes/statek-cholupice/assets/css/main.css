@@ -8,12 +8,12 @@
       --cream: #fbfaf6;
       --line: #d8e1d9;
       --graphite: #303631;
-      --anchor-offset: 128px;
+      --anchor-offset: 96px;
     }
 
     * { box-sizing: border-box; }
 
-      html { scroll-behavior: smooth; scroll-padding-top: var(--anchor-offset); }
+      html { scroll-behavior: smooth; }
 
     .skip-link {
       position: fixed;
@@ -70,7 +70,7 @@
     }
 
     body.admin-bar {
-      --anchor-offset: 168px;
+      --anchor-offset: 128px;
     }
 
       header {
@@ -92,10 +92,6 @@
       }
 
       @media (max-width: 782px) {
-        body.admin-bar {
-          --anchor-offset: 190px;
-        }
-
         .admin-bar header {
           top: 46px;
         }
@@ -1874,6 +1870,14 @@
       }
 
       @media (max-width: 980px) {
+        :root {
+          --anchor-offset: 90px;
+        }
+
+        body.admin-bar {
+          --anchor-offset: 124px;
+        }
+
         header {
           min-height: 68px;
           margin-bottom: -68px;
@@ -1894,6 +1898,10 @@
       }
 
       @media (max-width: 782px) {
+        body.admin-bar {
+          --anchor-offset: 136px;
+        }
+
         body.admin-bar.error404 .not-found-section {
           padding-top: calc(114px + clamp(20px, 5vw, 32px));
         }

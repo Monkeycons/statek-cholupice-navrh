@@ -1,5 +1,5 @@
 WordPress ZIP manifest
-Theme release candidate version: 1.1.0-rc.4
+Theme release candidate version: 1.1.0-rc.5
 Companion plugin version: 1.1.0-rc.3
 statek-cholupice-theme.zip: 142 entries
   statek-cholupice/404.php
@@ -83,7 +83,7 @@ statek-cholupice-theme.zip: 142 entries
   statek-cholupice/assets/images/optimized/statek_web_premium/hero-vjezd-preview-v4-lide-obchod-1280.avif
   statek-cholupice/assets/images/optimized/statek_web_premium/hero-vjezd-preview-v4-lide-obchod-1280.jpg
   ...
-statek-cholupice-core.zip: 6 entries
+statek-cholupice-core.zip: 6 entries (existing package unchanged)
   statek-cholupice-core/assets/admin-homepage.css
   statek-cholupice-core/assets/admin-homepage.js
   statek-cholupice-core/includes/contact.php
@@ -92,5 +92,6 @@ statek-cholupice-core.zip: 6 entries
   statek-cholupice-core/statek-cholupice-core.php
 Extraction test: OK
 Version test: OK for theme and companion plugin.
+Companion plugin ZIP: unchanged (SHA-256 verified before and after packaging).
 Package policy: no node_modules, temporary files, development logs, key files, or common secret signatures.
 ZIP paths: forward slashes only, one root folder, no absolute or parent-traversal paths.

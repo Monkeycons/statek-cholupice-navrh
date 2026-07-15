@@ -106,3 +106,24 @@ Aktualni kombinace balicku: sablona `1.1.0-rc.4`, companion plugin `1.1.0-rc.3`.
 - Nadpis i obrazek smeruji na stejny detail clanku. Prispevek bez vlastniho obrazku pouziva existujici fallback.
 - Vnitrni stranky dostavaji tmavou hlavicku serverove; homepage zustava bez teto tridy a zachovava pruhlednou hlavicku nad hero obrazkem.
 - Regresni zdrojovy test hlida CSS wrapperu, klikaci nadpis v obou sablonach a podminenou tridu vnitrni hlavicky.
+
+## Dodatek 1.1.0-rc.5
+
+Aktualni kombinace balicku: sablona `1.1.0-rc.5`, companion plugin `1.1.0-rc.3`.
+
+- Oprava kotev odstranuje dvojite zapocitani odsazeni: dokument uz nepouziva `scroll-padding-top`; cilove prvky pouzivaji pouze `scroll-margin-top: var(--anchor-offset)`.
+- Desktop bez admin baru pouziva offset 96 px, tedy vysku sticky hlavicky 68 px a cilovou mezeru 28 px.
+- Desktop s 32px WordPress admin barem pouziva offset 128 px; cilova mezera zustava 28 px.
+- Tablet a mobil bez admin baru pouzivaji offset 90 px, tedy vysku sticky hlavicky 62 px a cilovou mezeru 28 px.
+- Tablet s admin barem pouziva offset 124 px. Mobil pod 782 px s 46px admin barem pouziva offset 136 px; v obou pripadech zustava cilova mezera priblizne 28 px.
+- Zdrojova kontrola potvrzuje spolecne chovani pro `#projekt`, `#bezpecnost`, `#doprava`, `#zivotni-prostredi`, `#prinosy`, `#kontakt` a `#faq-contact-form`.
+- Homepage, menu, kontaktni formular, companion plugin a ostatni interakce nebyly touto revizi zmeneny.
+
+Kontroly teto revize:
+
+- WordPress source preflight: **OK**.
+- Verejny a administracni JavaScript: syntaxe **OK**.
+- Homepage admin repeater test: **OK**.
+- `git diff --check`: **OK**.
+- ZIP sablony: jedna korenova slozka, dopredna lomitka, zadne absolutni ani nadrizene cesty, uspesna extrakce a verze `1.1.0-rc.5` uvnitr balicku: **OK**.
+- PHP runtime lint nebyl soucasti pozadovanych lokalnich kontrol; zdrojovy preflight kontroluje delimitery vsech 20 PHP souboru.

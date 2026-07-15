@@ -12,7 +12,7 @@ PLUGIN_ROOT = ROOT / "wordpress" / "wp-content" / "plugins" / "statek-cholupice-
 DIST_ROOT = ROOT / "dist"
 TEST_ROOT = DIST_ROOT / "zip-test"
 MANIFEST = DIST_ROOT / "ZIP-MANIFEST.txt"
-EXPECTED_THEME_VERSION = "1.1.0-rc.4"
+EXPECTED_THEME_VERSION = "1.1.0-rc.5"
 EXPECTED_PLUGIN_VERSION = "1.1.0-rc.3"
 
 
