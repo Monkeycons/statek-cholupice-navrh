@@ -19,6 +19,10 @@ final class WP_REST_Request {
 	public function get_param( string $key ) {
 		return $this->params[ $key ] ?? null;
 	}
+
+	public function has_param( string $key ): bool {
+		return array_key_exists( $key, $this->params );
+	}
 }
 
 final class WP_REST_Response {
@@ -106,6 +110,7 @@ function test_reset(): void {
 	$GLOBALS['test_mail_calls'] = array();
 	$GLOBALS['test_mail_result'] = true;
 	$_SERVER['REMOTE_ADDR'] = '203.0.113.10';
+	unset( $_SERVER['HTTP_X_FORWARDED_FOR'], $_SERVER['HTTP_X_REAL_IP'], $_SERVER['HTTP_CLIENT_IP'], $_SERVER['CF_CONNECTING_IP'] );
 }
 
 function test_params(): array {
@@ -164,10 +169,50 @@ $tests['filled honeypot is silently accepted without mail'] = function (): void 
 	test_same( 0, count( $GLOBALS['test_mail_calls'] ), 'Honeypot must not send mail' );
 };
 
-$tests['missing honeypot field remains compatible'] = function (): void {
+$tests['missing honeypot field is silently accepted without mail'] = function (): void {
 	$response = test_request( array(), array( 'company' ) );
 	test_same( 200, $response->get_status(), 'Missing honeypot status' );
-	test_same( 1, count( $GLOBALS['test_mail_calls'] ), 'Missing empty honeypot should not block a valid request' );
+	test_same( 0, count( $GLOBALS['test_mail_calls'] ), 'Missing honeypot must not send mail' );
+};
+
+$tests['empty honeypot allows a valid request'] = function (): void {
+	$response = test_request( array( 'company' => '' ) );
+	test_same( 200, $response->get_status(), 'Empty honeypot status' );
+	test_same( 1, count( $GLOBALS['test_mail_calls'] ), 'Empty honeypot should allow a valid request' );
+};
+
+$tests['spoofed proxy headers do not change the source key'] = function (): void {
+	$_SERVER['REMOTE_ADDR'] = '203.0.113.10';
+	$_SERVER['HTTP_X_FORWARDED_FOR'] = '198.51.100.20';
+	$_SERVER['HTTP_X_REAL_IP'] = '198.51.100.21';
+	$_SERVER['HTTP_CLIENT_IP'] = '198.51.100.22';
+	$_SERVER['CF_CONNECTING_IP'] = '198.51.100.23';
+	$first_key = statek_cholupice_core_contact_source_key();
+
+	$_SERVER['HTTP_X_FORWARDED_FOR'] = '192.0.2.30';
+	$_SERVER['HTTP_X_REAL_IP'] = '192.0.2.31';
+	$_SERVER['HTTP_CLIENT_IP'] = '192.0.2.32';
+	$_SERVER['CF_CONNECTING_IP'] = '192.0.2.33';
+	$second_key = statek_cholupice_core_contact_source_key();
+
+	test_same( $first_key, $second_key, 'Client-controlled proxy headers changed the rate-limit source' );
+	test_true( ! str_contains( $first_key, '203.0.113.10' ), 'Raw IP leaked into the transient key' );
+};
+
+$tests['source key validates IPv4 IPv6 and fallback values'] = function (): void {
+	$_SERVER['REMOTE_ADDR'] = '203.0.113.10';
+	$ipv4_key = statek_cholupice_core_contact_source_key();
+	$_SERVER['REMOTE_ADDR'] = '2001:db8::10';
+	$ipv6_key = statek_cholupice_core_contact_source_key();
+	$_SERVER['REMOTE_ADDR'] = 'not-an-ip';
+	$invalid_key = statek_cholupice_core_contact_source_key();
+	unset( $_SERVER['REMOTE_ADDR'] );
+	$missing_key = statek_cholupice_core_contact_source_key();
+
+	test_same( 32, strlen( $ipv4_key ), 'IPv4 HMAC key length' );
+	test_same( 32, strlen( $ipv6_key ), 'IPv6 HMAC key length' );
+	test_true( $ipv4_key !== $ipv6_key, 'IPv4 and IPv6 source keys must differ' );
+	test_same( $invalid_key, $missing_key, 'Invalid and missing IP must use the same safe fallback' );
 };
 
 $tests['submission faster than three seconds is rejected'] = function (): void {

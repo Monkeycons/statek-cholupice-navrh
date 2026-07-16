@@ -179,6 +179,10 @@ function statek_cholupice_core_handle_contact( WP_REST_Request $request ): WP_RE
 		return statek_cholupice_core_contact_limit_response();
 	}
 
+	if ( ! $request->has_param( 'company' ) ) {
+		return new WP_REST_Response( array( 'message' => 'Dotaz byl přijat.' ), 200 );
+	}
+
 	$honeypot = trim( statek_cholupice_core_contact_param( $request, 'company' ) );
 	if ( '' !== $honeypot || statek_cholupice_core_contact_length( $honeypot ) > STATEK_CHOLUPICE_CORE_COMPANY_MAX_LENGTH ) {
 		return new WP_REST_Response( array( 'message' => 'Dotaz byl přijat.' ), 200 );
