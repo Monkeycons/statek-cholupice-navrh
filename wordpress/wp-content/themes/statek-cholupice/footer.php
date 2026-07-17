@@ -40,6 +40,7 @@ $footer = statek_cholupice_footer_data();
 		<span>© <?php echo esc_html( wp_date( 'Y' ) ); ?> Statek Cholupice</span>
 		<div class="footer-bottom-links">
 			<a href="<?php echo esc_url( statek_cholupice_privacy_url() ); ?>">Zásady zpracování osobních údajů</a>
+			<?php statek_cholupice_cookie_preferences_button(); ?>
 		</div>
 	</div>
 </footer>

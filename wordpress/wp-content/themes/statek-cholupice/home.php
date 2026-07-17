@@ -19,7 +19,7 @@ get_header();
 			<?php if ( have_posts() ) : ?>
 				<div class="news-track news-archive-grid">
 					<?php while ( have_posts() ) : the_post(); ?>
-						<article class="news-card">
+						<article class="news-card" data-news-id="<?php echo esc_attr( (string) get_the_ID() ); ?>" data-news-title="<?php echo esc_attr( get_the_title() ); ?>">
 							<a href="<?php the_permalink(); ?>" aria-label="<?php echo esc_attr( sprintf( 'Číst více: %s', get_the_title() ) ); ?>">
 								<?php
 								if ( has_post_thumbnail() ) {

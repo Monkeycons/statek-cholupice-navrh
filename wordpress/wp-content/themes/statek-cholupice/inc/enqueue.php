@@ -20,7 +20,7 @@ function statek_cholupice_enqueue_assets(): void {
 	wp_enqueue_script(
 		'statek-cholupice-main',
 		statek_cholupice_asset_url( 'js/main.js' ),
-		array(),
+		statek_cholupice_analytics_is_allowed() ? array( 'statek-cholupice-analytics' ) : array(),
 		statek_cholupice_asset_version( 'js/main.js' ),
 		true
 	);

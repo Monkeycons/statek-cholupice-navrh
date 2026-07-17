@@ -308,6 +308,7 @@
         submitButton.textContent = "Odesílám…";
         try {
           const contactNonce = window.StatekCholupice?.contactNonce || "";
+          const honeypotFilled = Boolean(contactForm.elements.company?.value.trim());
           const response = await fetch(CONTACT_ENDPOINT, {
             method: "POST",
             headers: { "Content-Type": "application/json", Accept: "application/json", "X-WP-Nonce": contactNonce },
@@ -326,6 +327,7 @@
           contactStatus.className = "form-status is-success";
           contactStatus.setAttribute("role", "status");
           contactStatus.textContent = data.message || "Děkujeme. Váš dotaz jsme přijali.";
+          if (!honeypotFilled) window.StatekAnalytics?.recordLead();
         } catch (error) {
           contactStatus.className = "form-status is-error";
           contactStatus.setAttribute("role", "alert");

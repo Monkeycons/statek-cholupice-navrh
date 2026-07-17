@@ -34,7 +34,7 @@ get_header();
         <?php foreach ( $project_blocks as $index => $block ) : ?>
           <div class="story-block<?php echo 1 === $index ? ' reverse' : ''; ?>">
             <?php if ( 1 === $index ) : ?>
-              <div class="before-after" data-before-after>
+              <div class="before-after" data-before-after data-slider-id="revitalizace-arealu">
                 <?php echo statek_cholupice_editable_image( $block['before'], array( 'sizes' => '(max-width: 900px) 100vw, 50vw' ) ); ?>
                 <?php echo statek_cholupice_editable_image( $block['after'], array( 'class' => 'after', 'sizes' => '(max-width: 900px) 100vw, 50vw' ) ); ?>
                 <span class="ba-label before">Současný stav</span>
