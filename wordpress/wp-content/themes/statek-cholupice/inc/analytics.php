@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 const STATEK_CHOLUPICE_GA4_OPTION          = 'statek_cholupice_ga4_measurement_id';
-const STATEK_CHOLUPICE_GA4_DEFAULT_ID      = 'G-6WYM4Z2VWZ';
+const STATEK_CHOLUPICE_GA4_RECOMMENDED_ID  = 'G-6WYM4Z2VWZ';
 const STATEK_CHOLUPICE_CONSENT_VERSION     = 1;
 const STATEK_CHOLUPICE_CONSENT_COOKIE_NAME = 'statek_cookie_consent';
 
@@ -18,7 +18,7 @@ const STATEK_CHOLUPICE_CONSENT_COOKIE_NAME = 'statek_cookie_consent';
  * Return the configured measurement ID, or an empty string when disabled/invalid.
  */
 function statek_cholupice_ga4_measurement_id(): string {
-	$value = get_option( STATEK_CHOLUPICE_GA4_OPTION, STATEK_CHOLUPICE_GA4_DEFAULT_ID );
+	$value = get_option( STATEK_CHOLUPICE_GA4_OPTION, '' );
 	$value = is_string( $value ) ? strtoupper( trim( $value ) ) : '';
 
 	return preg_match( '/^G-[A-Z0-9]+$/', $value ) ? $value : '';
@@ -57,7 +57,7 @@ function statek_cholupice_register_analytics_setting(): void {
 		array(
 			'type'              => 'string',
 			'sanitize_callback' => 'statek_cholupice_sanitize_ga4_measurement_id',
-			'default'           => STATEK_CHOLUPICE_GA4_DEFAULT_ID,
+			'default'           => '',
 		)
 	);
 
@@ -74,7 +74,7 @@ add_action( 'admin_init', 'statek_cholupice_register_analytics_setting' );
  * Render the GA4 setting field.
  */
 function statek_cholupice_render_analytics_setting(): void {
-	$value = get_option( STATEK_CHOLUPICE_GA4_OPTION, STATEK_CHOLUPICE_GA4_DEFAULT_ID );
+	$value = get_option( STATEK_CHOLUPICE_GA4_OPTION, '' );
 	$value = is_string( $value ) ? $value : '';
 	?>
 	<input
@@ -87,7 +87,15 @@ function statek_cholupice_render_analytics_setting(): void {
 		value="<?php echo esc_attr( $value ); ?>"
 	>
 	<p class="description">
-		<?php esc_html_e( 'Prázdná nebo neplatná hodnota analytiku zcela vypne. Měření se spustí jen na produkční doméně a až po souhlasu návštěvníka.', 'statek-cholupice' ); ?>
+		<?php
+		echo esc_html(
+			sprintf(
+				/* translators: %s: recommended GA4 measurement ID. */
+				__( 'Analytika je vypnutá, dokud zde není uloženo platné měřicí ID. Pro tento web použijte %s až po zveřejnění zásad ochrany osobních údajů a dokončení produkčního testu cookie lišty.', 'statek-cholupice' ),
+				STATEK_CHOLUPICE_GA4_RECOMMENDED_ID
+			)
+		);
+		?>
 	</p>
 	<?php
 }

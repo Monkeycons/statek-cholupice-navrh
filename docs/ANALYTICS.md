@@ -5,10 +5,20 @@ Produkční šablona používá vlastní privacy-first integraci Google Analytic
 ## Správa měření
 
 - Měřicí ID se mění ve WordPressu v **Nastavení → Obecné → Google Analytics 4 – měřicí ID**.
-- Výchozí ID je `G-6WYM4Z2VWZ`.
-- Prázdná nebo neplatná hodnota analytiku úplně vypne. Povolený formát je pouze `G-[A-Z0-9]+`.
+- Samotné nasazení souborů analytiku neaktivuje.
+- Při dosud neexistujícím nastavení, prázdné hodnotě nebo neplatném ID je analytika vypnutá. Aktivuje se pouze po explicitním uložení platného ID ve formátu `G-[A-Z0-9]+`.
+- Doporučené ID pro tento web je `G-6WYM4Z2VWZ`; správce je smí uložit až po zveřejnění zásad ochrany osobních údajů a dokončení produkčního testu cookie lišty.
 - Verze souhlasu je konstanta `STATEK_CHOLUPICE_CONSENT_VERSION` v `inc/analytics.php`. Zvýšení čísla zneplatní dřívější rozhodnutí a všem návštěvníkům znovu zobrazí volbu.
 - Technická first-party cookie `statek_cookie_consent` obsahuje jen verzi, volbu `granted`/`denied` a ISO datum změny. Má platnost 180 dnů, `Path=/`, `SameSite=Lax` a na HTTPS také `Secure`.
+
+## Pořadí produkčního spuštění
+
+1. Vytvořit a ověřit obnovitelnou zálohu souborů a databáze.
+2. Publikovat stránku zásad ochrany osobních údajů na `https://www.statekcholupice.cz/ochrana-osobnich-udaju/`.
+3. Nasadit kód s analytikou ve vypnutém stavu.
+4. Anonymně otestovat cookie lištu bez aktivního Google tagu.
+5. V administraci explicitně uložit `G-6WYM4Z2VWZ`.
+6. Znovu otestovat souhlas, odmítnutí, odvolání, cookies, Network a GA4 DebugView.
 
 ## Co se měří
 

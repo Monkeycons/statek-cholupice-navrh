@@ -14,6 +14,7 @@ HOME_ARCHIVE = ROOT / "wordpress/wp-content/themes/statek-cholupice/home.php"
 HOME_NEWS = ROOT / "wordpress/wp-content/themes/statek-cholupice/template-parts/home/news.php"
 HEADER = ROOT / "wordpress/wp-content/themes/statek-cholupice/header.php"
 MAIN_CSS = ROOT / "wordpress/wp-content/themes/statek-cholupice/assets/css/main.css"
+ANALYTICS = ROOT / "wordpress/wp-content/themes/statek-cholupice/inc/analytics.php"
 
 
 def require(condition: bool, message: str) -> None:
@@ -73,6 +74,7 @@ home_archive = HOME_ARCHIVE.read_text(encoding="utf-8")
 home_news = HOME_NEWS.read_text(encoding="utf-8")
 header = HEADER.read_text(encoding="utf-8")
 main_css = MAIN_CSS.read_text(encoding="utf-8")
+analytics = ANALYTICS.read_text(encoding="utf-8")
 
 for php_file in sorted((ROOT / "wordpress").rglob("*.php")):
     check_php_delimiters(php_file)
@@ -155,7 +157,23 @@ require(
 )
 require("header.site-header--solid .nav" in main_css, "Solid interior header style is missing")
 
+require("STATEK_CHOLUPICE_GA4_DEFAULT_ID" not in analytics, "GA4 must not have an automatic default ID")
+require(
+    "const STATEK_CHOLUPICE_GA4_RECOMMENDED_ID  = 'G-6WYM4Z2VWZ';" in analytics,
+    "Recommended GA4 ID must remain informational only",
+)
+require(
+    analytics.count("get_option( STATEK_CHOLUPICE_GA4_OPTION, '' )") == 2,
+    "Missing GA4 option and first admin render must both default to empty",
+)
+require("'default'           => ''," in analytics, "Registered GA4 setting must default to empty")
+require(
+    "Analytika je vypnutá, dokud zde není uloženo platné měřicí ID." in analytics,
+    "GA4 admin field must explain explicit activation",
+)
+
 print("WordPress preflight source checks: OK")
 print("PHP delimiter checks (20 files): OK")
 print("JSON round-trip fixture: OK")
 print("News card and interior header regression checks: OK")
+print("GA4 explicit opt-in source checks: OK")
